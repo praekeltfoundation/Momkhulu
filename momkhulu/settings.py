@@ -31,13 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    #CS Patients Logging App
+    'cspatients.apps.CspatientsConfig',
+    # The Django Rest FrameWork
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cspatients.apps.CspatientsConfig',
 ]
 
 MIDDLEWARE = [
