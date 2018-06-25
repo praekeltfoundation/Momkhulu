@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #CS Patients Logging App
+    # CS Patients Logging App
     'cspatients.apps.CspatientsConfig',
     # The Django Rest FrameWork
     'rest_framework',
