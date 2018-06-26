@@ -3,30 +3,32 @@
 <h1>Momkhulu C/S Patients List</h1>
 
 {% block content %}
-<div class = "container-fluid">
+<div class = "container-fluid table-responsive">
     <div class = "col-md-11">
         {% if patients_list %}
 
-        <table>
+        <table class="table table-hover">
             <thead>
                 <tr>
-                    <td>Name</td>
-                    <td>ID</td>
-                    <td>Age</td>
-                    <td>Location</td>
-                    <td>Urgency</td>
-                    <td>Notes</td>
+                    <td class="col-sm-2 col-md-1">Patient ID</td>
+                    <td class="col-sm-2 col-md-1">Name</td>
+                    <td class="col-sm-2 col-md-1">Age</td>
+                    <td class="col-sm-2 col-md-1">Location</td>
+                    <td class="col-sm-2 col-md-1">Urgency</td>
+                    <td class="col-sm-2 col-md-1">Indication</td>
+                    <td class="col-sm-2 col-md-1">Time of Log</td>
                 </tr>
             </thead>
             <tbody>
             {% for patient in patients_list %}
             <tr>
-                <td>{{patient.name}}</td>
-                <td>{{patient.id}}</td>
-                <td>{{patient.age}}</td>
-                <td>{{patient.location}}</td>
-                <td>{{patient.urgency}}</td>
-                <td>{{patient.indication}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.patient_id}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.name}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.age}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.location}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.urgency}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.indication}}</td>
+                <td class="col-sm-2 col-md-1">{{patient.time}}</td>
             </tr>                                
             {% endfor %}
             </tbody>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "cspatients/base.html" %}
 
 {% block content %}
 
@@ -9,28 +9,28 @@
     <div>
         <form method="POST">{% csrf_token %}
             <div class="form-group">
-                <label for="patient_name">Name</label>
-                <input type="text" name = "patient_name" id="patient_name" placeholder="John Doe" maxlength=200 required>
+                <label for="name">Name</label>
+                <input type="text" name = "name" id="name" placeholder="John Doe" maxlength=200 required>
             </div>
             <div class="form-group">
                 <label for="patient_id">ID</label>
                 <input type="text" name="patient_id" id="patient_id" placeholder="99" required>
             </div>
             <div class="form-group">
-                <label for="patient_age">Age</label>
-                <input type="text" number="patient_age" id="patient_age" placeholder="99" required>
+                <label for="age">Age</label>
+                <input type="text" name="age" id="age" placeholder="99" required>
             </div>
             <div class="form-group">
-                <label for="patient_indication">Notes</label>
-                <input type="text" name="patient_indication" id="patient_indication" placeholder="Needs One!" maxlength=200>
+                <label for="indication">Notes</label>
+                <input type="text" name="indication" id="indication" placeholder="Needs One!" maxlength=200>
             </div>
             <div class="form-group">
-                <label for="patient_clinician">Clinician</label>
-                <input type="text" name="patient_clinician" id="patient_clinician" placeholder="Dr. Peter Drew" required maxlength=200>
+                <label for="clinician">Clinician</label>
+                <input type="text" name="clinician" id="clinician" placeholder="Dr. Peter Drew" required maxlength=200>
             </div>
             <div class="form-group">
-                <label for="patient_urgency">Urgency</label>
-                <input type="number" name="patient_urgency" id="patient_urgency" placeholder="4" aria-describedby="urgency-help" required>
+                <label for="urgency">Urgency</label>
+                <input type="number" name="urgency" id="urgency" placeholder="4" aria-describedby="urgency-help" required>
                 <small id = "urgency-help">Urgency rating from 1-4, 1 most urgent and 4 least urgent.</small> 
             </div>
             <div class='form-group'>
