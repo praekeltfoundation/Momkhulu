@@ -16,16 +16,31 @@ def index(request):
     context = {
         'patients_list': patients_list
     }
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(template.render(context, request), status=200)
 
 
 def form(request):
-    return render(request, "cspatients/form.html")
-
-
-def submit(request):
+    template = loader.get_template("cspatients/index.html")
     if request.method == "POST":
+        # Send the Form information
         form = PatientLogForm(request.POST)
         if form.is_valid():
-            return render(request, "cspatients/index.html")
-    return redirect("form")
+
+            context = {
+                "saved": True,
+            }    
+    elif request.method == "GET":
+        # Get the Form
+
+        context = {
+            "saved": False,
+        }
+    return HttpResponse(template.render(context, request), status=200)
+
+
+def event(request):
+    # Takes in the information from Rapid Pro
+    if request.method == "POST":
+        # Save the information
+        return HttpResponse("", status=200)
+    return HttpResponse("", status=400)
