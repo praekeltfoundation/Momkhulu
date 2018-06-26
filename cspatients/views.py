@@ -1,10 +1,9 @@
 from django.http import HttpResponse
 from django.template import loader
 from django.db.models.query import EmptyQuerySet
-from django.shortcuts import render, redirect
 
 from .models import Patient
-from .forms import PatientLogForm
+from .serializers import PatientSerializer
 
 
 def index(request):
@@ -20,21 +19,20 @@ def index(request):
 
 
 def form(request):
-    template = loader.get_template("cspatients/index.html")
+    template = loader.get_template("cspatients/form.html")
+    context = {
+        "saved": False,
+    }
     if request.method == "POST":
         # Send the Form information
-        form = PatientLogForm(request.POST)
-        if form.is_valid():
-
+        patient = PatientSerializer(data=request.POST)
+        print(request.POST)
+        if patient.is_valid():
+            patient.save()
             context = {
                 "saved": True,
-            }    
-    elif request.method == "GET":
-        # Get the Form
+            }
 
-        context = {
-            "saved": False,
-        }
     return HttpResponse(template.render(context, request), status=200)
 
 
@@ -42,5 +40,9 @@ def event(request):
     # Takes in the information from Rapid Pro
     if request.method == "POST":
         # Save the information
-        return HttpResponse("", status=200)
+        patient = PatientSerializer(data=request.POST)
+        if patient.is_valid():
+            patient.save()
+            return HttpResponse("", status=201)
+
     return HttpResponse("", status=400)
