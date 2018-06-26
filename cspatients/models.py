@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Patient(models.Model):
     patient_id = models.IntegerField(unique=True)
