@@ -23,6 +23,7 @@ def form(request):
     context = {
         "saved": False,
     }
+    status_code = 200
     if request.method == "POST":
         # Send the Form information
         patient = PatientSerializer(data=request.POST)
@@ -32,17 +33,21 @@ def form(request):
             context = {
                 "saved": True,
             }
-
-    return HttpResponse(template.render(context, request), status=200)
+            status_code = 201
+        status_code = 405
+    return HttpResponse(template.render(context, request), status=status_code)
 
 
 def event(request):
     # Takes in the information from Rapid Pro
+    status_code = 405
     if request.method == "POST":
         # Save the information
         patient = PatientSerializer(data=request.POST)
         if patient.is_valid():
             patient.save()
-            return HttpResponse("", status=201)
+            status_code = 201
+        status_code = 400
+    else:
+        HttpResponse("", status=status_code)
 
-    return HttpResponse("", status=400)
