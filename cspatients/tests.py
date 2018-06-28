@@ -38,7 +38,7 @@ class EventTest(unittest.TestCase):
             "name": "Jane Doe",
             "age": 20
         })
-        # POST with incompelete vital information 
+        # POST with incompelete vital information
         post_response2 = self.client.post('/event', {
             "name": "Lisa Smith",
         })
