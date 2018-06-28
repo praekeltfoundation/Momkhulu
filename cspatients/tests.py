@@ -10,11 +10,12 @@ from .models import Patient
 
 class PatientTestCase(TestCase):
     def setUp(self):
-        Patient.objects.create(patient_id="XKT6484", name="Jane Doe",
-                               age=33, gravidity=1, parity=0,
-                               comorbidity="Pneumonia Diabeties",
-                               indication="Extreme pain", urgency=1,
-                               location="Ward 56", clinician="Dr Peter Drew")
+        Patient.objects.create(
+            patient_id="XKT6484", name="Jane Doe", age=33, gravidity=1,
+            parity=0, comorbidity="Pneumonia Diabeties",
+            indication="Extreme pain", urgency=1,
+            location="Ward 56", clinician="Dr Peter Drew"
+        )
 
     def test_Patient_str(self):
         jane = Patient.objects.get(patient_id="XKT6484")
