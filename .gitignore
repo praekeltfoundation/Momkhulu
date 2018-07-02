@@ -71,3 +71,8 @@ local_settings.py
 
 #VSCode
 .vscode/
+
+# Various files
+output.html
+output
+rapidpro_raw.txt
