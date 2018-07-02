@@ -1,52 +1,74 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import RequestContext, loader
+from django.template import loader
 from django.db.models.query import EmptyQuerySet
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 
 from .models import Patient
-from .serializers import PatientSerializer
+from .serializers import PatientSerializer, PatientEntrySerializer
+from .util import get_patient_dict, get_patiententry_dict
 
 
 def log_in(request):
-    context = RequestContext(request, {})
-    template = loader.get_template('cspatients/login.html')
+    context = {
+        "try": False,
+    }
     if request.method == "POST":
         context['try'] = True
         password = request.POST['password']
-        user = authenticate(request, username="alluser", password=password)
+        username = request.POST['username']
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(user)
+            login(request, user)
             next = request.GET.get('next')
             return HttpResponseRedirect(next)
-        else:
-            context['success'] = False
-    return HttpResponse(template.render(context), status=200)
+    return render(request, 'cspatients/login.html', context, status=200)
 
 
-@login_required(login_url="/login")
+@login_required(login_url="/cspatients/login")
 def log_out(request):
     template = loader.get_template('cspatients/logout.html')
     logout(request)
     return HttpResponse(template.render())
 
 
-@login_required(login_url="/login")
-def index(request):
+@login_required(login_url="/cspatients/login")
+def view(request):
 
+    template = loader.get_template('cspatients/index.html')
     patients_list = Patient.objects.all()
     if isinstance(patients_list, EmptyQuerySet):
         patients_list = False
-    template = loader.get_template('cspatients/index.html')
     context = {
         'patients_list': patients_list
     }
-    return HttpResponse(template.render(context, request), status=200)
+    return HttpResponse(
+        template.render(context),
+        status=200
+        )
 
 
-@login_required(login_url="/login")
+@login_required(login_url="/cspatients/login")
+def patient(request, patient_id):
+    template = loader.get_template("cspatients/patient.html")
+    try:
+        patient = Patient.objects.get(patient_id=patient_id)
+        context = {
+            "patient": patient,
+        }
+        status_code = 200
+    except Patient.DoesNotExist:
+        context = {
+            "patient": False,
+        }
+        status_code = 400
+    return HttpResponse(template.render(context), status=status_code)
+
+
+@login_required(login_url="/cspatients/login")
 def form(request):
-    template = loader.get_template("cspatients/form.html")
     context = {
         "saved": False,
     }
@@ -55,18 +77,23 @@ def form(request):
         status_code = 405
         # Send the Form information
         patient = PatientSerializer(data=request.POST)
-        print(request.POST)
-        if patient.is_valid():
+        patiententry = PatientEntrySerializer(data=request.POST)
+        if patient.is_valid() and patiententry.is_valid():
             patient.save()
+            patiententry.save()
             context = {
                 "saved": True,
             }
             status_code = 201
-    return HttpResponse(template.render(context, request), status=status_code)
+    return render(
+        request, "cspatients/form.html",
+        context=context,
+        status=status_code
+        )
 
 
-# Remember the use the following url for accessing it 
-def event(request):
+@csrf_exempt
+def rp_event(request):
     """
         RapidPro should use the following url
         /event?secret=momkhulu
@@ -77,9 +104,25 @@ def event(request):
     if request.method == "POST":
         status_code = 400
         if request.GET.get('secret') == "momkhulu":
-            # Save the information
-            patient = PatientSerializer(data=request.POST)
-            if patient.is_valid():
+            patient = PatientSerializer(data=get_patient_dict(request.body))
+            patiententry = PatientEntrySerializer(
+                data=get_patiententry_dict(request.body)
+            )
+            print(patient.is_valid())
+            print(patiententry.is_valid())
+            print(get_patiententry_dict(request.body))
+            if patient.is_valid() and patiententry.is_valid():
                 patient.save()
+                patiententry.save()
                 status_code = 201
     return HttpResponse(status=status_code)
+
+
+@csrf_exempt
+def rapidprochange(request):
+    return ""
+
+
+@csrf_exempt
+def rapidpro(request):
+    return ""

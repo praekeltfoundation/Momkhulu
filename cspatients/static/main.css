@@ -9,9 +9,20 @@ h1, h2, h3, h4{
     font-weight: bold;
 }
 
+
+hr{
+    color: grey;
+}
+
+.centre{
+    margin-left: auto;
+    margin-right: auto;
+}
+
 table{
     font-family: inherit;
 }
+
 
 /* Table Heading */
 
@@ -21,11 +32,27 @@ thead td{
     font-family: "Lato", sans-serif;
 }
 
-
+/* Table Rows */
 tr{
     border: 1px solid grey;
     border-top: none;
     font-family: inherit;
+}
+
+.heat-1{
+    background-color: green;
+}
+
+.heat-2{
+    background-color: greenyellow;
+}
+
+.heat-3{
+    background-color: crimson;
+}
+
+.heat-4{
+    background-color: purple;
 }
 
 td{
@@ -35,3 +62,5 @@ td{
 #no-patients{
     text-align: center;
 }
+
+

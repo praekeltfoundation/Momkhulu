@@ -1,50 +1,59 @@
 import unittest
 
-from django.test import TestCase
-from django.test import Client
+from django.test import TestCase, Client
+from django.test.testcases import SimpleTestCase
 
 from .models import Patient
 
 # Model Tests
+"""
+Do not test Django functionality. Assume she does it perfectly
+Assert template used
+Find a key phrase expected to be in the template
+Assert contains
+Hypothesis
 
-
-class PatientTestCase(TestCase):
-    def setUp(self):
-        Patient.objects.create(
-            patient_id="XKT6484", name="Jane Doe", age=33, gravidity=1,
-            parity=0, comorbidity="Pneumonia Diabeties",
-            indication="Extreme pain", urgency=1,
-            location="Ward 56", clinician="Dr Peter Drew"
-        )
-
-    def test_Patient_str(self):
-        jane = Patient.objects.get(patient_id="XKT6484")
-        self.AssertEqual(jane.__str__(), "Jane Doe")
+"""
 
 
 # View Tests
 
 
-class EventTest(unittest.TestCase):
+class RPEventTest(SimpleTestCase):
 
     def setUp(self):
         self.client = Client()
 
     def test_request_methods(self):
-        get_response = self.client.get('/event')
+        get_response = self.client.get('/rpevent')
         # POST with minimal vital information
-        post_response = self.client.post('/event', {
+        post_response = self.client.post('/rpevent', {
             "patient_id": "XXXXX",
             "name": "Jane Doe",
             "age": 20
         })
+
+        self.assertEqual(get_response.status_code, 405)
+        self.assertEqual(post_response.status_code, 201)
+
+    def test_serializing(self):
+        """
+            Test the serialization into database
+        """
+        post_response1 = self.client.post('/rpevent', {
+            "patient_id": "XXXXX",
+            "name": "Jane Doe",
+            "age": 20,
+        })
         # POST with incompelete vital information
-        post_response2 = self.client.post('/event', {
+        post_response2 = self.client.post('/rpevent', {
             "name": "Lisa Smith",
         })
-        self.assertEquals(get_response.status_code, 405)
-        self.assertEquals(post_response.status_code, 201)
-        self.assertEquals(post_response2.status_code, 400)
+
+        self.assertEqual(post_response1.status_code, 201)
+        self.assertEqual(post_response2.status_code, 400)
+        try:
+            Patient.objects.get(patient_id="XXXXX")
 
 
 class FormTest(unittest.TestCase):
@@ -69,13 +78,13 @@ class FormTest(unittest.TestCase):
         })
 
         # Check the status code response of the POST
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         jane = Patient.objects.get(patient_id="XXXXXX")
         # Check the fields have been saved correctly
-        self.assertEquals(jane.name, "Jane Doe")
-        self.assertEquals(jane.patient_id, "XXXXXX")
-        self.assertEquals(jane.age, 20)
-        self.assertEquals(jane.location, "Ward 56")
-        self.assertEquals(jane.urgency, 2)
-        self.assertEquals(jane.parity, 1)
-        self.assertEquals(jane.clinician, "Dr Peter Drew")
+        self.assertEqual(jane.name, "Jane Doe")
+        self.assertEqual(jane.patient_id, "XXXXXX")
+        self.assertEqual(jane.age, 20)
+        self.assertEqual(jane.location, "Ward 56")
+        self.assertEqual(jane.urgency, 2)
+        self.assertEqual(jane.parity, 1)
+        self.assertEqual(jane.clinician, "Dr Peter Drew")
