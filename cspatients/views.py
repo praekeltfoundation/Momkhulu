@@ -15,6 +15,8 @@ def log_in(request):
     context = {
         "try": False,
     }
+    if request.user.is_authenticated:
+        return HttpResponseRedirect("/")
     if request.method == "POST":
         context['try'] = True
         password = request.POST['password']

@@ -1,6 +1,7 @@
 body{
     font-family: "Open Sans", sans-serif;
     box-sizing: border-box;
+    padding-top: 30px;
 }
 
 h1, h2, h3, h4{
@@ -23,6 +24,11 @@ table{
     font-family: inherit;
 }
 
+.red-msg{
+    color: red;
+}
+
+/* View Page */
 
 /* Table Heading */
 
@@ -64,3 +70,14 @@ td{
 }
 
 
+/* Log in Page */
+
+#login_container{
+    padding-top: 30px;
+
+    font-weight: bold;
+}
+
+#login_container label{
+    font-weight: bold;
+}
