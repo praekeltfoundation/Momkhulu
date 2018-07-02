@@ -3,11 +3,23 @@
 {% block content %}
 
 <div class="container-fluid">
+    <h1>Momkhulu Caesarian Patients Waiting List</h1>
+    <hr style="color:grey;">
+    <p class="lead">
+        Welcome to the Momkhulu Caesarian Patients Waiting List.<br>
+        Please login to see the patient lists.
+    </p>
+</div>
+
+<div class="container-fluid">
 
     <h2> Login</h2>
 
     <div>
         <form action="/cspatients/login?next=index" method="POST">{% csrf_token %}
+            <div style= "display: none;">
+                <input type="text" name="username" value="momkhulu">
+            </div>
             <div class="form-group">
                 <label for="passphrase">Enter Passphrase</label>
                 <input type="password" name="password" id="passphrase" aria-describedby="passphrasedescription">

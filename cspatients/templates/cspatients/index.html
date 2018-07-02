@@ -1,10 +1,11 @@
 {% extends "cspatients/base.html" %}
 
-<h1>Momkhulu C/S Patients List</h1>
-
 {% block content %}
+
+
 <div class = "container-fluid table-responsive">
-    <div class = "col-md-11">
+    <h2>Momkhulu C/S Patients List</h2>
+    <div class = "centre">
         {% if patients_list %}
 
         <table class="table table-hover">
@@ -21,7 +22,7 @@
             </thead>
             <tbody>
             {% for patient in patients_list %}
-            <tr>
+            <tr class="heat-{{patient.urgency}}">
                 <td>{{patient.patient_id}}</td>
                 <td>{{patient.name}}</td>
                 <td>{{patient.age}}</td>
@@ -36,7 +37,7 @@
         
         {% else %}
             <div id="no-patients" class = "container">
-                <p> No Patients on the list now.</p>
+                <p class="lead"> No Patients on the list now.</p>
             </div> 
         {% endif %}
     </div>
