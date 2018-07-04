@@ -7,7 +7,7 @@ class Patient(models.Model):
     age = models.IntegerField(default=20)
 
     def __str__(self):
-        self.name
+        return self.name
 
 
 class PatientEntry(models.Model):

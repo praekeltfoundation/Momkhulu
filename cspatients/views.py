@@ -1,6 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.db.models.query import EmptyQuerySet
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
@@ -8,15 +7,15 @@ from django.shortcuts import render
 
 from .models import Patient
 from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import get_patient_dict, get_patiententry_dict
+from .util import get_patient_dict, get_patiententry_dict, view_all_context
 
 
 def log_in(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect("/")
     context = {
         "try": False,
     }
-    if request.user.is_authenticated:
-        return HttpResponseRedirect("/")
     if request.method == "POST":
         context['try'] = True
         password = request.POST['password']
@@ -39,12 +38,9 @@ def log_out(request):
 @login_required(login_url="/cspatients/login")
 def view(request):
 
-    template = loader.get_template('cspatients/index.html')
-    patients_list = Patient.objects.all()
-    if isinstance(patients_list, EmptyQuerySet):
-        patients_list = False
+    template = loader.get_template('cspatients/view.html')
     context = {
-        'patients_list': patients_list
+        "patiententrys": view_all_context()
     }
     return HttpResponse(
         template.render(context),
@@ -76,7 +72,7 @@ def form(request):
     }
     status_code = 200
     if request.method == "POST":
-        status_code = 405
+        status_code = 400
         # Send the Form information
         patient = PatientSerializer(data=request.POST)
         patiententry = PatientEntrySerializer(data=request.POST)
@@ -110,11 +106,9 @@ def rp_event(request):
             patiententry = PatientEntrySerializer(
                 data=get_patiententry_dict(request.body)
             )
-            print(patient.is_valid())
-            print(patiententry.is_valid())
-            print(get_patiententry_dict(request.body))
-            if patient.is_valid() and patiententry.is_valid():
+            if patient.is_valid():
                 patient.save()
+            if patiententry.is_valid():
                 patiententry.save()
                 status_code = 201
     return HttpResponse(status=status_code)
