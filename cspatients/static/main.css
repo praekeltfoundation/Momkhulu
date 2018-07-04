@@ -45,20 +45,20 @@ tr{
     font-family: inherit;
 }
 
-.heat-1{
+.urgency-4{
     background-color: green;
 }
 
-.heat-2{
+.urgency-3{
     background-color: greenyellow;
 }
 
-.heat-3{
-    background-color: crimson;
+.urgency-2{
+    background-color: orange;
 }
 
-.heat-4{
-    background-color: purple;
+.urgency-1{
+    background-color: orangered;
 }
 
 td{

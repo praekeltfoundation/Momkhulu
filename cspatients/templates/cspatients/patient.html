@@ -5,79 +5,73 @@
 <div class="container-fluid">
     <div class="centre col-sm-11 col-md-6">
 
-        {% if context.patient %}
-
+        {% if patient %}
+        <div>
         <table class="table"> 
             <thead>
             </thead>
             <tbody>
                 <tr>
                     <td>Name:</td>
-                    <td>{{context.patient.name}}</td>
+                    <td>{{ patient.name }}</td>
                 </tr>
                 <tr>
                     <td>Hospital ID:</td>
-                    <td>{{context.patient.patient_id}}</td> 
+                    <td>{{ patient.patient_id }}</td> 
                 </tr>
                 <tr>
                     <td>Urgency:</td>
-                    <td>{{context.patient.urgency}}</td>
+                    <td>{{ patient.urgency }}</td>
                 </tr>
                 <tr>
                     <td>Age:</td>
-                    <td>{{context.patient.age}}</td>
+                    <td>{{ patient.age }}</td>
                 </tr>
                 <tr>
                     <td>Location:</td>
-                    <td>{{context.patient.location}}</td>
+                    <td>{{ patient.location }}</td>
                 </tr>
                 <tr>
                     <td>Indication</td>
-                    <td>{{context.patient.indication}}</td>
+                    <td>{{ patient.indication }}</td>
                 </tr>
                 <tr>
                     <td>Gravidity:</td>
-                    <td>{{context.patient.gravidity}}</td>
+                    <td>{{ patient.gravidity }}</td>
                 </tr>
                 <tr>
                     <td>Parity:</td>
-                    <td>{{context.patient.parity}}</td>
+                    <td>{{ patient.parity }}</td>
                 </tr>
                 <tr>
                     <td>Comorbidities:</td>
-                    <td>{{context.patient.comorbidity}}</td>
+                    <td>{{ patient.comorbidity }}</td>
                 </tr>
                 <tr>
                     <td>Clinician:</td>
-                    <td>{{context.patient.clinician}}</td>
+                    <td>{{ patient.clinician }}</td>
                 </tr>
                 <tr>
                     <td>Time Logged:</td>
-                    <td>{{context.patient.time}}</td>
+                    <td>{{ patient.time }}</td>
                 </tr>
                 <tr>
                     <td>Date Logged:</td>
-                    <td>{{context.patient.date}}</td>
+                    <td>{{ patient.date }}</td>
                 </tr>
             </tbody>
         </table>
-        <div class="dtl-grp">
-            <label for="patient_name">Name</label>
-            
-        </div>
-        <div class="dtl-grp">
-
-        </div>
-        <div class="dtl-grp">
-
-        </div>
-        <div class="dtl-grp">
-
-        </div>
-
+        </div> 
         {% else %}
+        <div>
+            <p>Sorry. No patient such patient was found.</p>
+        </div>
         {% endif %}
     </div>
 </div>
+
+<style>
+    
+</style>
 
 {% endblock %}

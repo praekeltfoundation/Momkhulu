@@ -4,9 +4,9 @@
 
 
 <div class = "container-fluid table-responsive">
-    <h2>Momkhulu C/S Patients List</h2>
+    <h3>Patients List Waiting</h3>
     <div class = "centre">
-        {% if patients_list %}
+        {% if patiententrys %}
 
         <table class="table table-hover">
             <thead>
@@ -14,22 +14,26 @@
                     <td>Patient ID</td>
                     <td>Name</td>
                     <td>Age</td>
+                    <td>Operation</td>
+                    <td>Grav/Par</td>
                     <td>Location</td>
-                    <td>Urgency</td>
                     <td>Indication</td>
-                    <td>Time of Log</td>
+                    <td>Decision Time</td>
+                    <td>Clinician</td>
                 </tr>
             </thead>
             <tbody>
-            {% for patient in patients_list %}
-            <tr class="heat-{{patient.urgency}}">
-                <td>{{patient.patient_id}}</td>
-                <td>{{patient.name}}</td>
-                <td>{{patient.age}}</td>
-                <td>{{patient.location}}</td>
-                <td>{{patient.urgency}}</td>
-                <td>{{patient.indication}}</td>
-                <td>{{patient.time}}</td>
+            {% for patiententry in patiententrys %}
+            <tr class="heat-{{patiententry.urgency}}">
+                <td>{{patiententry.patient_id.patient_id}}</td>
+                <td>{{patiententry.patient_id.name}}</td>
+                <td>{{patiententry.patient_id.age}}</td>
+                <td>{{patiententry.operation}}</td>
+                <td>{{patiententry.gravpar}}</td>
+                <td>{{patiententry.location}}</td>
+                <td>{{patiententry.indication}}</td>
+                <td>{{patiententry.decision_time}}</td>
+                <td>{{patiententry.clinician}}</td>
             </tr>                                
             {% endfor %}
             </tbody>
@@ -37,7 +41,7 @@
         
         {% else %}
             <div id="no-patients" class = "container">
-                <p class="lead"> No Patients on the list now.</p>
+                <p class="lead"> No Patients on this list for now.</p>
             </div> 
         {% endif %}
     </div>
