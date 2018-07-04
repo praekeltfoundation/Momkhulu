@@ -1,6 +1,8 @@
 from urllib.parse import parse_qs
 import simplejson as json
 
+from .models import PatientEntry
+
 
 def get_patient_dict(data):
     """
@@ -40,3 +42,14 @@ def get_patiententry_dict(data):
         return patiententry_dict
     except json.JSONDecodeError:
         return patiententry_dict
+
+
+def view_all_context():
+    try:
+        rows = []
+        patiententrys = PatientEntry.objects.select_related("patient_id").all()
+        for patiententry in patiententrys:
+            rows.append(patiententry)
+        return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
+    except PatientEntry.DoesNotExist:
+        return False
