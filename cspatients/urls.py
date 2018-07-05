@@ -9,5 +9,5 @@ urlpatterns = [
     path('rpevent', views.rp_event, name='rp_event'),
     path('login', views.log_in, name="log_in"),
     path('logout', views.log_out, name="log_out"),
-    path('patient/<int:patient_id>', views.patient, name="patient"),
+    path('patient/<str:patient_id>', views.patient, name="patient"),
 ]

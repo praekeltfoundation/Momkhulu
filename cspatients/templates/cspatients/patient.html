@@ -5,7 +5,7 @@
 <div class="container-fluid">
     <div class="centre col-sm-11 col-md-6">
 
-        {% if patient %}
+        {% if patiententry %}
         <div>
         <table class="table"> 
             <thead>
@@ -13,52 +13,64 @@
             <tbody>
                 <tr>
                     <td>Name:</td>
-                    <td>{{ patient.name }}</td>
+                    <td>{{ patiententry.patient_id.name }}</td>
                 </tr>
                 <tr>
                     <td>Hospital ID:</td>
-                    <td>{{ patient.patient_id }}</td> 
+                    <td>{{ patiententry.patient_id }}</td> 
                 </tr>
                 <tr>
                     <td>Urgency:</td>
-                    <td>{{ patient.urgency }}</td>
+                    <td>{{ patiententry.urgency }}</td>
                 </tr>
                 <tr>
                     <td>Age:</td>
-                    <td>{{ patient.age }}</td>
+                    <td>{{ patiententry.age }}</td>
+                </tr>
+                <tr>
+                    <td>Operation:</td>
+                    <td>{{ patiententry.operation }}</td>
                 </tr>
                 <tr>
                     <td>Location:</td>
-                    <td>{{ patient.location }}</td>
+                    <td>{{ patiententry.location }}</td>
                 </tr>
                 <tr>
-                    <td>Indication</td>
-                    <td>{{ patient.indication }}</td>
+                    <td>Indication:</td>
+                    <td>{{ patiententry.indication }}</td>
                 </tr>
                 <tr>
-                    <td>Gravidity:</td>
-                    <td>{{ patient.gravidity }}</td>
-                </tr>
-                <tr>
-                    <td>Parity:</td>
-                    <td>{{ patient.parity }}</td>
+                    <td>GravPar:</td>
+                    <td>{{ patiententry.gravpar }}</td>
                 </tr>
                 <tr>
                     <td>Comorbidities:</td>
-                    <td>{{ patient.comorbidity }}</td>
+                    <td>{{ patient.comorbid }}</td>
                 </tr>
                 <tr>
-                    <td>Clinician:</td>
-                    <td>{{ patient.clinician }}</td>
+                    <td>Responsible Clinician:</td>
+                    <td>{{ patiententry.clinician }}</td>
                 </tr>
                 <tr>
-                    <td>Time Logged:</td>
-                    <td>{{ patient.time }}</td>
+                    <td>Decision Time:</td>
+                    <td>{{ patiententry.decision_time }}</td>
                 </tr>
                 <tr>
-                    <td>Date Logged:</td>
-                    <td>{{ patient.date }}</td>
+                    <td>Outstanding Information:</td>
+                    <td>{{ patiententry.outstanding_data }}</td>
                 </tr>
+                <tr>
+                    <td>Delivery Time:</td>
+                    <td>{{ patiententry.delivery_time }}</td>
+                </tr>
+                <tr>
+                    <td>APGAR 1:</td>
+                    <td>{{ patiententry.apgar_1 }}</td>
+                </tr>
+                <tr>
+                    <td>APGAR 5:</td>
+                    <td>{{ patiententry.apgar_5 }}</td>
+                </tr>               
             </tbody>
         </table>
         </div> 

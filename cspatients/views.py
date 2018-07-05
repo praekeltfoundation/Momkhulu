@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
-from .models import Patient
+from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import get_patient_dict, get_patiententry_dict, view_all_context
 
@@ -52,14 +52,14 @@ def view(request):
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     try:
-        patient = Patient.objects.get(patient_id=patient_id)
+        patiententry = PatientEntry.objects.get(patient_id=patient_id)
         context = {
-            "patient": patient,
+            "patiententry": patiententry,
         }
         status_code = 200
     except Patient.DoesNotExist:
         context = {
-            "patient": False,
+            "patiententry": False,
         }
         status_code = 400
     return HttpResponse(template.render(context), status=status_code)
@@ -111,6 +111,18 @@ def rp_event(request):
             if patiententry.is_valid():
                 patiententry.save()
                 status_code = 201
+    return HttpResponse(status=status_code)
+
+
+@csrf_exempt
+def patientexists(request):
+    status_code = 405
+    if request.method == "POST":
+        try:
+            Patient.objects.get(patient_id=get_patient_dict()['patient_id'])
+            status_code = 200
+        except Patient.DoesNotExist:
+            status_code = 400
     return HttpResponse(status=status_code)
 
 
