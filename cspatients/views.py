@@ -120,6 +120,9 @@ def rp_event(request):
 
 @csrf_exempt
 def patientexists(request):
+    """
+        Returns 200 if Patient exists and 400 if Patient Does Not Exist
+    """
     status_code = 405
     if request.method == "POST":
         try:
