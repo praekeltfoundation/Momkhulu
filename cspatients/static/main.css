@@ -63,11 +63,19 @@ td{
     padding: 5px;
 }
 
-#no-patients{
-    text-align: center;
+@media (max-width: 768px){
+    body{
+        font-size: 0.6rem;
+    }
+
+    h1{
+        font-size: 2rem;
+    }
+
+    h3{
+        font-size: 1.4rem;
+    }
 }
-
-
 /* Log in Page */
 
 #login_container{
