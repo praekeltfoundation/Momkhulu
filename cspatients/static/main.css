@@ -32,9 +32,7 @@ table{
 
 /* Table Heading */
 
-thead td{
-    font-size: 20px;
-    font-weight: bold;
+th{
     font-family: "Lato", sans-serif;
 }
 

@@ -17,12 +17,25 @@
 
     $( function(){
 
-        // Create the new websocket
+        // RESPONSIVE DESIGN
+
+        function setTableClass(){
+            var screenWidth = document.body.clientWidth;
+            console.log(screenWidth)
+            if (screenWidth < 576){
+                $("#main-table").addClass("table-sm");
+            }else{
+                $("#main-table").removeClass("table-sm");
+            };
+        };
+
+        setTableClass();
+        
+        // WEB SOCKET FUNCTIONS 
+
         console.log("Connecting to the viewSocket")
         var viewSocket =  new WebSocket(
         "ws://" + window.location.host + "/ws/cspatients/viewsocket/");
-
-        // Log if the socket has connected
 
         viewSocket.onopen = function (){
             console.log("Connected to the viewSocket")
@@ -45,7 +58,9 @@
         function next(element){
             var patient_id = $(element).contents("td.patient-id").html();     
             window.location.href = window.location.href.slice(0,-4).concat("patient/") + patient_id;
-        };    
+        };
+
+        
     });
 </script>
 

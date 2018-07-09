@@ -76,3 +76,5 @@ local_settings.py
 output.html
 output
 rapidpro_raw.txt
+db.sqlite3
+momkhulu/settings.py
