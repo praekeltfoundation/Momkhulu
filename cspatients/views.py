@@ -8,7 +8,7 @@ from django.shortcuts import render
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import get_patient_dict, get_patiententry_dict, view_all_context
-from .util import send_consumers_table
+from .util import send_consumers_table, save_model_changes
 
 
 def log_in(request):
@@ -134,7 +134,10 @@ def patientexists(request):
 
 @csrf_exempt
 def entrychanges(request):
-    return ""
+    status_code = 405
+    if request.method == "POST":
+        status_code = save_model_changes()
+    return HttpResponse(status=status_code)
 
 
 @csrf_exempt

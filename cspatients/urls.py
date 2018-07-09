@@ -10,4 +10,5 @@ urlpatterns = [
     path('login', views.log_in, name="log_in"),
     path('logout', views.log_out, name="log_out"),
     path('patient/<str:patient_id>', views.patient, name="patient"),
+    path('patientexists', views.patientexists, name="patientexits"),
 ]
