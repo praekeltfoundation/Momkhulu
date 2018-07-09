@@ -17,7 +17,7 @@
         </thead>
         <tbody>
         {% for patiententry in patiententrys %}
-        <tr onclick="next(this);" class="urgency-{{patiententry.urgency}}">
+        <tr onclick="goToPatient(this);" class="urgency-{{patiententry.urgency}}">
             <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
             <td>{{patiententry.patient_id.name}}</td>
             <td>{{patiententry.patient_id.age}}</td>
