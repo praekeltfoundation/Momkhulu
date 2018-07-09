@@ -64,7 +64,7 @@ td{
 }
 
 @media (max-width: 768px){
-    body{
+    #patients-table{
         font-size: 0.6rem;
     }
 
@@ -76,6 +76,14 @@ td{
         font-size: 1.4rem;
     }
 }
+
+/* Patient View Page */
+
+#patient-detail-table tbody th{
+    width: 30%;
+}
+
+
 /* Log in Page */
 
 #login_container{
