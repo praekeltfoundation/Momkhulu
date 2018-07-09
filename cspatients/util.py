@@ -1,3 +1,8 @@
+from django.template import loader
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 from urllib.parse import parse_qs
 import simplejson as json
 
@@ -53,3 +58,19 @@ def view_all_context():
         return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
     except PatientEntry.DoesNotExist:
         return False
+
+
+def send_consumers_table():
+    template = loader.get_template("cspatients/table.html")
+    channel_layer = get_channel_layer()
+    print(channel_layer)
+    print(async_to_sync(channel_layer.group_send)(
+        "view",
+        {
+            "type": "view.update",
+            "content":
+            template.render({
+                "patiententrys": view_all_context()
+            })
+        }
+    ))

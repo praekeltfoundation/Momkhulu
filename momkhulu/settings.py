@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    '8912d054.ngrok.io',
+    '079bd1db.ngrok.io',
 ]
 
 
@@ -77,7 +77,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'momkhulu.wsgi.application'
-ASGI_APPLICATION = "myproject.routing.application"
+
+# Channels Settings
+
+ASGI_APPLICATION = "momkhulu.routing.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [
+                ('127.0.0.1', 6379),
+                ],
+        },
+    },
+}
 
 
 # Database

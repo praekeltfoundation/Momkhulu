@@ -2,57 +2,51 @@
 
 {% block content %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<div class = "container-fluid table-responsive">
+<div class="container-fluid">
     <h3>Patients List Waiting</h3>
-    <div class = "centre">
-        {% if patiententrys %}
-
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <td>Patient ID</td>
-                    <td>Name</td>
-                    <td>Age</td>
-                    <td>Operation</td>
-                    <td>Grav/Par</td>
-                    <td>Location</td>
-                    <td>Indication</td>
-                    <td>Decision Time</td>
-                    <td>Clinician</td>
-                </tr>
-            </thead>
-            <tbody>
-            {% for patiententry in patiententrys %}
-            <tr onclick="next(this);" class="heat-{{patiententry.urgency}}">
-                <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
-                <td>{{patiententry.patient_id.name}}</td>
-                <td>{{patiententry.patient_id.age}}</td>
-                <td>{{patiententry.operation}}</td>
-                <td>{{patiententry.gravpar}}</td>
-                <td>{{patiententry.location}}</td>
-                <td>{{patiententry.indication}}</td>
-                <td>{{patiententry.decision_time}}</td>
-                <td>{{patiententry.clinician}}</td>
-            </tr>                                
-            {% endfor %}
-            </tbody>
-        </table>
-        
-        {% else %}
-            <div id="no-patients" class = "container">
-                <p class="lead"> No Patients on this list for now.</p>
-            </div> 
-        {% endif %}
+    <div id="table-div">
+        {% include "cspatients/table.html" %}
     </div>
 </div>
 
 <script>
-    function next(element){
-        var patient_id = $(element).contents("td.patient-id").html();     
-        window.location.href = window.location.href.slice(0,-4).concat("patient/") + patient_id;
+
+    function sleep(){
+        ;
     }
+
+    $( function(){
+
+        // Create the new websocket
+        console.log("Connecting to the viewSocket")
+        var viewSocket =  new WebSocket(
+        "ws://" + window.location.host + "/ws/cspatients/viewsocket/");
+
+        // Log if the socket has connected
+
+        viewSocket.onopen = function (){
+            console.log("Connected to the viewSocket")
+        }
+        // If the socket closes, the page will sleep for 20 seconds and then refresh
+        viewSocket.onclose =  function(e){
+            sleep();
+            window.location.href = "http://" + window.location.host + "/cspatients/view";
+        }
+
+        viewSocket.onmessage = function(e){
+            console.log("The table has been received.");
+            console.log(e);
+            $("#table-div").html(function(){
+                return e.data;
+                console.log("Rendering the new updated table.");
+            });
+        };
+    
+        function next(element){
+            var patient_id = $(element).contents("td.patient-id").html();     
+            window.location.href = window.location.href.slice(0,-4).concat("patient/") + patient_id;
+        };    
+    });
 </script>
 
 {% endblock %}

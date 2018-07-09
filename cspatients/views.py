@@ -8,6 +8,7 @@ from django.shortcuts import render
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import get_patient_dict, get_patiententry_dict, view_all_context
+from .util import send_consumers_table
 
 
 def log_in(request):
@@ -76,13 +77,15 @@ def form(request):
         # Send the Form information
         patient = PatientSerializer(data=request.POST)
         patiententry = PatientEntrySerializer(data=request.POST)
-        if patient.is_valid() and patiententry.is_valid():
+        if patient.is_valid():
             patient.save()
-            patiententry.save()
-            context = {
-                "saved": True,
-            }
-            status_code = 201
+            if patiententry.is_valid():
+                patiententry.save()
+                context = {
+                    "saved": True,
+                }
+                status_code = 201
+            send_consumers_table()
     return render(
         request, "cspatients/form.html",
         context=context,
@@ -111,6 +114,7 @@ def rp_event(request):
             if patiententry.is_valid():
                 patiententry.save()
                 status_code = 201
+                send_consumers_table()
     return HttpResponse(status=status_code)
 
 
@@ -119,7 +123,9 @@ def patientexists(request):
     status_code = 405
     if request.method == "POST":
         try:
-            Patient.objects.get(patient_id=get_patient_dict()['patient_id'])
+            Patient.objects.get(
+                patient_id=get_patient_dict(request.POST)['patient_id']
+                )
             status_code = 200
         except Patient.DoesNotExist:
             status_code = 400
@@ -127,7 +133,7 @@ def patientexists(request):
 
 
 @csrf_exempt
-def rapidprochange(request):
+def entrychanges(request):
     return ""
 
 
