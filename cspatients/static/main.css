@@ -1,0 +1,91 @@
+body{
+    font-family: "Open Sans", sans-serif;
+    box-sizing: border-box;
+    padding-top: 30px;
+}
+
+h1, h2, h3, h4{
+    font-family: "Lato", sans-serif;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+hr{
+    color: grey;
+}
+
+.centre{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table{
+    font-family: inherit;
+}
+
+.red-msg{
+    color: red;
+}
+
+/* View Page */
+
+/* Table Heading */
+
+thead td{
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Lato", sans-serif;
+}
+
+/* Table Rows */
+tr{
+    border: 1px solid grey;
+    border-top: none;
+    font-family: inherit;
+}
+
+.urgency-4{
+    background-color: green;
+}
+
+.urgency-3{
+    background-color: greenyellow;
+}
+
+.urgency-2{
+    background-color: orange;
+}
+
+.urgency-1{
+    background-color: orangered;
+}
+
+td{
+    padding: 5px;
+}
+
+#no-patients{
+    text-align: center;
+}
+
+
+/* Log in Page */
+
+#login_container{
+    padding-top: 30px;
+
+    font-weight: bold;
+}
+
+#login_container label{
+    font-weight: bold;
+}
+
+
+/* Footer Template */
+
+.footer{
+    text-align: center;
+    font-family: "Inconsolata", monospace;
+}
