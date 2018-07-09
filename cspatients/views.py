@@ -141,5 +141,8 @@ def entrychanges(request):
 
 
 @csrf_exempt
-def rapidpro(request):
-    return ""
+def entrydelivered(request):
+    status_code = 405
+    if request.method == "POST":
+        status_code = 400
+    return HttpResponse(status=status_code)

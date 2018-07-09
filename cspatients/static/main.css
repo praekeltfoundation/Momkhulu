@@ -81,3 +81,11 @@ td{
 #login_container label{
     font-weight: bold;
 }
+
+
+/* Footer Template */
+
+.footer{
+    text-align: center;
+    font-family: "Inconsolata", monospace;
+}
