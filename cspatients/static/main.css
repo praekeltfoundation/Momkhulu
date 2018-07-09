@@ -84,6 +84,7 @@ td{
 /* Footer Template */
 
 .footer{
+    padding-top: 30px;
     text-align: center;
     font-family: "Inconsolata", monospace;
 }
