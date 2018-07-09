@@ -11,4 +11,5 @@ urlpatterns = [
     path('patient/<str:patient_id>', views.patient, name="patient"),
     path('api/rpevent', views.rp_event, name='rp_event'),
     path('api/patientexists', views.patientexists, name="patientexits"),
+    path('api/entrychanges', views.entrychanges, name="entrychanges"),
 ]

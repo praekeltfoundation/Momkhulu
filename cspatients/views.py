@@ -139,7 +139,7 @@ def patientexists(request):
 def entrychanges(request):
     status_code = 405
     if request.method == "POST":
-        status_code = save_model_changes()
+        status_code = save_model_changes(request.POST)
     return HttpResponse(status=status_code)
 
 

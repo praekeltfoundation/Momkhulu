@@ -6,15 +6,10 @@ from asgiref.sync import async_to_sync
 from urllib.parse import parse_qs
 import simplejson as json
 
-from .models import PatientEntry
+from .models import PatientEntry, Patient
 
-PATIENT_FIELDS = ("patient_id", "name", "age")
-PATIENTENTRY_FIELDS = (
-    "patient_id", "operation", "gravpar", "comorbid", "indication",
-    "discharge_time", "decision_time", "location", "outstanding_data",
-    "delivery_time", "clinician", "urgency", "apgar_1",
-    "apgar_5"
-)
+PATIENT_FIELDS = Patient.__dict__.keys()
+PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
 
 
 def get_patient_dict(data):
@@ -87,42 +82,21 @@ def save_model_changes(data):
         200 if changes were made. 400 if the PatientEntry could not be found.
 
     """
-    all_values = get_patient_dict(data).update(get_patiententry_dict(data))
+    patient_dict = get_patient_dict(data)
+    patiententry_dict = get_patiententry_dict(data)
     try:
-        current_patiententry = PatientEntry.objects.get(
-            patient_id=all_values['patient_id']
+        patiententry = PatientEntry.objects.get(
+            patient_id=patiententry_dict['patient_id']
         )
-        if all_values.contains("name"):
-            current_patiententry.patient_id.name = all_values["name"]
-        if all_values.contains("age"):
-            current_patiententry.patient_id.age = all_values["age"]
-        if all_values.contains("operation"):
-            current_patiententry.operation = all_values["operation"]
-        if all_values.contains("gravpar"):
-            current_patiententry.gravpar = all_values["gravpar"]
-        if all_values.contains("comorbid"):
-            current_patiententry.comorbid = all_values["comorbid"]
-        if all_values.contains("indication"):
-            current_patiententry.indication = all_values["indication"]
-        if all_values.contains("decision_time"):
-            current_patiententry.decision_time = all_values["decision_time"]
-        if all_values.contains("discharge_time"):
-            current_patiententry.discharge_time = all_values["discharge_time"]
-        if all_values.contains("delivery_time"):
-            current_patiententry.delivery_time = all_values["delivery_time"]
-        if all_values.contains("urgency"):
-            current_patiententry.urgency = all_values["urgency"]
-        if all_values.contains("location"):
-            current_patiententry.location = all_values["location"]
-        if all_values.contains("outstanding_data"):
-            current_patiententry.outstanding_data = all_values["outstanding_data"]
-        if all_values.contains("clinician"):
-            current_patiententry.clinician = all_values["clinician"]
-        if all_values.contains("apgar_1"):
-            current_patiententry.apgar_1 = all_values["apgar_1"]
-        if all_values.contains("apgar_5"):
-            current_patiententry.apgar_5 = all_values["apgar_5"]
-
+        patient = Patient.objects.get(
+            patient_id=patient_dict['patient_id']
+        )
+        for value in patient_dict:
+            patient.__dict__[value] = patient_dict[value]
+        for value in patiententry_dict:
+            patiententry.__dict__[value] = patiententry_dict[value]
         return 200
     except PatientEntry.DoesNotExist:
+        return 400
+    except Patient.DoesNotExist:
         return 400
