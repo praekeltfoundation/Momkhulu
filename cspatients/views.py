@@ -7,7 +7,7 @@ from django.shortcuts import render
 
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import get_patient_dict, get_patiententry_dict, view_all_context
+from .util import get_rp_dict, view_all_context
 from .util import send_consumers_table, save_model_changes
 
 
@@ -105,9 +105,11 @@ def rp_event(request):
     if request.method == "POST":
         status_code = 400
         if request.GET.get('secret') == "momkhulu":
-            patient = PatientSerializer(data=get_patient_dict(request.body))
+            patient = PatientSerializer(
+                data=get_rp_dict(request.POST, context="patient")
+                )
             patiententry = PatientEntrySerializer(
-                data=get_patiententry_dict(request.body)
+                data=get_rp_dict(request.POST, context="patiententry")
             )
             if patient.is_valid():
                 patient.save()
@@ -127,7 +129,7 @@ def patientexists(request):
     if request.method == "POST":
         try:
             Patient.objects.get(
-                patient_id=get_patient_dict(request.POST)['patient_id']
+                patient_id=get_rp_dict(request.POST, "patient")['patient_id']
                 )
             status_code = 200
         except Patient.DoesNotExist:

@@ -3,7 +3,6 @@ from django.template import loader
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-from urllib.parse import parse_qs
 import simplejson as json
 
 from .models import PatientEntry, Patient
@@ -12,38 +11,34 @@ PATIENT_FIELDS = Patient.__dict__.keys()
 PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
 
 
-def get_patient_dict(data):
+def get_rp_dict(data, context=None):
     """
-        Take in a rapidpro request body and return a dictionary
-        with patient data.
+        Get a label and value dictionary from the request POST
     """
-    data = parse_qs(data)[b'values'][0].decode('utf-8')
-    patient_dict = {}
+    data = data['values']
     try:
         obj = json.loads(data)
+        all_dict = {}
         for a_dict in obj:
-            if a_dict['label'] in PATIENT_FIELDS:
-                patient_dict[a_dict['label']] = a_dict['value']
-        return patient_dict
+            if a_dict['category']['base'] == "All Responses":
+                all_dict[a_dict['label']] = a_dict['value']
+            else:
+                all_dict[a_dict['label']] = a_dict['category']['base']
     except json.JSONDecodeError:
-        return patient_dict
+        return {}
+    final_dict = {}
+    if context == "entrychanges":
+        final_dict[all_dict["change_category"]] = all_dict["new_value"]
+        final_dict["patient_id"] = all_dict["patient_id"]
 
-
-def get_patiententry_dict(data):
-    """
-        Take in a rapidpro request body and return a dictionary
-        with patiententry data.
-    """
-    data = parse_qs(data)[b'values'][0].decode('utf-8')
-    patiententry_dict = {}
-    try:
-        obj = json.loads(data)
-        for a_dict in obj:
-            if a_dict['label'] in PATIENTENTRY_FIELDS:
-                patiententry_dict[a_dict['label']] = a_dict['value']
-        return patiententry_dict
-    except json.JSONDecodeError:
-        return patiententry_dict
+    elif context == "patient" or context == "patiententry":
+        field = PATIENT_FIELDS if context == "patient" else PATIENTENTRY_FIELDS
+        for label in all_dict:
+            if label in field:
+                final_dict[label] = all_dict[label]
+    else:
+        final_dict = all_dict
+    return final_dict
 
 
 def view_all_context():
@@ -82,19 +77,18 @@ def save_model_changes(data):
         200 if changes were made. 400 if the PatientEntry could not be found.
 
     """
-    patient_dict = get_patient_dict(data)
-    patiententry_dict = get_patiententry_dict(data)
+
+    changes_dict = get_rp_dict(data, "entrychanges")
     try:
         patiententry = PatientEntry.objects.get(
-            patient_id=patiententry_dict['patient_id']
-        )
-        patient = Patient.objects.get(
-            patient_id=patient_dict['patient_id']
-        )
-        for value in patient_dict:
-            patient.__dict__[value] = patient_dict[value]
-        for value in patiententry_dict:
-            patiententry.__dict__[value] = patiententry_dict[value]
+            patient_id=changes_dict['patient_id']
+            )
+        del changes_dict['patient_id']
+        for label in changes_dict:
+            if label in PATIENTENTRY_FIELDS:
+                patiententry.__dict__[label] = changes_dict[label]
+            if label in PATIENT_FIELDS:
+                patiententry.__dict__[label] = changes_dict[label]
         return 200
     except PatientEntry.DoesNotExist:
         return 400
