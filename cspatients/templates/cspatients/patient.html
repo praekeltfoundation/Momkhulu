@@ -3,73 +3,76 @@
 {% block content %}
 
 <div class="container-fluid">
-    <div class="centre col-sm-11 col-md-6">
+    <div class="centre col-sm-11 col-md-8">
 
         {% if patiententry %}
         <div>
-        <table class="table"> 
-            <thead>
+        <table id="patient-detail-table" class="table table-striped"> 
+            <thead class="thead-dark">
+                <tr>
+                    <th colspan="2" style="text-align:center;">Patient Details</th>
+                </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Name:</td>
+                    <th scope="row">Name:</td>
                     <td>{{ patiententry.patient_id.name }}</td>
                 </tr>
                 <tr>
-                    <td>Hospital ID:</td>
+                    <th scope="row">Hospital ID:</td>
                     <td>{{ patiententry.patient_id.patient_id }}</td> 
                 </tr>
                 <tr>
-                    <td>Urgency:</td>
+                    <th scope="row">Urgency:</td>
                     <td>{{ patiententry.urgency }}</td>
                 </tr>
                 <tr>
-                    <td>Age:</td>
-                    <td>{{ patiententry.age }}</td>
+                    <th scope="row">Age:</td>
+                    <td>{{ patiententry.patient_id.age }}</td>
                 </tr>
                 <tr>
-                    <td>Operation:</td>
+                    <th scope="row">Operation:</td>
                     <td>{{ patiententry.operation }}</td>
                 </tr>
                 <tr>
-                    <td>Location:</td>
+                    <th scope="row">Location:</td>
                     <td>{{ patiententry.location }}</td>
                 </tr>
                 <tr>
-                    <td>Indication:</td>
+                    <th scope="row">Indication:</td>
                     <td>{{ patiententry.indication }}</td>
                 </tr>
                 <tr>
-                    <td>GravPar:</td>
+                    <th scope="row">GravPar:</td>
                     <td>{{ patiententry.gravpar }}</td>
                 </tr>
                 <tr>
-                    <td>Comorbidities:</td>
-                    <td>{{ patient.comorbid }}</td>
+                    <th scope="row">Comorbidities:</td>
+                    <td>{{ patiententry.comorbid|default_if_none:"-" }}</td>
                 </tr>
                 <tr>
-                    <td>Responsible Clinician:</td>
-                    <td>{{ patiententry.clinician }}</td>
+                    <th scope="row">Responsible Clinician:</td>
+                    <td>{{ patiententry.clinician|default_if_none:"-"}}</td>
                 </tr>
                 <tr>
-                    <td>Decision Time:</td>
-                    <td>{{ patiententry.decision_time }}</td>
+                    <th scope="row">Decision Time:</td>
+                    <td>{{ patiententry.decision_time|time:"H:i" }}</td>
                 </tr>
                 <tr>
-                    <td>Outstanding Information:</td>
-                    <td>{{ patiententry.outstanding_data }}</td>
+                    <th scope="row">Outstanding Info:</td>
+                    <td>{{ patiententry.outstanding_data|default_if_none:"-" }}</td>
                 </tr>
                 <tr>
-                    <td>Delivery Time:</td>
-                    <td>{{ patiententry.delivery_time }}</td>
+                    <th scope="row">Delivery Time:</td>
+                    <td>{{ patiententry.delivery_time|time:"H i" }}</td>
                 </tr>
                 <tr>
-                    <td>APGAR 1:</td>
-                    <td>{{ patiententry.apgar_1 }}</td>
+                    <th scope="row">APGAR 1:</td>
+                    <td>{{ patiententry.apgar_1|default_if_none:"-" }}</td>
                 </tr>
                 <tr>
-                    <td>APGAR 5:</td>
-                    <td>{{ patiententry.apgar_5 }}</td>
+                    <th scope="row">APGAR 5:</td>
+                    <td>{{ patiententry.apgar_5|default_if_none:"-" }}</td>
                 </tr>               
             </tbody>
         </table>
@@ -82,8 +85,21 @@
     </div>
 </div>
 
-<style>
-    
-</style>
+<script>
+    $( function(){
+
+        function setTableClass(){
+            var screenWidth = document.body.clientWidth;
+            console.log(screenWidth)
+            if (screenWidth < 576){
+                $("#patient-details-table").addClass("table-sm");
+            }else{
+                $("#patient-details-table").removeClass("table-sm");
+            };
+        };
+
+        setTableClass();
+    });
+</script>
 
 {% endblock %}

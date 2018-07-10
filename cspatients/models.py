@@ -29,4 +29,4 @@ class PatientEntry(models.Model):
     apgar_5 = models.IntegerField(null=True)
 
     def __str__(self):
-        return self.patient_id + " having " + self.operation
+        return str(self.patient_id) + " having " + self.operation
