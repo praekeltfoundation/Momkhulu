@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
 from .models import Patient, PatientEntry
-from .util import get_rp_dict, view_all_context
+from .util import get_rp_dict, view_all_context, patient_has_delivered
 from .util import send_consumers_table, save_model_changes, save_model
 
 
@@ -128,5 +128,5 @@ def entrychanges(request):
 def entrydelivered(request):
     status_code = 405
     if request.method == "POST":
-        status_code = 400
+        status_code = patient_has_delivered(request.POST)
     return HttpResponse(status=status_code)
