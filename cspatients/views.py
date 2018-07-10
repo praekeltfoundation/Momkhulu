@@ -82,6 +82,8 @@ def form(request):
         )
 
 
+# API VIEWS
+
 @csrf_exempt
 def rp_event(request):
     """
