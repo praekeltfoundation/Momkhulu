@@ -6,9 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
 from .models import Patient, PatientEntry
-from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import get_rp_dict, view_all_context
-from .util import send_consumers_table, save_model_changes
+from .util import send_consumers_table, save_model_changes, save_model
 
 
 def log_in(request):
@@ -73,18 +72,8 @@ def form(request):
     }
     status_code = 200
     if request.method == "POST":
-        status_code = 400
-        # Send the Form information
-        patient = PatientSerializer(data=request.POST)
-        patiententry = PatientEntrySerializer(data=request.POST)
-        if patient.is_valid():
-            patient.save()
-            if patiententry.is_valid():
-                patiententry.save()
-                context = {
-                    "saved": True,
-                }
-                status_code = 201
+        status_code = save_model(request.POST)
+        if status_code == 201:
             send_consumers_table()
     return render(
         request, "cspatients/form.html",
@@ -103,19 +92,9 @@ def rp_event(request):
     # Takes in the information from Rapid Pro
     status_code = 405
     if request.method == "POST":
-        status_code = 400
         if request.GET.get('secret') == "momkhulu":
-            patient = PatientSerializer(
-                data=get_rp_dict(request.POST, context="patient")
-                )
-            patiententry = PatientEntrySerializer(
-                data=get_rp_dict(request.POST, context="patiententry")
-            )
-            if patient.is_valid():
-                patient.save()
-            if patiententry.is_valid():
-                patiententry.save()
-                status_code = 201
+            status_code = save_model(request.POST)
+            if status_code == 201:
                 send_consumers_table()
     return HttpResponse(status=status_code)
 

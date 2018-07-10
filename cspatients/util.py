@@ -6,6 +6,7 @@ from asgiref.sync import async_to_sync
 import simplejson as json
 
 from .models import PatientEntry, Patient
+from .serializers import PatientSerializer, PatientEntrySerializer
 
 PATIENT_FIELDS = Patient.__dict__.keys()
 PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
@@ -93,4 +94,20 @@ def save_model_changes(data):
     except PatientEntry.DoesNotExist:
         return 400
     except Patient.DoesNotExist:
+        return 400
+
+
+def save_model(post_data):
+    patient = PatientSerializer(
+        data=get_rp_dict(post_data, context="patient")
+        )
+    patiententry = PatientEntrySerializer(
+        data=get_rp_dict(post_data, context="patiententry")
+    )
+    if patient.is_valid():
+        patient.save()
+        if patiententry.is_valid():
+            patiententry.save()
+        return 201
+    else:
         return 400
