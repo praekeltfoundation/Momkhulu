@@ -22,6 +22,9 @@ def get_rp_dict(data, context=None):
         obj = json.loads(data)
         all_dict = {}
         for a_dict in obj:
+            # All Responses is a category base for responses that are free text
+            # and not options. If not all All Responses, the label must take the value
+            # of the chosen category base.
             if a_dict['category']['base'] == "All Responses":
                 all_dict[a_dict['label']] = a_dict['value']
             else:
@@ -34,9 +37,10 @@ def get_rp_dict(data, context=None):
         final_dict["patient_id"] = all_dict["patient_id"]
 
     elif context == "patient" or context == "patiententry":
-        field = PATIENT_FIELDS if context == "patient" else PATIENTENTRY_FIELDS
+        fields = PATIENT_FIELDS if context == "patient" else \
+            PATIENTENTRY_FIELDS
         for label in all_dict:
-            if label in field:
+            if label in fields:
                 final_dict[label] = all_dict[label]
     else:
         final_dict = all_dict
@@ -85,12 +89,15 @@ def save_model_changes(data):
         patiententry = PatientEntry.objects.get(
             patient_id=changes_dict['patient_id']
             )
+        patient = patiententry.patient_id
         del changes_dict['patient_id']
         for label in changes_dict:
             if label in PATIENTENTRY_FIELDS:
                 patiententry.__dict__[label] = changes_dict[label]
             if label in PATIENT_FIELDS:
-                patiententry.__dict__[label] = changes_dict[label]
+                patient.__dict__[label] = changes_dict[label]
+        patient.save()
+        patiententry.save()
         return 200
     except PatientEntry.DoesNotExist:
         return 400
