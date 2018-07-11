@@ -22,9 +22,11 @@ def get_rp_dict(data, context=None):
         obj = json.loads(data)
         all_dict = {}
         for a_dict in obj:
-            # All Responses is a category base for responses that are free text
-            # and not options. If not all All Responses, the label must take the value
-            # of the chosen category base.
+            """
+            All Responses is a category base for responses that are free text
+            and not options. If not all All Responses, the label must take
+            the value of the chosen category base.
+            """
             if a_dict['category']['base'] == "All Responses":
                 all_dict[a_dict['label']] = a_dict['value']
             else:
