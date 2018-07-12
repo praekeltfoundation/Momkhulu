@@ -5,9 +5,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, get_object_or_404
 
+from datetime import datetime
+
 from .models import Patient, PatientEntry
-from .util import get_rp_dict, view_all_context, patient_has_delivered
-from .util import send_consumers_table, save_model_changes, save_model
+from .util import (get_rp_dict, view_all_context,
+                   send_consumers_table, save_model_changes, save_model)
 
 
 def log_in(request):
@@ -127,5 +129,12 @@ def entrychanges(request):
 def entrydelivered(request):
     status_code = 405
     if request.method == "POST":
-        status_code = patient_has_delivered(request.POST)
+        try:
+            patiententry = PatientEntry.objects.get(
+                patient_id=get_rp_dict(request.POST)['patient_id']
+            )
+        except PatientEntry.DoesNotExist:
+            return HttpResponse(status=404)
+        patiententry.delivery_time = datetime.now()
+        send_consumers_table()
     return HttpResponse(status=status_code)

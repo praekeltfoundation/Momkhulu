@@ -4,7 +4,6 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 import simplejson as json
-from datetime import datetime
 
 from .models import PatientEntry, Patient
 from .serializers import PatientSerializer, PatientEntrySerializer
@@ -114,16 +113,3 @@ def save_model(post_data):
             return patiententry.save()
     else:
         return None
-
-
-def patient_has_delivered(post_data):
-
-    try:
-        patiententry = PatientEntry.objects.get(
-            patient_id=get_rp_dict(post_data)['patient_id']
-        )
-        patiententry.delivery_time = datetime.now()
-        send_consumers_table()
-        return 200
-    except PatientEntry.DoesNotExist:
-        return 400
