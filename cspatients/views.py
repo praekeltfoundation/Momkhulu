@@ -143,5 +143,6 @@ def entrydelivered(request):
             return HttpResponse(status=404)
         patiententry.delivery_time = datetime.now()
         patiententry.save()
+        status_code = 200
         send_consumers_table()
     return HttpResponse(status=status_code)
