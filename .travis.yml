@@ -1,0 +1,15 @@
+sudo: false
+language: python
+python:
+  - "3.6"
+cache: pip
+install:
+  - pip install --upgrade pip
+  - pip install coveralls coverage
+  - pip install -r requirements.txt
+  - pip install -e
+script:
+  - flake8 momkhulu
+  - python3 manage.py test --with-coverage
+after_success:
+  - coveralls
