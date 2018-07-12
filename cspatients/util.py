@@ -20,24 +20,27 @@ def get_rp_dict(data, context=None):
     data = data['values']
     try:
         obj = json.loads(data)
-        all_dict = {}
-        for a_dict in obj:
-            """
-            All Responses is a category base for responses that are free text
-            and not options. If not all All Responses, the label must take
-            the value of the chosen category base.
-            """
-            if a_dict['category']['base'] == "All Responses":
-                all_dict[a_dict['label']] = a_dict['value']
-            else:
-                all_dict[a_dict['label']] = a_dict['category']['base']
     except json.JSONDecodeError:
         return {}
-    final_dict = all_dict
+    all_dict = {}
+    for a_dict in obj:
+        """
+        All Responses is a category base for responses that are free text
+        and not options. If not all All Responses, the label must take
+        the value of the chosen category base.
+        """
+        if a_dict['category']['base'] == "All Responses":
+            all_dict[a_dict['label']] = a_dict['value']
+        else:
+            all_dict[a_dict['label']] = a_dict['category']['base']
+
     if context == "entrychanges":
+        final_dict = {}
         final_dict[all_dict["change_category"]] = all_dict["new_value"]
         final_dict["patient_id"] = all_dict["patient_id"]
-    return final_dict
+        return final_dict
+    else:
+        return all_dict
 
 
 def view_all_context():
@@ -52,10 +55,13 @@ def view_all_context():
 
 
 def send_consumers_table():
+    """
+        Method to send a rendered templated through to the 
+        view channel in the ViewConsumer.
+    """
     template = loader.get_template("cspatients/table.html")
     channel_layer = get_channel_layer()
-    print(channel_layer)
-    print(async_to_sync(channel_layer.group_send)(
+    async_to_sync(channel_layer.group_send)(
         "view",
         {
             "type": "view.update",
@@ -64,7 +70,7 @@ def send_consumers_table():
                 "patiententrys": view_all_context()
             })
         }
-    ))
+    )
 
 
 def save_model_changes(post_data):
