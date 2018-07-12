@@ -3,7 +3,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Patient, PatientEntry
 from .util import get_rp_dict, view_all_context, patient_has_delivered
@@ -108,16 +108,11 @@ def patientexists(request):
     """
         Returns 200 if Patient exists and 400 if Patient Does Not Exist
     """
-    status_code = 405
-    if request.method == "POST":
-        try:
-            Patient.objects.get(
-                patient_id=get_rp_dict(request.POST, "patient")['patient_id']
-                )
-            status_code = 200
-        except Patient.DoesNotExist:
-            status_code = 400
-    return HttpResponse(status=status_code)
+    get_object_or_404(
+        Patient,
+        patient_id=get_rp_dict(request.POST)['patient_id']
+    )
+    return HttpResponse(status=200)
 
 
 @csrf_exempt
