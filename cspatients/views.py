@@ -67,17 +67,17 @@ def patient(request, patient_id):
 
 @login_required(login_url="/cspatients/login")
 def form(request):
-    context = {
-        "saved": False,
-    }
     status_code = 200
     if request.method == "POST":
-        status_code = save_model(request.POST)
-        if status_code == 201:
+        if save_model(request.POST):
             send_consumers_table()
+            status_code = 201
+        else:
+            status_code = 400
     return render(
-        request, "cspatients/form.html",
-        context=context,
+        request,
+        "cspatients/form.html",
+        context={"status_code": status_code},
         status=status_code
         )
 
@@ -95,9 +95,11 @@ def rp_event(request):
     status_code = 405
     if request.method == "POST":
         if request.GET.get('secret') == "momkhulu":
-            status_code = save_model(request.POST)
-            if status_code == 201:
+            if save_model(request.POST):
                 send_consumers_table()
+                status_code = 201
+            else:
+                status_code = 400
     return HttpResponse(status=status_code)
 
 

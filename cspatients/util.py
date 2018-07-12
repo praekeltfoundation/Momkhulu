@@ -93,19 +93,21 @@ def save_model_changes(post_data):
 
 
 def save_model(post_data):
+    """
+        Saves a models. Returns patient object or None.
+    """
     patient = PatientSerializer(
-        data=get_rp_dict(post_data, context="patient")
+        data=get_rp_dict(post_data)
         )
     patiententry = PatientEntrySerializer(
-        data=get_rp_dict(post_data, context="patiententry")
+        data=get_rp_dict(post_data)
     )
     if patient.is_valid():
         patient.save()
         if patiententry.is_valid():
-            patiententry.save()
-        return 201
+            return patiententry.save()
     else:
-        return 400
+        return None
 
 
 def patient_has_delivered(post_data):
