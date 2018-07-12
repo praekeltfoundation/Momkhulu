@@ -33,19 +33,10 @@ def get_rp_dict(data, context=None):
                 all_dict[a_dict['label']] = a_dict['category']['base']
     except json.JSONDecodeError:
         return {}
-    final_dict = {}
+    final_dict = all_dict
     if context == "entrychanges":
         final_dict[all_dict["change_category"]] = all_dict["new_value"]
         final_dict["patient_id"] = all_dict["patient_id"]
-
-    elif context == "patient" or context == "patiententry":
-        fields = PATIENT_FIELDS if context == "patient" else \
-            PATIENTENTRY_FIELDS
-        for label in all_dict:
-            if label in fields:
-                final_dict[label] = all_dict[label]
-    else:
-        final_dict = all_dict
     return final_dict
 
 
@@ -76,35 +67,29 @@ def send_consumers_table():
     ))
 
 
-def save_model_changes(data):
+def save_model_changes(post_data):
     """
-        The function takes in the request.POST object and creates an all_values
-        dictionary with all the intended Patient or PatientEntry changes.
-
-        Returns the status code of the operation.
-        200 if changes were made. 400 if the PatientEntry could not be found.
-
+        The function takes in the request.POST object and saves changes in
+        models. Returns boolean
     """
 
-    changes_dict = get_rp_dict(data, "entrychanges")
+    changes_dict = get_rp_dict(post_data)
     try:
         patiententry = PatientEntry.objects.get(
             patient_id=changes_dict['patient_id']
             )
-        patient = patiententry.patient_id
-        del changes_dict['patient_id']
-        for label in changes_dict:
-            if label in PATIENTENTRY_FIELDS:
-                patiententry.__dict__[label] = changes_dict[label]
-            if label in PATIENT_FIELDS:
-                patient.__dict__[label] = changes_dict[label]
-        patient.save()
-        patiententry.save()
-        return 200
     except PatientEntry.DoesNotExist:
-        return 400
-    except Patient.DoesNotExist:
-        return 400
+        return False
+    patient = patiententry.patient_id
+    patientserializer = PatientSerializer(patient, changes_dict, partial=True)
+    patiententryserializer = PatientEntrySerializer(
+        patiententry, changes_dict, partial=True
+    )
+    if patientserializer.is_valid():
+        patient.save()
+    if patiententryserializer.is_valid():
+        patiententry.save()
+    return True
 
 
 def save_model(post_data):
