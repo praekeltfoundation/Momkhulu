@@ -7,9 +7,6 @@ install:
   - pip install --upgrade pip
   - pip install coveralls coverage
   - pip install -r requirements.txt
-  - pip install -e
+  - pip install -e .
 script:
   - flake8 momkhulu
-  - python3 manage.py test --with-coverage
-after_success:
-  - coveralls
