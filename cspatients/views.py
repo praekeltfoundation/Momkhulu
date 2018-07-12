@@ -110,10 +110,12 @@ def patientexists(request):
     """
         Returns 200 if Patient exists and 400 if Patient Does Not Exist
     """
-    get_object_or_404(
-        Patient,
-        patient_id=get_rp_dict(request.POST)['patient_id']
-    )
+    try:
+        PatientEntry.objects.get(
+            patient_id=get_rp_dict(request.POST)['patient_id']
+        )
+    except PatientEntry.DoesNotExist:
+        return HttpResponse(status=404)
     return HttpResponse(status=200)
 
 
