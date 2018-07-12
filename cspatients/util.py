@@ -55,7 +55,7 @@ def view_all_context():
 
 def send_consumers_table():
     """
-        Method to send a rendered templated through to the 
+        Method to send a rendered templated through to the
         view channel in the ViewConsumer.
     """
     template = loader.get_template("cspatients/table.html")
@@ -78,7 +78,8 @@ def save_model_changes(post_data):
         models. Returns boolean
     """
 
-    changes_dict = get_rp_dict(post_data)
+    changes_dict = get_rp_dict(post_data, context="entrychanges")
+    print(changes_dict)
     try:
         patiententry = PatientEntry.objects.get(
             patient_id=changes_dict['patient_id']
@@ -91,9 +92,9 @@ def save_model_changes(post_data):
         patiententry, changes_dict, partial=True
     )
     if patientserializer.is_valid():
-        patient.save()
+        patientserializer.save()
     if patiententryserializer.is_valid():
-        updated_patiententry = patiententry.save()
+        updated_patiententry = patiententryserializer.save()
     return updated_patiententry
 
 

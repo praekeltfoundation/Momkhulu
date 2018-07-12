@@ -127,7 +127,7 @@ def entrychanges(request):
             status_code = 201
             send_consumers_table()
         else:
-            status_code = 404
+            status_code = 400
     return HttpResponse(status=status_code)
 
 
