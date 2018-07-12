@@ -121,7 +121,11 @@ def patientexists(request):
 def entrychanges(request):
     status_code = 405
     if request.method == "POST":
-        status_code = save_model_changes(request.POST)
+        if save_model_changes(request.POST):
+            status_code = 201
+            send_consumers_table()
+        else:
+            status_code = 404
     return HttpResponse(status=status_code)
 
 
@@ -136,5 +140,6 @@ def entrydelivered(request):
         except PatientEntry.DoesNotExist:
             return HttpResponse(status=404)
         patiententry.delivery_time = datetime.now()
+        patiententry.save()
         send_consumers_table()
     return HttpResponse(status=status_code)

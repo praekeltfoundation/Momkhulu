@@ -84,7 +84,7 @@ def save_model_changes(post_data):
             patient_id=changes_dict['patient_id']
             )
     except PatientEntry.DoesNotExist:
-        return False
+        return None
     patient = patiententry.patient_id
     patientserializer = PatientSerializer(patient, changes_dict, partial=True)
     patiententryserializer = PatientEntrySerializer(
@@ -93,8 +93,8 @@ def save_model_changes(post_data):
     if patientserializer.is_valid():
         patient.save()
     if patiententryserializer.is_valid():
-        patiententry.save()
-    return True
+        updated_patiententry = patiententry.save()
+    return updated_patiententry
 
 
 def save_model(post_data):
