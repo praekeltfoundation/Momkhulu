@@ -5,10 +5,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
+from datetime import datetime
+
 from .models import Patient, PatientEntry
-from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import get_patient_dict, get_patiententry_dict, view_all_context
-from .util import send_consumers_table, save_model_changes
+from .util import (get_rp_dict, view_all_context,
+                   send_consumers_table, save_model_changes, save_model)
 
 
 def log_in(request):
@@ -68,30 +69,22 @@ def patient(request, patient_id):
 
 @login_required(login_url="/cspatients/login")
 def form(request):
-    context = {
-        "saved": False,
-    }
     status_code = 200
     if request.method == "POST":
-        status_code = 400
-        # Send the Form information
-        patient = PatientSerializer(data=request.POST)
-        patiententry = PatientEntrySerializer(data=request.POST)
-        if patient.is_valid():
-            patient.save()
-            if patiententry.is_valid():
-                patiententry.save()
-                context = {
-                    "saved": True,
-                }
-                status_code = 201
+        if save_model(request.POST):
             send_consumers_table()
+            status_code = 201
+        else:
+            status_code = 400
     return render(
-        request, "cspatients/form.html",
-        context=context,
+        request,
+        "cspatients/form.html",
+        context={"status_code": status_code},
         status=status_code
         )
 
+
+# API VIEWS
 
 @csrf_exempt
 def rp_event(request):
@@ -103,40 +96,38 @@ def rp_event(request):
     # Takes in the information from Rapid Pro
     status_code = 405
     if request.method == "POST":
-        status_code = 400
         if request.GET.get('secret') == "momkhulu":
-            patient = PatientSerializer(data=get_patient_dict(request.body))
-            patiententry = PatientEntrySerializer(
-                data=get_patiententry_dict(request.body)
-            )
-            if patient.is_valid():
-                patient.save()
-            if patiententry.is_valid():
-                patiententry.save()
-                status_code = 201
+            if save_model(request.POST):
                 send_consumers_table()
+                status_code = 201
+            else:
+                status_code = 400
     return HttpResponse(status=status_code)
 
 
 @csrf_exempt
 def patientexists(request):
-    status_code = 405
-    if request.method == "POST":
-        try:
-            Patient.objects.get(
-                patient_id=get_patient_dict(request.POST)['patient_id']
-                )
-            status_code = 200
-        except Patient.DoesNotExist:
-            status_code = 400
-    return HttpResponse(status=status_code)
+    """
+        Returns 200 if Patient exists and 400 if Patient Does Not Exist
+    """
+    try:
+        PatientEntry.objects.get(
+            patient_id=get_rp_dict(request.POST)['patient_id']
+        )
+    except PatientEntry.DoesNotExist:
+        return HttpResponse(status=404)
+    return HttpResponse(status=200)
 
 
 @csrf_exempt
 def entrychanges(request):
     status_code = 405
     if request.method == "POST":
-        status_code = save_model_changes()
+        if save_model_changes(request.POST):
+            status_code = 201
+            send_consumers_table()
+        else:
+            status_code = 400
     return HttpResponse(status=status_code)
 
 
@@ -144,5 +135,14 @@ def entrychanges(request):
 def entrydelivered(request):
     status_code = 405
     if request.method == "POST":
-        status_code = 400
+        try:
+            patiententry = PatientEntry.objects.get(
+                patient_id=get_rp_dict(request.POST)['patient_id']
+            )
+        except PatientEntry.DoesNotExist:
+            return HttpResponse(status=404)
+        patiententry.delivery_time = datetime.now()
+        patiententry.save()
+        status_code = 200
+        send_consumers_table()
     return HttpResponse(status=status_code)
