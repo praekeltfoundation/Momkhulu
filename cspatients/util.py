@@ -3,52 +3,43 @@ from django.template import loader
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-from urllib.parse import parse_qs
 import simplejson as json
 
-from .models import PatientEntry
+from .models import PatientEntry, Patient
+from .serializers import PatientSerializer, PatientEntrySerializer
 
-PATIENT_FIELDS = ("patient_id", "name", "age")
-PATIENTENTRY_FIELDS = (
-    "patient_id", "operation", "gravpar", "comorbid", "indication",
-    "discharge_time", "decision_time", "location", "outstanding_data",
-    "delivery_time", "clinician", "urgency", "apgar_1",
-    "apgar_5"
-)
+PATIENT_FIELDS = Patient.__dict__.keys()
+PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
 
 
-def get_patient_dict(data):
+def get_rp_dict(data, context=None):
     """
-        Take in a rapidpro request body and return a dictionary
-        with patient data.
+        Get a label and value dictionary from the request POST
     """
-    data = parse_qs(data)[b'values'][0].decode('utf-8')
-    patient_dict = {}
+    data = data['values']
     try:
         obj = json.loads(data)
-        for a_dict in obj:
-            if a_dict['label'] in PATIENT_FIELDS:
-                patient_dict[a_dict['label']] = a_dict['value']
-        return patient_dict
     except json.JSONDecodeError:
-        return patient_dict
+        return {}
+    all_dict = {}
+    for a_dict in obj:
+        """
+        All Responses is a category base for responses that are free text
+        and not options. If not all All Responses, the label must take
+        the value of the chosen category base.
+        """
+        if a_dict['category']['base'] == "All Responses":
+            all_dict[a_dict['label']] = a_dict['value']
+        else:
+            all_dict[a_dict['label']] = a_dict['category']['base']
 
-
-def get_patiententry_dict(data):
-    """
-        Take in a rapidpro request body and return a dictionary
-        with patiententry data.
-    """
-    data = parse_qs(data)[b'values'][0].decode('utf-8')
-    patiententry_dict = {}
-    try:
-        obj = json.loads(data)
-        for a_dict in obj:
-            if a_dict['label'] in PATIENTENTRY_FIELDS:
-                patiententry_dict[a_dict['label']] = a_dict['value']
-        return patiententry_dict
-    except json.JSONDecodeError:
-        return patiententry_dict
+    if context == "entrychanges":
+        final_dict = {}
+        final_dict[all_dict["change_category"]] = all_dict["new_value"]
+        final_dict["patient_id"] = all_dict["patient_id"]
+        return final_dict
+    else:
+        return all_dict
 
 
 def view_all_context():
@@ -63,10 +54,13 @@ def view_all_context():
 
 
 def send_consumers_table():
+    """
+        Method to send a rendered templated through to the
+        view channel in the ViewConsumer.
+    """
     template = loader.get_template("cspatients/table.html")
     channel_layer = get_channel_layer()
-    print(channel_layer)
-    print(async_to_sync(channel_layer.group_send)(
+    async_to_sync(channel_layer.group_send)(
         "view",
         {
             "type": "view.update",
@@ -75,54 +69,48 @@ def send_consumers_table():
                 "patiententrys": view_all_context()
             })
         }
-    ))
+    )
 
 
-def save_model_changes(data):
+def save_model_changes(post_data):
     """
-        The function takes in the request.POST object and creates an all_values
-        dictionary with all the intended Patient or PatientEntry changes.
-
-        Returns the status code of the operation.
-        200 if changes were made. 400 if the PatientEntry could not be found.
-
+        The function takes in the request.POST object and saves changes in
+        models. Returns boolean
     """
-    all_values = get_patient_dict(data).update(get_patiententry_dict(data))
+
+    changes_dict = get_rp_dict(post_data, context="entrychanges")
+    print(changes_dict)
     try:
-        current_patiententry = PatientEntry.objects.get(
-            patient_id=all_values['patient_id']
-        )
-        if all_values.contains("name"):
-            current_patiententry.patient_id.name = all_values["name"]
-        if all_values.contains("age"):
-            current_patiententry.patient_id.age = all_values["age"]
-        if all_values.contains("operation"):
-            current_patiententry.operation = all_values["operation"]
-        if all_values.contains("gravpar"):
-            current_patiententry.gravpar = all_values["gravpar"]
-        if all_values.contains("comorbid"):
-            current_patiententry.comorbid = all_values["comorbid"]
-        if all_values.contains("indication"):
-            current_patiententry.indication = all_values["indication"]
-        if all_values.contains("decision_time"):
-            current_patiententry.decision_time = all_values["decision_time"]
-        if all_values.contains("discharge_time"):
-            current_patiententry.discharge_time = all_values["discharge_time"]
-        if all_values.contains("delivery_time"):
-            current_patiententry.delivery_time = all_values["delivery_time"]
-        if all_values.contains("urgency"):
-            current_patiententry.urgency = all_values["urgency"]
-        if all_values.contains("location"):
-            current_patiententry.location = all_values["location"]
-        if all_values.contains("outstanding_data"):
-            current_patiententry.outstanding_data = all_values["outstanding_data"]
-        if all_values.contains("clinician"):
-            current_patiententry.clinician = all_values["clinician"]
-        if all_values.contains("apgar_1"):
-            current_patiententry.apgar_1 = all_values["apgar_1"]
-        if all_values.contains("apgar_5"):
-            current_patiententry.apgar_5 = all_values["apgar_5"]
-
-        return 200
+        patiententry = PatientEntry.objects.get(
+            patient_id=changes_dict['patient_id']
+            )
     except PatientEntry.DoesNotExist:
-        return 400
+        return None
+    patient = patiententry.patient_id
+    patientserializer = PatientSerializer(patient, changes_dict, partial=True)
+    patiententryserializer = PatientEntrySerializer(
+        patiententry, changes_dict, partial=True
+    )
+    if patientserializer.is_valid():
+        patientserializer.save()
+    if patiententryserializer.is_valid():
+        updated_patiententry = patiententryserializer.save()
+    return updated_patiententry
+
+
+def save_model(post_data):
+    """
+        Saves a models. Returns patient object or None.
+    """
+    patient = PatientSerializer(
+        data=get_rp_dict(post_data)
+        )
+    patiententry = PatientEntrySerializer(
+        data=get_rp_dict(post_data)
+    )
+    if patient.is_valid():
+        patient.save()
+        if patiententry.is_valid():
+            return patiententry.save()
+    else:
+        return None
