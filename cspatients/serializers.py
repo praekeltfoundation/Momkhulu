@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.db import models
 from cspatients.models import Patient, PatientEntry
 
 
@@ -11,7 +11,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class PatientEntrySerializer(serializers.ModelSerializer):
-    decision_time = serializers.DateTimeField()
+    decision_time = models.DateTimeField()
 
     class Meta:
         model = PatientEntry
