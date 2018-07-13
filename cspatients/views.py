@@ -97,7 +97,7 @@ def rp_event(request):
     status_code = 405
     if request.method == "POST":
         if request.GET.get('secret') == "momkhulu":
-            if save_model(request.POST):
+            if save_model(get_rp_dict(request.POST)):
                 send_consumers_table()
                 status_code = 201
             else:
