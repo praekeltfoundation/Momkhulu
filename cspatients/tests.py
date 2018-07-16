@@ -2,8 +2,14 @@ from django.test import Client
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from .models import Patient
+from .models import Patient, PatientEntry
+from .serializers import PatientSerializer, PatientEntrySerializer
+from .util import (view_all_context, )
 # View Tests
+
+
+def delete_whole_table():
+    PatientEntry.objects.all().delete()
 
 
 class LoginTest(TestCase):
@@ -213,3 +219,51 @@ class ViewTest(TestCase):
             response=response,
             template_name="cspatients/view.html"
         )
+
+# Util Tests
+
+
+class ViewAllContextTest(TestCase):
+
+    def setUp(self):
+        delete_whole_table()
+        self.patient_one_data = {
+            "name": "Jane Doe",
+            "patient_id": "XXXXX",
+            "age": 20,
+        }
+
+        self.patient_two_data = {
+            "name": "Mary Mary",
+            "patient_id": "YYYYY",
+            "age": 23,
+            "urgency": 1
+        }
+
+    def test_context_when_no_patients(self):
+        delete_whole_table()
+        self.assertFalse(view_all_context())
+
+    def test_context_when_patiententrys(self):
+        delete_whole_table()
+        patient_one = PatientSerializer(data=self.patient_one_data)
+        patiententry_one = PatientEntrySerializer(data=self.patient_one_data)
+        if patient_one.is_valid():
+            patient_one.save()
+            if patiententry_one.is_valid():
+                patiententry_one.save()
+        patient_two = PatientSerializer(data=self.patient_two_data)
+        patiententry_two = PatientEntrySerializer(data=self.patient_two_data)
+        if patient_two.is_valid():
+            patient_two.save()
+            if patiententry_two.is_valid():
+                patiententry_two.save()
+
+        # Check that view_all_context doesn't return False
+        self.assertTrue(view_all_context)
+
+        # Check that it returns two objects
+        self.assertEqual(len(view_all_context()), 2)
+
+        # Check that the results are sorted by the urgency
+        self.assertEqual(view_all_context()[0].patient_id.name, "Mary Mary")
