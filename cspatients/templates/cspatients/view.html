@@ -11,9 +11,10 @@
 
 <script>
 
-    function goToPatient(element){
-        var patient_id = $(element).contents("td.patient-id").html();     
-        window.location.href = window.location.href.slice(0,-4).concat("patient/") + patient_id;
+    function goToPatient(){
+        var patient_id = $(this).contents("td.patient-id").html();
+        window.location.href = window.location.protocol + "//" +
+        window.location.host + "/cspatients/patient/" + patient_id;
     };
 
     function sleep(){
@@ -60,7 +61,9 @@
                 return e.data;
                 console.log("Rendering the new updated table.");
             });
-        };        
+        };
+        
+        $(".info-row").click(goToPatient);
     });
 </script>
 

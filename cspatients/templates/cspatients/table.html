@@ -1,6 +1,4 @@
 <div class="table-responsive centre">
-    {% if patiententrys %}
-
     <table id="decision-table" class="table table-hover patients-table">
         <thead class="thead-dark">
             <tr>
@@ -17,8 +15,8 @@
         </thead>
         <tbody>
         {% for patiententry in patiententrys %}
-        {% if not patiententry.delivery_time %}
-        <tr onclick="goToPatient(this);" class="urgency-{{patiententry.urgency}}">
+        {% if not patiententry.completion_time %}
+        <tr class="urgency-{{patiententry.urgency}} info-row">
             <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
             <td>{{ patiententry.patient_id.name }}</td>
             <td>{{ patiententry.patient_id.age }}</td>
@@ -33,12 +31,7 @@
         {% endfor %}
         </tbody>
     </table>
-    
-    {% else %}
-        <div id="delivered-table" class = "container text-center">
-            <p class="lead"> No Patients on this list for now.</p>
-        </div> 
-    {% endif %}
+
 </div>    
 <br>
 <br>
@@ -66,8 +59,8 @@
         </thead>
         <tbody>
         {% for patiententry in patiententrys %}
-        {% if patiententry.delivery_time %}
-        <tr onclick="goToPatient(this);">
+        {% if patiententry.completion_time %}
+        <tr class="info-row row-completed">
             <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
             <td>{{ patiententry.patient_id.name }}</td>
             <td>{{ patiententry.patient_id.age }}</td>
