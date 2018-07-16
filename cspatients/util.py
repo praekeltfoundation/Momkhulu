@@ -72,14 +72,11 @@ def send_consumers_table():
     )
 
 
-def save_model_changes(post_data):
+def save_model_changes(changes_dict):
     """
         The function takes in the request.POST object and saves changes in
         models. Returns boolean
     """
-
-    changes_dict = get_rp_dict(post_data, context="entrychanges")
-    print(changes_dict)
     try:
         patiententry = PatientEntry.objects.get(
             patient_id=changes_dict['patient_id']

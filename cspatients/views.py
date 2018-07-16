@@ -130,7 +130,8 @@ def patientexists(request):
 def entrychanges(request):
     status_code = 405
     if request.method == "POST":
-        if save_model_changes(request.POST):
+        changes_dict = get_rp_dict(request.POST, context="entrychanges")
+        if save_model_changes(changes_dict):
             status_code = 201
             send_consumers_table()
         else:
