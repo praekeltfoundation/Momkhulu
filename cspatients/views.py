@@ -14,20 +14,27 @@ from .util import (get_rp_dict, view_all_context,
 
 def log_in(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect("/cspatients/")
     context = {
         "try": False,
     }
+    status_code = 200
     if request.method == "POST":
         context['try'] = True
-        password = request.POST['password']
-        username = request.POST['username']
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(
+            request,
+            username=request.POST['username'],
+            password=request.POST['password'],
+        )
         if user is not None:
             login(request, user)
-            next = request.GET.get('next')
+            next = request.GET.get('next', default="/cspatients/")
             return HttpResponseRedirect(next)
-    return render(request, 'cspatients/login.html', context, status=200)
+        else:
+            status_code = 401
+    return render(
+        request, 'cspatients/login.html', context, status=status_code
+        )
 
 
 @login_required(login_url="/cspatients/login")
