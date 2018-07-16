@@ -1,4 +1,5 @@
 from django.template import loader
+from django.db.models.query import EmptyQuerySet
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -43,14 +44,13 @@ def get_rp_dict(data, context=None):
 
 
 def view_all_context():
-    try:
-        rows = []
-        patiententrys = PatientEntry.objects.select_related("patient_id").all()
-        for patiententry in patiententrys:
-            rows.append(patiententry)
-        return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
-    except PatientEntry.DoesNotExist:
+    rows = []
+    patiententrys = PatientEntry.objects.select_related("patient_id").all()
+    if isinstance(patiententrys, EmptyQuerySet):
         return False
+    for patiententry in patiententrys:
+        rows.append(patiententry)
+    return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
 
 
 def send_consumers_table():
