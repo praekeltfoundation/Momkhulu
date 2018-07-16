@@ -1,7 +1,5 @@
 <div class="table-responsive centre">
-    {% if patiententrys %}
-
-    <table id="patients-table" class="table table-hover">
+    <table id="decision-table" class="table table-hover patients-table">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Patient ID</th>
@@ -17,7 +15,8 @@
         </thead>
         <tbody>
         {% for patiententry in patiententrys %}
-        <tr onclick="goToPatient(this);" class="urgency-{{patiententry.urgency}}">
+        {% if not patiententry.completion_time %}
+        <tr class="urgency-{{patiententry.urgency}} info-row">
             <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
             <td>{{ patiententry.patient_id.name }}</td>
             <td>{{ patiententry.patient_id.age }}</td>
@@ -27,7 +26,54 @@
             <td>{{ patiententry.indication }}</td>
             <td>{{ patiententry.decision_time|time:"H:i" }}</td>
             <td>{{ patiententry.clinician }}</td>
-        </tr>                                
+        </tr>
+        {% endif %}                                
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>    
+<br>
+<hr>
+<br>
+<br>
+<!-- The delivered table -->
+<h3>Completed Patients List</h3>
+
+<div class="table-responsive centre">
+    {% if patiententrys %}
+
+    <table id="completed-table" class="table table-hover patients-table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Age</th>
+                <th scope="col">Operation</th>
+                <th scope="col">Grav/Par</th>
+                <th scope="col">Location</th>
+                <th scope="col">Indication</th>
+                <th scope="col">Decision Time</th>
+                <th scope="col">Complete Time</th>
+                <th scope="col">Clinician</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for patiententry in patiententrys %}
+        {% if patiententry.completion_time %}
+        <tr class="info-row row-completed">
+            <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
+            <td>{{ patiententry.patient_id.name }}</td>
+            <td>{{ patiententry.patient_id.age }}</td>
+            <td>{{ patiententry.operation }}</td>
+            <td>{{ patiententry.gravpar }}</td>
+            <td>{{ patiententry.location }}</td>
+            <td>{{ patiententry.indication }}</td>
+            <td>{{ patiententry.decision_time|time:"H:i" }}</td>
+            <td>{{ patiententry.completion_time|time:"H:i" }}</td>
+            <td>{{ patiententry.clinician }}</td>
+        </tr>
+        {% endif %}
         {% endfor %}
         </tbody>
     </table>
@@ -37,4 +83,4 @@
             <p class="lead"> No Patients on this list for now.</p>
         </div> 
     {% endif %}
-</div>    
+</div>
