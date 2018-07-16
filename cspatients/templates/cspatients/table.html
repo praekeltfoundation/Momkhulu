@@ -44,12 +44,12 @@
 <br>
 <br>
 <!-- The delivered table -->
-<h3>Delivered Patients List</h3>
+<h3>Completed Patients List</h3>
 
 <div class="table-responsive centre">
     {% if patiententrys %}
 
-    <table id="delivered-table" class="table table-hover patients-table">
+    <table id="completed-table" class="table table-hover patients-table">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">ID</th>
@@ -60,7 +60,7 @@
                 <th scope="col">Location</th>
                 <th scope="col">Indication</th>
                 <th scope="col">Decision Time</th>
-                <th scope="col">Delivery Time</th>
+                <th scope="col">Complete Time</th>
                 <th scope="col">Clinician</th>
             </tr>
         </thead>
@@ -76,7 +76,7 @@
             <td>{{ patiententry.location }}</td>
             <td>{{ patiententry.indication }}</td>
             <td>{{ patiententry.decision_time|time:"H:i" }}</td>
-            <td>{{ patiententry.delivery_time|time:"H:i" }}</td>
+            <td>{{ patiententry.completion_time|time:"H:i" }}</td>
             <td>{{ patiententry.clinician }}</td>
         </tr>
         {% endif %}
