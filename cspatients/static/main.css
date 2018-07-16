@@ -63,6 +63,10 @@ td{
     padding: 5px;
 }
 
+.row-completed{
+    background-color: gray;
+}
+
 @media (max-width: 768px){
     #decision-table{
         font-size: 0.6rem;
