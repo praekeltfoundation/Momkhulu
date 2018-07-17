@@ -99,12 +99,15 @@ class LogoutTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_logout_when_not_logged_in(self):
-        response = self.client.get("/cspatients/logout")
+        response = self.client.get("/cspatients/logout", follow=True)
         self.assertTemplateNotUsed(
             response=response,
             template_name="cspatients/logout.html"
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertTemplateUsed(
+            response=response,
+            template_name="cspatients/login.html"
+        )
 
 
 class FormTest(TestCase):
