@@ -313,12 +313,14 @@ class SaveModelChangesTest(TestCase):
 
     def setUp(self):
         delete_whole_table()
-        self.patient_one_data = {
-            "name": "Jane Doe",
-            "patient_id": "XXXXX",
-            "age": 20,
-        }
-        save_model(self.patient_one_data)
+        Patient.objects.create(
+            name="Jane Doe",
+            patient_id="XXXXX",
+            age=20
+        )
+        PatientEntry.objects.create(
+            patient_id=Patient.objects.get(patient_id="XXXXX")
+        )
 
     def test_saves_data_when_passed_good_dict(self):
         changes_dict = {
