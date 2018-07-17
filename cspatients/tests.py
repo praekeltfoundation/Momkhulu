@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import (view_all_context, save_model, save_model_changes)
+
 # View Tests
 
 
