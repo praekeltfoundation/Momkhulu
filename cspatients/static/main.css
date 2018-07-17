@@ -63,9 +63,17 @@ td{
     padding: 5px;
 }
 
+.row-completed{
+    background-color: gray;
+}
+
 @media (max-width: 768px){
-    #patients-table{
+    #decision-table{
         font-size: 0.6rem;
+    }
+
+    #delivered-table{
+        font-size: 0.6rem
     }
 
     h1{
