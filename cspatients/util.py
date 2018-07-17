@@ -91,8 +91,9 @@ def save_model_changes(changes_dict):
     if patientserializer.is_valid():
         patientserializer.save()
     if patiententryserializer.is_valid():
-        updated_patiententry = patiententryserializer.save()
-    return updated_patiententry
+        return patiententryserializer.save()
+    else:
+        return patiententry
 
 
 def save_model(data):
