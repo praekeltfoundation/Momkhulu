@@ -1,4 +1,5 @@
 from django.template import loader
+from django.db.models.query import EmptyQuerySet
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -43,14 +44,13 @@ def get_rp_dict(data, context=None):
 
 
 def view_all_context():
-    try:
-        rows = []
-        patiententrys = PatientEntry.objects.select_related("patient_id").all()
-        for patiententry in patiententrys:
-            rows.append(patiententry)
-        return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
-    except PatientEntry.DoesNotExist:
+    rows = []
+    patiententrys = PatientEntry.objects.select_related("patient_id").all()
+    if isinstance(patiententrys, EmptyQuerySet):
         return False
+    for patiententry in patiententrys:
+        rows.append(patiententry)
+    return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
 
 
 def send_consumers_table():
@@ -72,14 +72,11 @@ def send_consumers_table():
     )
 
 
-def save_model_changes(post_data):
+def save_model_changes(changes_dict):
     """
         The function takes in the request.POST object and saves changes in
         models. Returns boolean
     """
-
-    changes_dict = get_rp_dict(post_data, context="entrychanges")
-    print(changes_dict)
     try:
         patiententry = PatientEntry.objects.get(
             patient_id=changes_dict['patient_id']
@@ -94,19 +91,20 @@ def save_model_changes(post_data):
     if patientserializer.is_valid():
         patientserializer.save()
     if patiententryserializer.is_valid():
-        updated_patiententry = patiententryserializer.save()
-    return updated_patiententry
+        return patiententryserializer.save()
+    else:
+        return patiententry
 
 
-def save_model(post_data):
+def save_model(data):
     """
         Saves a models. Returns patient object or None.
     """
     patient = PatientSerializer(
-        data=get_rp_dict(post_data)
+        data=data
         )
     patiententry = PatientEntrySerializer(
-        data=get_rp_dict(post_data)
+        data=data
     )
     if patient.is_valid():
         patient.save()
