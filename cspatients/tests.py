@@ -268,6 +268,7 @@ class ViewAllContextTest(TestCase):
 
         # Check that the results are sorted by the urgency
         self.assertEqual(view_all_context()[0].patient_id.name, "Mary Mary")
+        self.assertEqual(view_all_context()[1].patient_id.name, "Jane Doe")
 
 
 class SaveModelTest(TestCase):
