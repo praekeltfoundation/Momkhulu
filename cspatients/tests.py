@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import (view_all_context, )
+from .util import (view_all_context, save_model, save_model_changes)
 # View Tests
 
 
@@ -267,3 +267,85 @@ class ViewAllContextTest(TestCase):
 
         # Check that the results are sorted by the urgency
         self.assertEqual(view_all_context()[0].patient_id.name, "Mary Mary")
+
+
+class SaveModelTest(TestCase):
+
+    def setUp(self):
+        delete_whole_table()
+        self.patient_one_data = {
+            "name": "Jane Doe",
+            "patient_id": "XXXXX",
+            "age": 20,
+        }
+
+        self.patient_two_data = {
+            "name": "Mary Mary",
+            "age": 23,
+            "urgency": 1
+        }
+
+    def test_saves_when_given_sufficient_data(self):
+        patiententry = save_model(self.patient_one_data)
+
+        # Must return the saved patient entry
+        self.assertIsNotNone(patiententry)
+        # Check that the save persisted in the database
+        self.assertTrue(PatientEntry.objects.get(patient_id="XXXXX"))
+
+    def test_nothing_saved_with_insufficient_data(self):
+        patientryentry = save_model(self.patient_two_data)
+
+        # Must return None
+        self.assertIsNone(patientryentry)
+
+        # Check that none of the information is in the database
+        with self.assertRaises(Patient.DoesNotExist):
+            Patient.objects.get(name="Mary Mary")
+
+
+class SaveModelChangesTest(TestCase):
+
+    def setUp(self):
+        delete_whole_table()
+        self.patient_one_data = {
+            "name": "Jane Doe",
+            "patient_id": "XXXXX",
+            "age": 20,
+        }
+        save_model(self.patient_one_data)
+
+    def test_saves_data_when_passed_good_dict(self):
+        changes_dict = {
+            "patient_id": "XXXXX",
+            "name": "Jane Moe",
+        }
+
+        # Check returns PatientEntry
+        self.assertTrue(
+            isinstance(save_model_changes(changes_dict), PatientEntry)
+            )
+        # Check that the name change has persisted.
+        self.assertEqual(
+            PatientEntry.objects.get(patient_id="XXXXX").patient_id.name,
+            "Jane Moe"
+        )
+
+    def test_wrong_patient_id_bad_dict(self):
+        changes_dict = {
+            "patient_id": "YXXXX",
+            "name": "Jane Moe",
+        }
+
+        # Returns none on bad incorrect patient_id
+        self.assertIsNone(save_model_changes(changes_dict))
+
+    def test_right_patient_id_bad_dict(self):
+        changes_dict = {
+            "patient_id": "XXXXX",
+            "names": "Janet Moe",
+            "urgent": "DSHLSD",
+        }
+
+        patiententry = PatientEntry.objects.get(patient_id="XXXXX")
+        self.assertEqual(patiententry, save_model_changes(changes_dict))
