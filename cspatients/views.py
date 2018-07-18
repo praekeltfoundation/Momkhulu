@@ -140,7 +140,7 @@ def entrychanges(request):
 
 
 @csrf_exempt
-def entrydelivered(request):
+def entrycompleted(request):
     status_code = 405
     if request.method == "POST":
         try:
@@ -149,7 +149,7 @@ def entrydelivered(request):
             )
         except PatientEntry.DoesNotExist:
             return HttpResponse(status=404)
-        patiententry.delivery_time = datetime.now()
+        patiententry.completion_time = datetime.now()
         patiententry.save()
         status_code = 200
         send_consumers_table()
