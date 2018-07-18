@@ -12,5 +12,5 @@ urlpatterns = [
     path('api/rpevent', views.rp_event, name='rp_event'),
     path('api/patientexists', views.patientexists, name="patientexits"),
     path('api/entrychanges', views.entrychanges, name="entrychanges"),
-    path('api/entrydelivered', views.entrydelivered, name="entrydelivered")
+    path('api/entrycompleted', views.entrycompleted, name="entrycompleted")
 ]
