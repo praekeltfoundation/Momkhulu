@@ -113,7 +113,7 @@ def rp_event(request):
 
 
 @csrf_exempt
-def patientexists(request):
+def rp_patientexists(request):
     """
         Returns 200 if Patient exists and 400 if Patient Does Not Exist
     """
@@ -127,7 +127,7 @@ def patientexists(request):
 
 
 @csrf_exempt
-def entrychanges(request):
+def rp_entrychanges(request):
     status_code = 405
     if request.method == "POST":
         changes_dict = get_rp_dict(request.POST, context="entrychanges")
@@ -140,7 +140,7 @@ def entrychanges(request):
 
 
 @csrf_exempt
-def entrydelivered(request):
+def rp_entrydelivered(request):
     status_code = 405
     if request.method == "POST":
         try:
