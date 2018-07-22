@@ -64,7 +64,7 @@ td{
 }
 
 .row-completed{
-    background-color: gray;
+    background-color: lightgray;
 }
 
 @media (max-width: 768px){
