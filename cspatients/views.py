@@ -132,7 +132,7 @@ def rp_entrychanges(request):
     if request.method == "POST":
         changes_dict = get_rp_dict(request.POST, context="entrychanges")
         if save_model_changes(changes_dict):
-            status_code = 201
+            status_code = 200
             send_consumers_table()
         else:
             status_code = 400
