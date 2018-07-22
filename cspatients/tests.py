@@ -515,7 +515,7 @@ class RPEventTest(TestCase):
 
         delete_whole_table()
         response = self.client.post(
-            "/cspatients/api/rpevent?secret=momkhulu",
+            "/cspatients/api/rpneepatiententry?secret=momkhulu",
             self.data,
         )
         # Assert a correct response of 201

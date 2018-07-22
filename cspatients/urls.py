@@ -9,7 +9,11 @@ urlpatterns = [
     path('login', views.log_in, name="log_in"),
     path('logout', views.log_out, name="log_out"),
     path('patient/<str:patient_id>', views.patient, name="patient"),
-    path('api/rpevent', views.rp_event, name='rp_event'),
+    path(
+        'api/rpneepatiententry',
+        views.rp_newpatiententry,
+        name='rp_newpatiententry'
+    ),
     path(
         'api/rppatientexists',
         views.rp_patientexists,
