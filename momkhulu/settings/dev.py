@@ -1,12 +1,11 @@
 from .base import * # noqa
 
 import os
+import environ
 
 DEBUG = True
 
-BASE_DIR = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-)
+BASE_DIR = environ.Path(__file__) - 2
 
 DATABASES = {
     'default': {
