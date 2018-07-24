@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-
-from datetime import datetime
+from django.utils import timezone
 
 from .models import Patient, PatientEntry
 from .util import (get_rp_dict, view_all_context,
@@ -149,7 +148,7 @@ def rp_entrydelivered(request):
             )
         except PatientEntry.DoesNotExist:
             return HttpResponse(status=404)
-        patiententry.delivery_time = datetime.now()
+        patiententry.delivery_time = timezone.now()
         patiententry.save()
         status_code = 200
         send_consumers_table()
