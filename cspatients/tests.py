@@ -521,8 +521,8 @@ class RPPatientExistsTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.good_data = SAMPLE_RP_POST_DATA
-        self.bad_data = SAMPLE_RP_POST_DATA_2
+        self.existing_patient_data = SAMPLE_RP_POST_DATA
+        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
         patient = Patient.objects.create(
             name="Jane Doe",
@@ -538,7 +538,7 @@ class RPPatientExistsTest(TestCase):
 
         response = self.client.post(
             "/cspatients/api/rppatientexists",
-            self.good_data
+            self.existing_patient_data
         )
 
         self.assertEqual(response.status_code, 200)
@@ -547,7 +547,7 @@ class RPPatientExistsTest(TestCase):
 
         response = self.client.post(
             "/cspatients/api/rppatientexists",
-            self.bad_data
+            self.nonexisting_patient_data
         )
 
         self.assertEqual(response.status_code, 404)
