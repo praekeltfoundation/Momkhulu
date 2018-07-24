@@ -590,7 +590,7 @@ class RPEntryChangesTest(TestCase):
         patient = Patient.objects.get(patient_id="HLFSH")
         self.assertTrue(patient.name == "Nyasha")
 
-    def test_non_existing_entry_change_name(self):
+    def test_returns_400_for_update_to_non_existent_patient(self):
 
         response = self.client.post(
             "/cspatients/api/rpentrychanges",
