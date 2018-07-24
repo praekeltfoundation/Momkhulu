@@ -11,3 +11,5 @@ install:
 script:
   - flake8 momkhulu
   - coverage run --source='.' manage.py test
+after_success:
+  - coveralls
