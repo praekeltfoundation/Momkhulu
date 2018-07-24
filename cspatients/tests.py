@@ -560,8 +560,8 @@ class RPEntryChangesTest(TestCase):
     """
     def setUp(self):
         self.client = Client()
-        self.good_data = SAMPLE_RP_POST_DATA
-        self.bad_data = SAMPLE_RP_POST_DATA_2
+        self.existing_patient_data = SAMPLE_RP_POST_DATA
+        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
         patient = Patient.objects.create(
             name="Jane Doe",
@@ -577,7 +577,7 @@ class RPEntryChangesTest(TestCase):
 
         response = self.client.post(
             "/cspatients/api/rpentrychanges",
-            self.good_data
+            self.existing_patient_data
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
@@ -591,7 +591,7 @@ class RPEntryChangesTest(TestCase):
 
         response = self.client.post(
             "/cspatients/api/rpentrychanges",
-            self.bad_data
+            self.nonexisting_patient_data
         )
         # Test the right response code 400
 
@@ -602,8 +602,8 @@ class RPEntryDeliveredTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.good_data = SAMPLE_RP_POST_DATA
-        self.bad_data = SAMPLE_RP_POST_DATA_2
+        self.existing_patient_data= SAMPLE_RP_POST_DATA
+        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
         patient = Patient.objects.create(
             name="Jane Doe",
@@ -619,7 +619,7 @@ class RPEntryDeliveredTest(TestCase):
 
         response = self.client.post(
             "/cspatients/api/rpentrydelivered",
-            self.good_data
+            self.existing_patient_data
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 200)
@@ -633,7 +633,7 @@ class RPEntryDeliveredTest(TestCase):
 
         response = self.client.post(
             "/cspatients/api/rppatientdelivered",
-            self.bad_data
+            self.nonexisting_patient_data
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)
