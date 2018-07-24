@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-
-from datetime import datetime
+from django.utils import timezone
 
 from .models import Patient, PatientEntry
 from .util import (get_rp_dict, view_all_context,
@@ -94,10 +93,10 @@ def form(request):
 # API VIEWS
 
 @csrf_exempt
-def rp_event(request):
+def rp_newpatiententry(request):
     """
         RapidPro should use the following url
-        /event?secret=momkhulu
+        /rpnewpatiententry?secret=momkhulu
 
     """
     # Takes in the information from Rapid Pro
@@ -113,7 +112,7 @@ def rp_event(request):
 
 
 @csrf_exempt
-def patientexists(request):
+def rp_patientexists(request):
     """
         Returns 200 if Patient exists and 400 if Patient Does Not Exist
     """
@@ -127,12 +126,12 @@ def patientexists(request):
 
 
 @csrf_exempt
-def entrychanges(request):
+def rp_entrychanges(request):
     status_code = 405
     if request.method == "POST":
         changes_dict = get_rp_dict(request.POST, context="entrychanges")
         if save_model_changes(changes_dict):
-            status_code = 201
+            status_code = 200
             send_consumers_table()
         else:
             status_code = 400
@@ -140,7 +139,7 @@ def entrychanges(request):
 
 
 @csrf_exempt
-def entrycompleted(request):
+def rp_entrydelivered(request):
     status_code = 405
     if request.method == "POST":
         try:
@@ -149,7 +148,7 @@ def entrycompleted(request):
             )
         except PatientEntry.DoesNotExist:
             return HttpResponse(status=404)
-        patiententry.completion_time = datetime.now()
+        patiententry.delivery_time = timezone.now()
         patiententry.save()
         status_code = 200
         send_consumers_table()
