@@ -2,6 +2,7 @@ from django.test import Client
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.http import QueryDict
+from django.utils import timezone
 
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
@@ -9,6 +10,8 @@ from .util import (view_all_context, save_model, save_model_changes,
                    get_rp_dict)
 
 import urllib.parse as parse
+from datetime import timedelta
+
 # View Tests
 
 SAMPLE_RP_POST_DATA =\
@@ -625,8 +628,9 @@ class RPEntryDeliveredTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Test that the delivery time has been updated
-        self.assertIsNotNone(
-            PatientEntry.objects.get(patient_id="HLFSH").delivery_time
+        self.assertTrue(
+            PatientEntry.objects.get(patient_id="HLFSH").delivery_time -
+            timezone.now() < timedelta(seconds=20)
         )
 
     def test_delivery_of_patient_who_does_not_exist(self):
