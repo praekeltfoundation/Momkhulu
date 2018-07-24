@@ -4,6 +4,7 @@ from .base import env
 
 ALLOWED_HOSTS = env.str("ALLOWED_HOSTS", "").split(",")
 
+SECRET_KEY = env("SECRET_KEY")
 
 DATABASES = {
     "default": env.db(

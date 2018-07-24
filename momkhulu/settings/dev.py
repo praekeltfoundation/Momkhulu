@@ -6,6 +6,8 @@ import os
 
 DEBUG = True
 
+SECRET_KEY = env("SECRET_KEY", "asimplesecretkeyfordev")
+
 DATABASES = {
     'default': env.db(
         "DATABASE_URL",
