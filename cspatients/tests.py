@@ -534,7 +534,7 @@ class RPPatientExistsTest(TestCase):
             patient_id=patient
         )
 
-    def test_finds_existing_patient(self):
+    def test_returns_200_for_existing_patient(self):
 
         response = self.client.post(
             "/cspatients/api/rppatientexists",
@@ -543,7 +543,7 @@ class RPPatientExistsTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_does_not_find_not_existing_patient(self):
+    def test_returns_404_for_non_existent_patient(self):
 
         response = self.client.post(
             "/cspatients/api/rppatientexists",
