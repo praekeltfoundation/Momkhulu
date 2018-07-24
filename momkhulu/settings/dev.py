@@ -1,16 +1,16 @@
 from .base import * # noqa
 from .base import env
+from .base import BASE_DIR
 
 import os
-import environ
 
 DEBUG = True
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': env.db(
+        "DATABASE_URL",
+        default="sqlite3://{}".format(os.path.join(BASE_DIR, "db.sqlite3"))
+    )
 }
 
 ENV_HOSTS = [host for host in env.str("ALLOWED_HOSTS", "").split(",") if host]
