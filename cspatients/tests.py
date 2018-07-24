@@ -132,7 +132,7 @@ class LoginTest(TestCase):
         # Must redirect to the root of the cspatients app
         self.assertRedirects(get_response_logged, "/cspatients/")
 
-    def test_good_login(self):
+    def test_login_with_right_credentials(self):
         """
             Test the posting credintials to login
         """
@@ -146,7 +146,7 @@ class LoginTest(TestCase):
         # The login should redirect to the root of the cspatients app
         self.assertRedirects(response, "/cspatients/")
 
-    def test_bad_login(self):
+    def test_login_with_wrong_credentials(self):
 
         """
             Test trying to login in with the wrong details.
@@ -217,7 +217,7 @@ class FormTest(TestCase):
             "name": "Lisa Smith",
         }
 
-    def test_get_method_not_logged_in(self):
+    def test_get_method_when_not_logged_in(self):
         """
             Test GET method to the form view.
             Render template and return 200.
@@ -234,7 +234,7 @@ class FormTest(TestCase):
             template_name="cspatients/form.html"
             )
 
-    def test_get_method_logged_in(self):
+    def test_get_method_when_logged_in(self):
         """
             Test the GET method when logged in. Must render the form template.
         """
@@ -245,7 +245,7 @@ class FormTest(TestCase):
             response=response, template_name="cspatients/form.html"
             )
 
-    def test_sufficient_post_method(self):
+    def test_post_method_with_sufficient_data(self):
         """
             Test the POST method when posted the right information.
         """
@@ -266,7 +266,7 @@ class FormTest(TestCase):
             template_name="cspatients/form.html"
             )
 
-    def test_insufficient_post_method(self):
+    def test_post_method_with_insufficient_data(self):
         """
             Test the POST method when given insufficient information
             to save.
@@ -421,7 +421,7 @@ class SaveModelChangesTest(TestCase):
             "Jane Moe"
         )
 
-    def test_wrong_patient_id_bad_dict(self):
+    def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
         changes_dict = {
             "patient_id": "YXXXX",
             "name": "Jane Moe",
@@ -430,7 +430,7 @@ class SaveModelChangesTest(TestCase):
         # Returns none on bad incorrect patient_id
         self.assertIsNone(save_model_changes(changes_dict))
 
-    def test_right_patient_id_bad_dict(self):
+    def test_does_not_make_changes_when_dict_has_wrong_fields(self):
         changes_dict = {
             "patient_id": "XXXXX",
             "names": "Janet Moe",
@@ -576,7 +576,7 @@ class RPEntryChangesTest(TestCase):
             patient_id=patient
         )
 
-    def test_good_change_name(self):
+    def test_changes_name_for_existing_patient(self):
 
         response = self.client.post(
             "/cspatients/api/rpentrychanges",
