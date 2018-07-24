@@ -5,7 +5,8 @@ import environ
 
 DEBUG = True
 
-BASE_DIR = environ.Path(__file__) - 2
+root = environ.Path(__file__) - 2
+BASE_DIR = root()
 
 DATABASES = {
     'default': {
