@@ -96,7 +96,7 @@ def form(request):
 def rp_newpatiententry(request):
     """
         RapidPro should use the following url
-        /rpenewpatiententry?secret=momkhulu
+        /rpnewpatiententry?secret=momkhulu
 
     """
     # Takes in the information from Rapid Pro
