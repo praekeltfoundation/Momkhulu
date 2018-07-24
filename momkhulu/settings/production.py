@@ -3,7 +3,8 @@ import environ
 
 DEBUG = False
 
-BASE_DIR = environ.Path(__file__) - 2
+root = environ.Path(__file__) - 2
+BASE_DIR = root()
 
 # PostGres db Setup
 
