@@ -1,11 +1,10 @@
 from .base import * # noqa
-import environ
-
-root = environ.Path(__file__) - 2
-BASE_DIR = root()
+from .base import env
 
 # PostGres db Setup
 
 DATABASES = {
 
 }
+
+ALLOWED_HOSTS = env.str("ALLOWED_HOSTS").split(",")
