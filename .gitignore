@@ -79,3 +79,4 @@ rapidpro_raw.txt
 db.sqlite3
 momkhulu/settings.py
 sample_rp_post_data.txt
+.env
