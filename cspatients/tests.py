@@ -11,11 +11,6 @@ from .util import (view_all_context, save_model, save_model_changes,
 import urllib.parse as parse
 # View Tests
 
-
-def delete_whole_table():
-    PatientEntry.objects.all().delete()
-
-
 SAMPLE_RP_POST_DATA =\
     {
         'values': [
@@ -320,7 +315,6 @@ class ViewTest(TestCase):
 class ViewAllContextTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         self.patient_one_data = {
             "name": "Jane Doe",
             "patient_id": "XXXXX",
@@ -335,11 +329,9 @@ class ViewAllContextTest(TestCase):
         }
 
     def test_context_when_no_patients(self):
-        delete_whole_table()
         self.assertFalse(view_all_context())
 
     def test_context_when_patiententrys(self):
-        delete_whole_table()
         patient_one = PatientSerializer(data=self.patient_one_data)
         patiententry_one = PatientEntrySerializer(data=self.patient_one_data)
         if patient_one.is_valid():
@@ -367,7 +359,6 @@ class ViewAllContextTest(TestCase):
 class SaveModelTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         self.patient_one_data = {
             "name": "Jane Doe",
             "patient_id": "XXXXX",
@@ -402,7 +393,6 @@ class SaveModelTest(TestCase):
 class SaveModelChangesTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         Patient.objects.create(
             name="Jane Doe",
             patient_id="XXXXX",
@@ -513,9 +503,8 @@ class RPEventTest(TestCase):
 
     def test_rpevent_saves_minimum_data_correctly(self):
 
-        delete_whole_table()
         response = self.client.post(
-            "/cspatients/api/rpneepatiententry?secret=momkhulu",
+            "/cspatients/api/rpnewpatiententry?secret=momkhulu",
             self.data,
         )
         # Assert a correct response of 201
@@ -531,7 +520,6 @@ class RPEventTest(TestCase):
 class RPPatientExistsTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         self.client = Client()
         self.good_data = SAMPLE_RP_POST_DATA
         self.bad_data = SAMPLE_RP_POST_DATA_2
@@ -571,7 +559,6 @@ class RPEntryChangesTest(TestCase):
         Test the rp_entrychanges endpoint.
     """
     def setUp(self):
-        delete_whole_table()
         self.client = Client()
         self.good_data = SAMPLE_RP_POST_DATA
         self.bad_data = SAMPLE_RP_POST_DATA_2
