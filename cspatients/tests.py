@@ -473,8 +473,8 @@ class GetRPDictTest(TestCase):
 
         # Test that it gets the appropriate keys and values
 
-        self.assertTrue(event_dict.__contains__("name"))
-        self.assertTrue(event_dict.__contains__("patient_id"))
+        self.assertTrue("name" in event_dict)
+        self.assertTrue("patient_id" in event_dict)
 
         # Test that it saves the right methods
 
