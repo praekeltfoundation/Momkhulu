@@ -1,16 +1,104 @@
 from django.test import Client
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.http import QueryDict
+from django.utils import timezone
 
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import (view_all_context, save_model, save_model_changes)
+from .util import (view_all_context, save_model, save_model_changes,
+                   get_rp_dict)
+
+import urllib.parse as parse
+from datetime import timedelta
 
 # View Tests
 
+SAMPLE_RP_POST_DATA =\
+    {
+        'values': [
+            """[
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "Jane Doe",
+                    "label": "name"
+                },
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "HLFSH",
+                    "label": "patient_id"
+                },
+                {
+                    "category": {
+                        "base": "Success"
+                        },
+                    "value": "",
+                    "label": "exists"
+                },
+                {
+                    "category":{
+                        "base": "name"
+                        },
+                    "value": "1",
+                    "label": "change_category"
+                },
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "Nyasha",
+                    "label": "new_value"
+                }
+            ]"""
+        ]
+    }
 
-def delete_whole_table():
-    PatientEntry.objects.all().delete()
+SAMPLE_RP_POST_DATA_2 =\
+    {
+        'values': [
+            """[
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "Jane Moe",
+                    "label": "name"
+                },
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "XXXXX",
+                    "label": "patient_id"
+                },
+                {
+                    "category": {
+                        "base": "Success"
+                        },
+                    "value": "",
+                    "label": "exists"
+                },
+                {
+                    "category":{
+                        "base": "name"
+                        },
+                    "value": "1",
+                    "label": "change_category"
+                },
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "Nyasha",
+                    "label": "new_value"
+                }
+            ]"""
+        ]
+    }
 
 
 class LoginTest(TestCase):
@@ -44,7 +132,7 @@ class LoginTest(TestCase):
         # Must redirect to the root of the cspatients app
         self.assertRedirects(get_response_logged, "/cspatients/")
 
-    def test_good_login(self):
+    def test_login_with_right_credentials(self):
         """
             Test the posting credintials to login
         """
@@ -58,7 +146,7 @@ class LoginTest(TestCase):
         # The login should redirect to the root of the cspatients app
         self.assertRedirects(response, "/cspatients/")
 
-    def test_bad_login(self):
+    def test_login_with_wrong_credentials(self):
 
         """
             Test trying to login in with the wrong details.
@@ -129,7 +217,7 @@ class FormTest(TestCase):
             "name": "Lisa Smith",
         }
 
-    def test_get_method_not_logged_in(self):
+    def test_get_method_when_not_logged_in(self):
         """
             Test GET method to the form view.
             Render template and return 200.
@@ -146,7 +234,7 @@ class FormTest(TestCase):
             template_name="cspatients/form.html"
             )
 
-    def test_get_method_logged_in(self):
+    def test_get_method_when_logged_in(self):
         """
             Test the GET method when logged in. Must render the form template.
         """
@@ -157,7 +245,7 @@ class FormTest(TestCase):
             response=response, template_name="cspatients/form.html"
             )
 
-    def test_sufficient_post_method(self):
+    def test_post_method_with_sufficient_data(self):
         """
             Test the POST method when posted the right information.
         """
@@ -178,7 +266,7 @@ class FormTest(TestCase):
             template_name="cspatients/form.html"
             )
 
-    def test_insufficient_post_method(self):
+    def test_post_method_with_insufficient_data(self):
         """
             Test the POST method when given insufficient information
             to save.
@@ -230,7 +318,6 @@ class ViewTest(TestCase):
 class ViewAllContextTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         self.patient_one_data = {
             "name": "Jane Doe",
             "patient_id": "XXXXX",
@@ -245,11 +332,9 @@ class ViewAllContextTest(TestCase):
         }
 
     def test_context_when_no_patients(self):
-        delete_whole_table()
         self.assertFalse(view_all_context())
 
     def test_context_when_patiententrys(self):
-        delete_whole_table()
         patient_one = PatientSerializer(data=self.patient_one_data)
         patiententry_one = PatientEntrySerializer(data=self.patient_one_data)
         if patient_one.is_valid():
@@ -277,7 +362,6 @@ class ViewAllContextTest(TestCase):
 class SaveModelTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         self.patient_one_data = {
             "name": "Jane Doe",
             "patient_id": "XXXXX",
@@ -312,7 +396,6 @@ class SaveModelTest(TestCase):
 class SaveModelChangesTest(TestCase):
 
     def setUp(self):
-        delete_whole_table()
         Patient.objects.create(
             name="Jane Doe",
             patient_id="XXXXX",
@@ -338,7 +421,7 @@ class SaveModelChangesTest(TestCase):
             "Jane Moe"
         )
 
-    def test_wrong_patient_id_bad_dict(self):
+    def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
         changes_dict = {
             "patient_id": "YXXXX",
             "name": "Jane Moe",
@@ -347,7 +430,7 @@ class SaveModelChangesTest(TestCase):
         # Returns none on bad incorrect patient_id
         self.assertIsNone(save_model_changes(changes_dict))
 
-    def test_right_patient_id_bad_dict(self):
+    def test_does_not_make_changes_when_dict_has_wrong_fields(self):
         changes_dict = {
             "patient_id": "XXXXX",
             "names": "Janet Moe",
@@ -356,3 +439,210 @@ class SaveModelChangesTest(TestCase):
 
         patiententry = PatientEntry.objects.get(patient_id="XXXXX")
         self.assertEqual(patiententry, save_model_changes(changes_dict))
+
+
+class GetRPDictTest(TestCase):
+
+    """
+        Test the get_rp_dict method
+        Takes in request.POST method
+    """
+
+    def setUp(self):
+        self.client = Client()
+        self.post_query = parse.urlencode(SAMPLE_RP_POST_DATA, doseq=True)
+
+    def test_get_rp_event_dict(self):
+        """
+            The Method should be able to extract the name, and patient ID,
+            from the Query dict into a dictionary with just name and
+            patient_id
+        """
+        # Simulate posting the query string and getting a QueryDict
+        response_dict = QueryDict(query_string=self.post_query)
+
+        # Extract the dictionary using the get_rp_dict method
+        event_dict = get_rp_dict(response_dict)
+
+        # Test that it gets the appropriate keys and values
+
+        self.assertTrue("name" in event_dict)
+        self.assertTrue("patient_id" in event_dict)
+
+        # Test that it saves the right methods
+
+        self.assertTrue(event_dict["name"] == "Jane Doe")
+        self.assertTrue(event_dict["patient_id"] == "HLFSH")
+
+    def test_get_entrychanges_dict(self):
+        """
+            The Method when passed a context of entrychanges, must be able
+            to pick up the change category and the new value
+        """
+        # Simulate posting the query string and getting a QueryDict
+        response_dict = QueryDict(query_string=self.post_query)
+
+        # Extract the dictionary using the get_rp_dict method and
+        # entrychanges context
+        changes_dict = get_rp_dict(response_dict, context="entrychanges")
+
+        # Test that the change category and values are stored well
+        self.assertTrue(changes_dict.__contains__("name"))
+        self.assertTrue(changes_dict['name'] == "Nyasha")
+
+        # Test that the patient ID is kept well
+        self.assertTrue(changes_dict.__contains__("patient_id"))
+        self.assertTrue(changes_dict["patient_id"] == "HLFSH")
+
+
+# API Tests
+
+
+class RPEventTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.data = SAMPLE_RP_POST_DATA
+
+    def test_rpevent_saves_minimum_data_correctly(self):
+
+        response = self.client.post(
+            "/cspatients/api/rpnewpatiententry?secret=momkhulu",
+            self.data,
+        )
+        # Assert a correct response of 201
+        self.assertEqual(response.status_code, 201)
+
+        # Check that the Patient, PatientEntry been correctly saved
+        self.assertTrue(
+            Patient.objects.get(patient_id="HLFSH").name == "Jane Doe"
+            )
+        self.assertTrue(PatientEntry.objects.get(patient_id="HLFSH"))
+
+
+class RPPatientExistsTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.existing_patient_data = SAMPLE_RP_POST_DATA
+        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
+
+        patient = Patient.objects.create(
+            name="Jane Doe",
+            patient_id="HLFSH",
+            age=20
+        )
+
+        PatientEntry.objects.create(
+            patient_id=patient
+        )
+
+    def test_returns_200_for_existing_patient(self):
+
+        response = self.client.post(
+            "/cspatients/api/rppatientexists",
+            self.existing_patient_data
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_returns_404_for_non_existent_patient(self):
+
+        response = self.client.post(
+            "/cspatients/api/rppatientexists",
+            self.nonexisting_patient_data
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+
+class RPEntryChangesTest(TestCase):
+
+    """
+        Test the rp_entrychanges endpoint.
+    """
+    def setUp(self):
+        self.client = Client()
+        self.existing_patient_data = SAMPLE_RP_POST_DATA
+        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
+
+        patient = Patient.objects.create(
+            name="Jane Doe",
+            patient_id="HLFSH",
+            age=20
+        )
+
+        PatientEntry.objects.create(
+            patient_id=patient
+        )
+
+    def test_changes_name_for_existing_patient(self):
+
+        response = self.client.post(
+            "/cspatients/api/rpentrychanges",
+            self.existing_patient_data
+        )
+        # Test the right response code
+        self.assertEqual(response.status_code, 200)
+
+        # Test that that the change has been made
+
+        patient = Patient.objects.get(patient_id="HLFSH")
+        self.assertTrue(patient.name == "Nyasha")
+
+    def test_returns_400_for_update_to_non_existent_patient(self):
+
+        response = self.client.post(
+            "/cspatients/api/rpentrychanges",
+            self.nonexisting_patient_data
+        )
+        # Test the right response code 400
+
+        self.assertEqual(response.status_code, 400)
+
+
+class RPEntryDeliveredTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.existing_patient_data = SAMPLE_RP_POST_DATA
+        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
+
+        patient = Patient.objects.create(
+            name="Jane Doe",
+            patient_id="HLFSH",
+            age=20
+        )
+
+        PatientEntry.objects.create(
+            patient_id=patient
+        )
+
+    def test_patient_who_exists_delivered(self):
+
+        response = self.client.post(
+            "/cspatients/api/rpentrydelivered",
+            self.existing_patient_data
+        )
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 200)
+
+        # Test that the delivery time has been updated
+        self.assertTrue(
+            PatientEntry.objects.get(patient_id="HLFSH").delivery_time -
+            timezone.now() < timedelta(seconds=20)
+        )
+
+    def test_delivery_of_patient_who_does_not_exist(self):
+
+        response = self.client.post(
+            "/cspatients/api/rppatientdelivered",
+            self.nonexisting_patient_data
+        )
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 404)
+
+        # Test that the delivery time has not been updated
+        self.assertEqual(
+            PatientEntry.objects.get(patient_id="HLFSH").delivery_time, None
+        )
