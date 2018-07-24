@@ -602,7 +602,7 @@ class RPEntryDeliveredTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.existing_patient_data= SAMPLE_RP_POST_DATA
+        self.existing_patient_data = SAMPLE_RP_POST_DATA
         self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
         patient = Patient.objects.create(
