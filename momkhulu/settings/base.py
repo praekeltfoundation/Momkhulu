@@ -4,7 +4,6 @@ import environ
 
 root = environ.Path(__file__) - 3
 BASE_DIR = root()
-
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
