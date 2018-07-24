@@ -10,7 +10,7 @@ urlpatterns = [
     path('logout', views.log_out, name="log_out"),
     path('patient/<str:patient_id>', views.patient, name="patient"),
     path(
-        'api/rpneepatiententry',
+        'api/rpnewpatiententry',
         views.rp_newpatiententry,
         name='rp_newpatiententry'
     ),
