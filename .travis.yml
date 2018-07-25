@@ -8,6 +8,7 @@ services:
 install:
   - pip install --upgrade pip
   - pip install -r requirements.txt
+  - pip install coveralls
 script:
   - flake8 momkhulu
   - coverage run --source='.' manage.py test
