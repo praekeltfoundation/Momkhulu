@@ -20,5 +20,3 @@ DATABASES = {
         ),
     )
 }
-
-RAPIDPRO_API_KEY = env.str("RAPIDPRO_API_KEY")
