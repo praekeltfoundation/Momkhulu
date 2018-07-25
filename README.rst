@@ -17,7 +17,7 @@ To set up the environment:
 
 To start up channels redis::
 
-    $ sudo docker run -p 6379:6379 redis:2.8
+    $ sudo docker run -p 6379:6379 -d redis:2.8
 
 Migrate the database::
 
