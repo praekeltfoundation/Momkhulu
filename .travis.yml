@@ -5,8 +5,10 @@ python:
 cache: pip
 services:
   - redis-server
-install:
+before_install:
   - pip install --upgrade pip
+install:
+  - pip install -e .
   - pip install -r requirements.txt
   - pip install coveralls
 script:
