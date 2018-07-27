@@ -29,11 +29,9 @@
             var screenWidth = document.body.clientWidth;
             console.log(screenWidth)
             if (screenWidth < 576){
-                $("#delivered-table").addClass("table-sm");
-                $("#decision-table").addClass("table-sm");
+                $(".patients-table").addClass("table-sm");
             }else{
-                $("#delivered-table").removeClass("table-sm");
-                $("#decision-table").removeClass("table-sm");
+                $(".patients-table").removeClass("table-sm");
             };
         };
 
