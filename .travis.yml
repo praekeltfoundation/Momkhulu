@@ -16,3 +16,47 @@ script:
   - coverage run --source='.' manage.py test
 after_success:
   - coveralls
+jobs:
+  include:
+    - stage: test
+      python: "3.6"
+      # Clear unused build steps
+      services: []
+      deploy: []
+      after_success: []
+    - stage: docker
+      python: "3.6"
+      sudo: required
+      dist: trusty
+      services: [docker]
+      env:
+        - IMAGE_NAME=praekeltfoundation/momkhulu
+        - REGISTRY_USER=praekeltorgdeploy
+        - secure: "VsyFoTHP8LFVBo1fioj+cfLuUcnULcwgTXzk7o8WMiy/SE0if9XatcodTc7CUbqHLSsPXeS+C6eBKqd6ckjsl1vVShhHN8Psv+mkPykcfvReXD3JHBsW+SmDOPRutSKpnp7K3xtUDMEpNZZmFB4lOVhpIPL3pEjC/S8aaJtnKXMZ9f9uYwbD/Xakg9WGYQYzWiebdq4B2tFgE0JgcNJ9Ga2QyGTx7Olb8Ql0egKS4Yicn6RNSFwrXcHMSV+SZw+uN7Wrk0ucNXR2jHG9Ks7h+NetT9d4TQ6UUxMz6uZrEu1TLQmSNrDr62wPLS5I2GZizwLv73xKU7RFCkXZm7pW4wtU3Pp6G+tPkrgpUi5C3NmRxOuRN765onl8Y9aSaeft4MOXCo1NYVsvUexMGRUNyFlucsC6LqpFfZi1Dpr4SbWDiDwHBiMxDhy6rGDthkuKcJ5gsE9yIFRIsKleFPym752aJ/045EGLCGG4B4ojmNjP7pmdHNxiqjlzqHu03730953w12dbT2r177u5cobwcqStuJCClFCw5NmuoK5gYdQTThaWWT6a00/fiAhHH1UNYAdhv4uamGUySiBPjpFKDXOr7j/n/wyfSLXBzhaIpXqOwz7u26tsMgmOaNCr1go5/iLmTUiaTu2w8fDXfun4vhoPyTh/bA+/S7JVVFwmGOg=" # yamllint disable-line
+
+      # Update Docker: we want some new docker build features
+      install:
+        - sudo apt-get update
+        - sudo apt-get install -y -o Dpkg::Options::="--force-confold" docker-ce
+
+      before_script:
+        - docker pull "$IMAGE_NAME" || true
+      script:
+        - docker build --pull --tag "$IMAGE_NAME" .
+
+      before_deploy:
+        - pip install docker-ci-deploy==0.3.0
+        - echo -n $REGISTRY_PASS | docker login -u "$REGISTRY_USER" --password-stdin # yamllint disable-line
+      deploy:
+        - provider: script
+          script: dcd --version "$(git rev-parse --short HEAD)" --version-latest "$IMAGE_NAME" # yamllint disable-line
+          on:
+            branch: develop
+        - provider: script
+          script: dcd --tag "$TRAVIS_TAG" -- "$IMAGE_NAME"
+          on:
+            tags: true
+
+      # Built steps inherited from the default stage that we don't want
+      before_install: ignore
+      after_success: []
