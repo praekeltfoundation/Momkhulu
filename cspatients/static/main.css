@@ -68,11 +68,11 @@ td{
 }
 
 @media (max-width: 768px){
-    #decision-table{
+    .patients-table{
         font-size: 0.6rem;
     }
 
-    #delivered-table{
+    .patients-table{
         font-size: 0.6rem
     }
 
