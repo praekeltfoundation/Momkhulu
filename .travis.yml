@@ -21,7 +21,8 @@ jobs:
     - stage: test
       python: "3.6"
       # Clear unused build steps
-      services: []
+      services:
+        - redis-server
       deploy: []
       after_success: []
     - stage: docker
