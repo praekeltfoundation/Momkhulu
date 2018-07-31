@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.utils import timezone
 
-from .models import Patient, PatientEntry
+from .models import PatientEntry
 from .util import (get_rp_dict, view_all_context,
                    send_consumers_table, save_model_changes, save_model)
 
@@ -59,17 +59,19 @@ def view(request):
 @login_required(login_url="/cspatients/login")
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
+    status_code = 200
     try:
         patiententry = PatientEntry.objects.get(patient_id=patient_id)
-        context = {
-            "patiententry": patiententry,
-        }
-        status_code = 200
-    except Patient.DoesNotExist:
-        context = {
-            "patiententry": False,
-        }
-        status_code = 400
+    except PatientEntry.MultipleObjectsReturned:
+        patiententry = PatientEntry.objects.order_by('-decision_time')[0]
+    except PatientEntry.DoesNotExist:
+        patiententry = False
+        status_code = 404
+
+    context = {
+        "patiententry": patiententry,
+    }
+
     return HttpResponse(template.render(context), status=status_code)
 
 
