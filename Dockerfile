@@ -6,5 +6,5 @@ COPY nginx.conf /etc/nginx/conf.d/django.conf
 RUN pip install -e .
 
 ENV DJANGO_SETTINGS_MODULE "momkhulu.settings.production"
-RUN ./manage.py collectstatic --noinput
+RUN SECRET_KEY=placeholder ALLOWED_HOSTS=placeholder python manage.py collectstatic --noinput
 CMD ["momkhulu.wsgi:application"]
