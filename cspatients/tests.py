@@ -347,7 +347,9 @@ class PatientViewTest(TestCase):
             decision_time=timezone.now()
         )
 
-        response = self.client.get("/cspatients/patient/XXXXXX")
+        response = self.client.get(
+            "/cspatients/patient/{}".format(jane.patient_id)
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
             response=response,
@@ -376,7 +378,9 @@ class PatientViewTest(TestCase):
             decision_time=timezone.now(),
             indication="Second Operation"
         )
-        response = self.client.get("/cspatients/patient/XXXXXX")
+        response = self.client.get(
+            "/cspatients/patient/{}".format(jane.patient_id)
+        )
         self.assertEqual(response.status_code, 200)
         self.assertInHTML(
             "Second Operation",
