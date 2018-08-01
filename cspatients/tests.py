@@ -330,7 +330,7 @@ class PatientViewTest(TestCase):
             template_name="cspatients/patient.html"
         )
         self.assertInHTML(
-            "Sorry. No patient such patient was found.",
+            "Sorry. No such patient was found.",
             str(response.content)
         )
 
