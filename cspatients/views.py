@@ -59,19 +59,17 @@ def view(request):
 @login_required(login_url="/cspatients/login")
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
-    status_code = 200
-    try:
-        patiententry = PatientEntry.objects.get(patient_id=patient_id)
-    except PatientEntry.MultipleObjectsReturned:
-        patiententry = PatientEntry.objects.order_by('-decision_time')[0]
-    except PatientEntry.DoesNotExist:
-        patiententry = False
-        status_code = 404
+    patiententry = PatientEntry.objects.filter(
+        patient_id=patient_id
+        ).order_by('-decision_time').first()
 
     context = {
         "patiententry": patiententry,
     }
-
+    if patiententry:
+        status_code = 200
+    else:
+        status_code = 404
     return HttpResponse(template.render(context), status=status_code)
 
 
