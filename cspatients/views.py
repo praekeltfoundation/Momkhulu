@@ -59,9 +59,8 @@ def view(request):
 @login_required(login_url="/cspatients/login")
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
-    patiententry = PatientEntry.objects.filter(
-        patient_id=patient_id
-        ).order_by('-decision_time').first()
+    patiententry = (PatientEntry.objects.filter(patient_id=patient_id).
+                    order_by('-decision_time').first())
 
     context = {
         "patiententry": patiententry,
