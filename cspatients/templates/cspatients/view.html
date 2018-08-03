@@ -17,9 +17,9 @@
         window.location.host + "/cspatients/patient/" + patient_id;
     };
 
-    function sleep(){
-        ;
-    }
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    };
 
     $( function(){
 
@@ -46,11 +46,11 @@
         viewSocket.onopen = function (){
             console.log("Connected to the viewSocket")
         }
-        // If the socket closes, the page will sleep for 20 seconds and then refresh
-        viewSocket.onclose =  function(e){
-            sleep();
-            window.location.href = "http://" + window.location.host + "/cspatients/view";
-        }
+        // If the socket closes, the page will sleep for 30 seconds and then refresh
+        viewSocket.onclose =  async function(e){
+            await sleep(30000);
+            window.location.reload(true);
+        };
 
         viewSocket.onmessage = function(e){
             console.log("The table has been received.");
