@@ -58,14 +58,15 @@ WSGI_APPLICATION = 'momkhulu.wsgi.application'
 
 ASGI_APPLICATION = 'momkhulu.routing.application'
 
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://{}:{}'.format(
+    env.str("CHANNEL_LAYERS_HOST", "127.0.0.1"),
+    env.int("CHANNEL_LAYERS_PORT", 6379)
+))
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [(
-                env.str("CHANNEL_LAYERS_HOST", "127.0.0.1"),
-                env.int("CHANNEL_LAYERS_PORT", 6379)
-                )],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
         },
     },
 }
