@@ -8,15 +8,6 @@ SECRET_KEY = env("SECRET_KEY")
 
 DATABASES = {
     "default": env.db(
-        var="DATABASE_URL",
-        default="postgres://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".format(
-            **{
-                "USER": env.str("DB_USER", "momkhulu"),
-                "PASSWORD": env.str("DB_PASSWORD", "momkhulu"),
-                "HOST": env.str("DB_HOST", "localhost"),
-                "PORT": env.str("DB_PORT", ""),
-                "NAME": env.str("DB_NAME", "momkhulu"),
-            }
-        ),
+        var="DATABASE_URL"
     )
 }
