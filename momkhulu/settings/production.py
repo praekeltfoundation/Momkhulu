@@ -8,7 +8,6 @@ SECRET_KEY = env("SECRET_KEY")
 
 DATABASES = {
     "default": env.db(
-        var="DATABASE_URL",
         default="postgres://momkhulu:momkhulu@localhost:5432/momkhulu"
     )
 }
