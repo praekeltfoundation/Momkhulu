@@ -8,7 +8,7 @@ used with RapidPro. Uses WebSockets for real-time page updates.
 Getting started on local
 --------------------------
 
-To set up the environment:
+To set up the environment::
 
     $ virtualenv env
     $ . env/bin/activate
