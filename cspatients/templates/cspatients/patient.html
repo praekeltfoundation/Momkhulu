@@ -15,63 +15,63 @@
             </thead>
             <tbody>
                 <tr>
-                    <th scope="row">Name:</td>
+                    <th scope="row">Name:</th>
                     <td>{{ patiententry.patient_id.name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Hospital ID:</td>
+                    <th scope="row">Hospital ID:</th>
                     <td>{{ patiententry.patient_id.patient_id }}</td> 
                 </tr>
                 <tr>
-                    <th scope="row">Urgency:</td>
+                    <th scope="row">Urgency:</th>
                     <td>{{ patiententry.urgency }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Age:</td>
+                    <th scope="row">Age:</th>
                     <td>{{ patiententry.patient_id.age }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Operation:</td>
+                    <th scope="row">Operation:</th>
                     <td>{{ patiententry.operation }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Location:</td>
+                    <th scope="row">Location:</th>
                     <td>{{ patiententry.location }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Indication:</td>
+                    <th scope="row">Indication:</th>
                     <td>{{ patiententry.indication }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">GravPar:</td>
+                    <th scope="row">GravPar:</th>
                     <td>{{ patiententry.gravpar }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Comorbidities:</td>
+                    <th scope="row">Comorbidities:</th>
                     <td>{{ patiententry.comorbid|default_if_none:"-" }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Responsible Clinician:</td>
+                    <th scope="row">Responsible Clinician:</th>
                     <td>{{ patiententry.clinician|default_if_none:"-"}}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Decision Time:</td>
+                    <th scope="row">Decision Time:</th>
                     <td>{{ patiententry.decision_time|time:"H:i" }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Outstanding Info:</td>
+                    <th scope="row">Outstanding Info:</th>
                     <td>{{ patiententry.outstanding_data|default_if_none:"-" }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Delivery Time:</td>
+                    <th scope="row">Delivery Time:</th>
                     <td>{{ patiententry.delivery_time|time:"H:i" }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">APGAR 1:</td>
+                    <th scope="row">APGAR 1:</th>
                     <td>{{ patiententry.apgar_1|default_if_none:"-" }}</td>
                 </tr>
                 <tr>
-                    <th scope="row">APGAR 5:</td>
+                    <th scope="row">APGAR 5:</th>
                     <td>{{ patiententry.apgar_5|default_if_none:"-" }}</td>
                 </tr>               
             </tbody>
@@ -79,7 +79,7 @@
         </div> 
         {% else %}
         <div>
-            <p>Sorry. No patient such patient was found.</p>
+            <p>Sorry. No such patient was found.</p>
         </div>
         {% endif %}
     </div>

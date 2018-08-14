@@ -312,6 +312,81 @@ class ViewTest(TestCase):
             template_name="cspatients/view.html"
         )
 
+
+class PatientViewTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="Itai"
+        )
+        self.client.force_login(self.user)
+
+    def test_view_non_existing_patient_returns_404(self):
+        response = self.client.get("/cspatients/patient/SHFLFLF")
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(
+            response=response,
+            template_name="cspatients/patient.html"
+        )
+        self.assertInHTML(
+            "Sorry. No such patient was found.",
+            str(response.content)
+        )
+
+    def test_view_one_existing_patiententry(self):
+        jane = Patient.objects.create(
+            name="Jane",
+            patient_id="XXXXXX",
+            age=10
+        )
+
+        PatientEntry.objects.create(
+            patient_id=jane,
+            urgency=2,
+            decision_time=timezone.now()
+        )
+
+        response = self.client.get(
+            "/cspatients/patient/{}".format(jane.patient_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response=response,
+            template_name="cspatients/patient.html"
+        )
+        self.assertInHTML(
+            "Jane",
+            str(response.content)
+        )
+
+    def test_view_two_existing_same_patiententries(self):
+        jane = Patient.objects.create(
+            name="Jane",
+            patient_id="XXXXXX",
+            age=10
+        )
+        PatientEntry.objects.create(
+            patient_id=jane,
+            urgency=2,
+            decision_time=timezone.now(),
+            indication="First Operation"
+        )
+        PatientEntry.objects.create(
+            patient_id=jane,
+            urgency=3,
+            decision_time=timezone.now(),
+            indication="Second Operation"
+        )
+        response = self.client.get(
+            "/cspatients/patient/{}".format(jane.patient_id)
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertInHTML(
+            "Second Operation",
+            str(response.content)
+        )
+
 # Util Tests
 
 
