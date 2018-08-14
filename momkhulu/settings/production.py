@@ -8,6 +8,6 @@ SECRET_KEY = env("SECRET_KEY")
 
 DATABASES = {
     "default": env.db(
-        default="postgres://momkhulu:momkhulu@localhost:5432/momkhulu"
+        default="postgres://postgres@db:5432/postgres"
     )
 }
