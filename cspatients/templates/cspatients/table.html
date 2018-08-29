@@ -17,15 +17,15 @@
         {% for patiententry in patiententrys %}
         {% if not patiententry.completion_time %}
         <tr class="urgency-{{patiententry.urgency}} info-row">
-            <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
-            <td>{{ patiententry.patient_id.name }}</td>
-            <td>{{ patiententry.patient_id.age }}</td>
-            <td>{{ patiententry.operation }}</td>
-            <td>{{ patiententry.gravpar }}</td>
-            <td>{{ patiententry.location }}</td>
-            <td>{{ patiententry.indication }}</td>
-            <td>{{ patiententry.decision_time|time:"H:i" }}</td>
-            <td>{{ patiententry.clinician }}</td>
+            <td class="patient-id">{{patiententry.patient_id.patient_id | default_if_none:"-"}}</td>
+            <td>{{ patiententry.patient_id.name | default_if_none:"-" }}</td>
+            <td>{{ patiententry.patient_id.age | default_if_none:"-" }}</td>
+            <td>{{ patiententry.operation | default_if_none:"-" }}</td>
+            <td>{{ patiententry.gravpar | default_if_none:"-" }}</td>
+            <td>{{ patiententry.location | default_if_none:"-" }}</td>
+            <td>{{ patiententry.indication | default_if_none:"-" }}</td>
+            <td>{{ patiententry.decision_time | time:"H:i"|default_if_none:"-" }}</td>
+            <td>{{ patiententry.clinician | default_if_none:"-" }}</td>
         </tr>
         {% endif %}                                
         {% endfor %}
@@ -58,16 +58,16 @@
         {% for patiententry in patiententrys %}
         {% if patiententry.completion_time %}
         <tr class="info-row row-completed">
-            <td class="patient-id">{{patiententry.patient_id.patient_id}}</td>
-            <td>{{ patiententry.patient_id.name }}</td>
-            <td>{{ patiententry.patient_id.age }}</td>
-            <td>{{ patiententry.operation }}</td>
-            <td>{{ patiententry.gravpar }}</td>
-            <td>{{ patiententry.location }}</td>
-            <td>{{ patiententry.indication }}</td>
-            <td>{{ patiententry.decision_time|time:"H:i" }}</td>
-            <td>{{ patiententry.completion_time|time:"H:i" }}</td>
-            <td>{{ patiententry.clinician }}</td>
+            <td class="patient-id">{{patiententry.patient_id.patient_id | default_if_none:"-"}}</td>
+            <td>{{ patiententry.patient_id.name | default_if_none:"-" }}</td>
+            <td>{{ patiententry.patient_id.age | default_if_none:"-" }}</td>
+            <td>{{ patiententry.operation | default_if_none:"-" }}</td>
+            <td>{{ patiententry.gravpar | default_if_none:"-" }}</td>
+            <td>{{ patiententry.location | default_if_none:"-" }}</td>
+            <td>{{ patiententry.indication | default_if_none:"-" }}</td>
+            <td>{{ patiententry.decision_time | time:"H:i" | default_if_none:"-" }}</td>
+            <td>{{ patiententry.completion_time | time:"H:i" | default_if_none:"-" }}</td>
+            <td>{{ patiententry.clinician | default_if_none:"-" }}</td>
         </tr>
         {% endif %}
         {% endfor %}
