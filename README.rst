@@ -12,8 +12,8 @@ To set up the environment::
 
     $ virtualenv env
     $ . env/bin/activate
-    $ pip install -r requirements/dev.txt
-    $ pip install -e
+    $ pip install -r requirements.txt
+    $ pip install -e .
 
 To start up channels redis::
 
