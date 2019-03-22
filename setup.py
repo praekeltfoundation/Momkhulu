@@ -40,7 +40,14 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=get_requirements(),
-    tests_require=get_requirements(),
+    install_requires=[
+        "channels==2.1.7",
+        "channels-redis==2.3.3",
+        "Django>=2.1.7,<2.2",
+        "django-environ": "0.4.5",
+        "djangorestframework": "3.9.2",
+        "environ": "1.0",
+        "simplejson": "3.16.0"
+    ],
     entry_points={},
 )
