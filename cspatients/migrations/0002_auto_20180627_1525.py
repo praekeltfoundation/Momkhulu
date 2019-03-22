@@ -6,30 +6,26 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('cspatients', '0001_initial'),
-    ]
+    dependencies = [("cspatients", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='patient',
-            name='date',
-            field=models.DateField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="patient",
+            name="date",
+            field=models.DateField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='patient',
-            name='parity',
-            field=models.IntegerField(default=0),
+            model_name="patient", name="parity", field=models.IntegerField(default=0)
         ),
         migrations.AlterField(
-            model_name='patient',
-            name='patient_id',
+            model_name="patient",
+            name="patient_id",
             field=models.CharField(max_length=255, unique=True),
         ),
         migrations.AlterField(
-            model_name='patient',
-            name='time',
-            field=models.TimeField(auto_now_add=True),
+            model_name="patient", name="time", field=models.TimeField(auto_now_add=True)
         ),
     ]

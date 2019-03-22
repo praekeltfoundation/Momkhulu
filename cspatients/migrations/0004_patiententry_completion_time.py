@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('cspatients', '0003_auto_20180702_1435'),
-    ]
+    dependencies = [("cspatients", "0003_auto_20180702_1435")]
 
     operations = [
         migrations.AddField(
-            model_name='patiententry',
-            name='completion_time',
+            model_name="patiententry",
+            name="completion_time",
             field=models.DateTimeField(null=True),
-        ),
+        )
     ]

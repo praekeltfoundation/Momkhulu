@@ -7,38 +7,39 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from .models import PatientEntry
-from .util import (get_rp_dict, view_all_context,
-                   send_consumers_table, save_model_changes, save_model)
+from .util import (
+    get_rp_dict,
+    view_all_context,
+    send_consumers_table,
+    save_model_changes,
+    save_model,
+)
 
 
 def log_in(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect("/cspatients/")
-    context = {
-        "try": False,
-    }
+    context = {"try": False}
     status_code = 200
     if request.method == "POST":
-        context['try'] = True
+        context["try"] = True
         user = authenticate(
             request,
-            username=request.POST['username'],
-            password=request.POST['password'],
+            username=request.POST["username"],
+            password=request.POST["password"],
         )
         if user is not None:
             login(request, user)
-            next = request.GET.get('next', default="/cspatients/")
+            next = request.GET.get("next", default="/cspatients/")
             return HttpResponseRedirect(next)
         else:
             status_code = 401
-    return render(
-        request, 'cspatients/login.html', context, status=status_code
-        )
+    return render(request, "cspatients/login.html", context, status=status_code)
 
 
 @login_required(login_url="/cspatients/login")
 def log_out(request):
-    template = loader.get_template('cspatients/logout.html')
+    template = loader.get_template("cspatients/logout.html")
     logout(request)
     return HttpResponse(template.render())
 
@@ -46,25 +47,21 @@ def log_out(request):
 @login_required(login_url="/cspatients/login")
 def view(request):
 
-    template = loader.get_template('cspatients/view.html')
-    context = {
-        "patiententrys": view_all_context()
-    }
-    return HttpResponse(
-        template.render(context),
-        status=200
-        )
+    template = loader.get_template("cspatients/view.html")
+    context = {"patiententrys": view_all_context()}
+    return HttpResponse(template.render(context), status=200)
 
 
 @login_required(login_url="/cspatients/login")
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
-    patiententry = (PatientEntry.objects.filter(patient_id=patient_id).
-                    order_by('-decision_time').first())
+    patiententry = (
+        PatientEntry.objects.filter(patient_id=patient_id)
+        .order_by("-decision_time")
+        .first()
+    )
 
-    context = {
-        "patiententry": patiententry,
-    }
+    context = {"patiententry": patiententry}
     if patiententry:
         status_code = 200
     else:
@@ -85,11 +82,12 @@ def form(request):
         request,
         "cspatients/form.html",
         context={"status_code": status_code},
-        status=status_code
-        )
+        status=status_code,
+    )
 
 
 # API VIEWS
+
 
 @csrf_exempt
 def rp_newpatiententry(request):
@@ -101,7 +99,7 @@ def rp_newpatiententry(request):
     # Takes in the information from Rapid Pro
     status_code = 405
     if request.method == "POST":
-        if request.GET.get('secret') == "momkhulu":
+        if request.GET.get("secret") == "momkhulu":
             if save_model(get_rp_dict(request.POST)):
                 send_consumers_table()
                 status_code = 201
@@ -116,9 +114,7 @@ def rp_patientexists(request):
         Returns 200 if Patient exists and 400 if Patient Does Not Exist
     """
     try:
-        PatientEntry.objects.get(
-            patient_id=get_rp_dict(request.POST)['patient_id']
-        )
+        PatientEntry.objects.get(patient_id=get_rp_dict(request.POST)["patient_id"])
     except PatientEntry.DoesNotExist:
         return HttpResponse(status=404)
     return HttpResponse(status=200)
@@ -143,7 +139,7 @@ def rp_entrydelivered(request):
     if request.method == "POST":
         try:
             patiententry = PatientEntry.objects.get(
-                patient_id=get_rp_dict(request.POST)['patient_id']
+                patient_id=get_rp_dict(request.POST)["patient_id"]
             )
         except PatientEntry.DoesNotExist:
             return HttpResponse(status=404)
