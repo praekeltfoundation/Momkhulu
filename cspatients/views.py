@@ -6,6 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.utils import timezone
 
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import PatientEntry
 from .util import (
     get_rp_dict,
@@ -89,23 +93,15 @@ def form(request):
 # API VIEWS
 
 
-@csrf_exempt
-def rp_newpatiententry(request):
-    """
-        RapidPro should use the following url
-        /rpnewpatiententry?secret=momkhulu
+class NewPatientEntryView(APIView):
+    def post(self, request):
+        if save_model(get_rp_dict(request.POST)):
+            send_consumers_table()
+            status_code = status.HTTP_201_CREATED
+        else:
+            status_code = status.HTTP_400_BAD_REQUEST
 
-    """
-    # Takes in the information from Rapid Pro
-    status_code = 405
-    if request.method == "POST":
-        if request.GET.get("secret") == "momkhulu":
-            if save_model(get_rp_dict(request.POST)):
-                send_consumers_table()
-                status_code = 201
-            else:
-                status_code = 400
-    return HttpResponse(status=status_code)
+        return Response(status=status_code)
 
 
 @csrf_exempt
