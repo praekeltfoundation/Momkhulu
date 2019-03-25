@@ -10,10 +10,13 @@ Getting started on local
 
 To set up the environment::
 
+    $ git clone git@github.com:praekeltfoundation/momkhulu.git
+    $ cd momkhulu
     $ virtualenv env
-    $ . env/bin/activate
-    $ pip install -r requirements.txt
+    $ source env/bin/activate
     $ pip install -e .
+    $ pip install -r requirements-dev.txt
+    $ pre-commit install
 
 To start up channels redis::
 
@@ -21,10 +24,10 @@ To start up channels redis::
 
 Migrate the database::
 
-    $ python3 manage.py migrate
+    $ ./manage.py migrate
 
 Run the server::
 
-    $ python3 manage.py runserver
+    $ ./manage.py runserver
 
 You can now go access the site on 127.0.0.1/cspatients/
