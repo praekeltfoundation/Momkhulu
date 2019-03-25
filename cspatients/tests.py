@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.http import QueryDict
 from django.utils import timezone
 
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient
+
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import view_all_context, save_model, save_model_changes, get_rp_dict
@@ -92,6 +95,48 @@ SAMPLE_RP_POST_DATA_2 = {
                         },
                     "value": "Nyasha",
                     "label": "new_value"
+                }
+            ]"""
+    ]
+}
+
+SAMPLE_RP_POST_INVALID_DATA = {
+    "values": [
+        """[
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "Jane Doe",
+                    "label": "name"
+                },
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "HLFSH",
+                    "label": "patient_id"
+                },
+                {
+                    "category": {
+                        "base": "Success"
+                        },
+                    "value": "",
+                    "label": "exists"
+                },
+                {
+                    "category":{
+                        "base": "name"
+                        },
+                    "value": "A",
+                    "label": "change_category"
+                },
+                {
+                    "category": {
+                        "base": "All Responses"
+                        },
+                    "value": "abcdefg",
+                    "label": "gravpar"
                 }
             ]"""
     ]
@@ -480,15 +525,25 @@ class GetRPDictTest(TestCase):
 # API Tests
 
 
-class RPEventTest(TestCase):
+class NewPatientAPITestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.data = SAMPLE_RP_POST_DATA
 
-    def test_rpevent_saves_minimum_data_correctly(self):
+        # Normal User setup
+        self.normalclient = APIClient()
+        self.normalusername = "testnormaluser"
+        self.normalpassword = "testnormalpass"
+        self.normaluser = User.objects.create_user(
+            self.normalusername, "testnormaluser@example.com", self.normalpassword
+        )
+        normaltoken = Token.objects.create(user=self.normaluser)
+        self.normaltoken = normaltoken
+        self.normalclient.credentials(HTTP_AUTHORIZATION="Token %s" % self.normaltoken)
 
-        response = self.client.post(
-            "/cspatients/api/rpnewpatiententry?secret=momkhulu", self.data
+    def test_new_patient_entry_saves_minimum_data(self):
+
+        response = self.normalclient.post(
+            "/cspatients/api/rpnewpatiententry", SAMPLE_RP_POST_DATA
         )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
@@ -496,6 +551,20 @@ class RPEventTest(TestCase):
         # Check that the Patient, PatientEntry been correctly saved
         self.assertTrue(Patient.objects.get(patient_id="HLFSH").name == "Jane Doe")
         self.assertTrue(PatientEntry.objects.get(patient_id="HLFSH"))
+
+    def test_new_patient_entry_without_auth(self):
+        response = self.client.post(
+            "/cspatients/api/rpnewpatiententry", SAMPLE_RP_POST_DATA
+        )
+        # Assert a correct response of 201
+        self.assertEqual(response.status_code, 401)
+
+    def test_new_patient_entry_invalid_data(self):
+        response = self.normalclient.post(
+            "/cspatients/api/rpnewpatiententry", SAMPLE_RP_POST_INVALID_DATA
+        )
+        # Assert a correct response of 201
+        self.assertEqual(response.status_code, 400)
 
 
 class RPPatientExistsTest(TestCase):
