@@ -6,18 +6,16 @@ from django.utils import timezone
 
 from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import (view_all_context, save_model, save_model_changes,
-                   get_rp_dict)
+from .util import view_all_context, save_model, save_model_changes, get_rp_dict
 
 import urllib.parse as parse
 from datetime import timedelta
 
 # View Tests
 
-SAMPLE_RP_POST_DATA =\
-    {
-        'values': [
-            """[
+SAMPLE_RP_POST_DATA = {
+    "values": [
+        """[
                 {
                     "category": {
                         "base": "All Responses"
@@ -54,13 +52,12 @@ SAMPLE_RP_POST_DATA =\
                     "label": "new_value"
                 }
             ]"""
-        ]
-    }
+    ]
+}
 
-SAMPLE_RP_POST_DATA_2 =\
-    {
-        'values': [
-            """[
+SAMPLE_RP_POST_DATA_2 = {
+    "values": [
+        """[
                 {
                     "category": {
                         "base": "All Responses"
@@ -97,8 +94,8 @@ SAMPLE_RP_POST_DATA_2 =\
                     "label": "new_value"
                 }
             ]"""
-        ]
-    }
+    ]
+}
 
 
 class LoginTest(TestCase):
@@ -118,17 +115,13 @@ class LoginTest(TestCase):
         """
         get_response = self.client.get("/cspatients/login")
         # Must render the log in page
-        self.assertTemplateUsed(
-            get_response,
-            template_name="cspatients/login.html"
-            )
+        self.assertTemplateUsed(get_response, template_name="cspatients/login.html")
         self.client.force_login(self.user)
         get_response_logged = self.client.get("/cspatients/login")
         # Must not show you the login page
         self.assertTemplateNotUsed(
-            get_response_logged,
-            template_name="cspatients/login.html"
-            )
+            get_response_logged, template_name="cspatients/login.html"
+        )
         # Must redirect to the root of the cspatients app
         self.assertRedirects(get_response_logged, "/cspatients/")
 
@@ -137,10 +130,9 @@ class LoginTest(TestCase):
             Test the posting credintials to login
         """
         self.client.logout()
-        response = self.client.post("/cspatients/login", {
-            "username": "Itai",
-            "password": "itai",
-        })
+        response = self.client.post(
+            "/cspatients/login", {"username": "Itai", "password": "itai"}
+        )
         # The user must now be logged in
         self.assertTrue(self.user.is_authenticated)
         # The login should redirect to the root of the cspatients app
@@ -154,22 +146,19 @@ class LoginTest(TestCase):
         self.client.logout()
         # The user must not be authenticated
 
-        response = self.client.post("/cspatients/login", {
-            "username": "Itai",
-            "password": "badpassword",
-        })
+        response = self.client.post(
+            "/cspatients/login", {"username": "Itai", "password": "badpassword"}
+        )
 
         # The returned status code must be 401
         self.assertEquals(response.status_code, 401)
         # Must render the login in page again
         self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/login.html",
+            response=response, template_name="cspatients/login.html"
         )
 
 
 class LogoutTest(TestCase):
-
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="Itai")
@@ -181,20 +170,17 @@ class LogoutTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get("/cspatients/logout")
         self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/logout.html"
+            response=response, template_name="cspatients/logout.html"
         )
         self.assertEqual(response.status_code, 200)
 
     def test_logout_when_not_logged_in(self):
         response = self.client.get("/cspatients/logout", follow=True)
         self.assertTemplateNotUsed(
-            response=response,
-            template_name="cspatients/logout.html"
+            response=response, template_name="cspatients/logout.html"
         )
         self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/login.html"
+            response=response, template_name="cspatients/login.html"
         )
 
 
@@ -213,9 +199,7 @@ class FormTest(TestCase):
             "clinician": "Dr. Joe",
             "urgency": 3,
         }
-        self.insufficient_data = {
-            "name": "Lisa Smith",
-        }
+        self.insufficient_data = {"name": "Lisa Smith"}
 
     def test_get_method_when_not_logged_in(self):
         """
@@ -224,34 +208,28 @@ class FormTest(TestCase):
             If you not logged in then the form page must not be
             rendered.
         """
-        response = self.client.get('/cspatients/form')
+        response = self.client.get("/cspatients/form")
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(
-            response, "/cspatients/login?next=/cspatients/form"
-            )
+        self.assertRedirects(response, "/cspatients/login?next=/cspatients/form")
         self.assertTemplateNotUsed(
-            response=response,
-            template_name="cspatients/form.html"
-            )
+            response=response, template_name="cspatients/form.html"
+        )
 
     def test_get_method_when_logged_in(self):
         """
             Test the GET method when logged in. Must render the form template.
         """
         self.client.force_login(self.user)
-        response = self.client.get('/cspatients/form')
+        response = self.client.get("/cspatients/form")
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response=response, template_name="cspatients/form.html"
-            )
+        self.assertTemplateUsed(response=response, template_name="cspatients/form.html")
 
     def test_post_method_with_sufficient_data(self):
         """
             Test the POST method when posted the right information.
         """
         self.client.force_login(self.user)
-        response = self.client.post(
-            '/cspatients/form', self.sufficient_data)
+        response = self.client.post("/cspatients/form", self.sufficient_data)
 
         # Check the status code response of the POST
         self.assertEqual(response.status_code, 201)
@@ -261,10 +239,7 @@ class FormTest(TestCase):
         self.assertEqual(jane.patient_id, "XXXXX")
         self.assertEqual(jane.age, 20)
         # Check that it renders the form page again
-        self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/form.html"
-            )
+        self.assertTemplateUsed(response=response, template_name="cspatients/form.html")
 
     def test_post_method_with_insufficient_data(self):
         """
@@ -272,16 +247,12 @@ class FormTest(TestCase):
             to save.
         """
         self.client.force_login(self.user)
-        response = self.client.post(
-            '/cspatients/form', self.insufficient_data)
+        response = self.client.post("/cspatients/form", self.insufficient_data)
         # Check the response code of the post
         self.assertEqual(response.status_code, 400)
 
         # Check that the template is rendered again
-        self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/form.html"
-            )
+        self.assertTemplateUsed(response=response, template_name="cspatients/form.html")
 
         # Check that nothing was saved in the database.
         with self.assertRaises(Patient.DoesNotExist):
@@ -292,6 +263,7 @@ class ViewTest(TestCase):
     """
         Test the view view method. Pun intended.
     """
+
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="Itai")
@@ -302,108 +274,72 @@ class ViewTest(TestCase):
         """
         response = self.client.get("/cspatients/view")
         self.assertTemplateNotUsed(
-            response=response,
-            template_name="cspatients/view.html"
+            response=response, template_name="cspatients/view.html"
         )
         self.client.force_login(self.user)
         response = self.client.get("/cspatients/view")
-        self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/view.html"
-        )
+        self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
 
 
 class PatientViewTest(TestCase):
-
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(
-            username="Itai"
-        )
+        self.user = User.objects.create_user(username="Itai")
         self.client.force_login(self.user)
 
     def test_view_non_existing_patient_returns_404(self):
         response = self.client.get("/cspatients/patient/SHFLFLF")
         self.assertEqual(response.status_code, 404)
         self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/patient.html"
+            response=response, template_name="cspatients/patient.html"
         )
-        self.assertInHTML(
-            "Sorry. No such patient was found.",
-            str(response.content)
-        )
+        self.assertInHTML("Sorry. No such patient was found.", str(response.content))
 
     def test_view_one_existing_patiententry(self):
-        jane = Patient.objects.create(
-            name="Jane",
-            patient_id="XXXXXX",
-            age=10
-        )
+        jane = Patient.objects.create(name="Jane", patient_id="XXXXXX", age=10)
 
         PatientEntry.objects.create(
-            patient_id=jane,
-            urgency=2,
-            decision_time=timezone.now()
+            patient_id=jane, urgency=2, decision_time=timezone.now()
         )
 
-        response = self.client.get(
-            "/cspatients/patient/{}".format(jane.patient_id)
-        )
+        response = self.client.get("/cspatients/patient/{}".format(jane.patient_id))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response=response,
-            template_name="cspatients/patient.html"
+            response=response, template_name="cspatients/patient.html"
         )
-        self.assertInHTML(
-            "Jane",
-            str(response.content)
-        )
+        self.assertInHTML("Jane", str(response.content))
 
     def test_view_two_existing_same_patiententries(self):
-        jane = Patient.objects.create(
-            name="Jane",
-            patient_id="XXXXXX",
-            age=10
-        )
+        jane = Patient.objects.create(name="Jane", patient_id="XXXXXX", age=10)
         PatientEntry.objects.create(
             patient_id=jane,
             urgency=2,
             decision_time=timezone.now(),
-            indication="First Operation"
+            indication="First Operation",
         )
         PatientEntry.objects.create(
             patient_id=jane,
             urgency=3,
             decision_time=timezone.now(),
-            indication="Second Operation"
+            indication="Second Operation",
         )
-        response = self.client.get(
-            "/cspatients/patient/{}".format(jane.patient_id)
-        )
+        response = self.client.get("/cspatients/patient/{}".format(jane.patient_id))
         self.assertEqual(response.status_code, 200)
-        self.assertInHTML(
-            "Second Operation",
-            str(response.content)
-        )
+        self.assertInHTML("Second Operation", str(response.content))
+
 
 # Util Tests
 
 
 class ViewAllContextTest(TestCase):
-
     def setUp(self):
-        self.patient_one_data = {
-            "name": "Jane Doe",
-            "patient_id": "XXXXX",
-            "age": 20,
-        }
+        self.patient_one_data = {"name": "Jane Doe", "patient_id": "XXXXX", "age": 20}
 
         self.patient_two_data = {
             "name": "Mary Mary",
             "patient_id": "YYYYY",
             "age": 23,
-            "urgency": 1
+            "urgency": 1,
         }
 
     def test_context_when_no_patients(self):
@@ -435,19 +371,10 @@ class ViewAllContextTest(TestCase):
 
 
 class SaveModelTest(TestCase):
-
     def setUp(self):
-        self.patient_one_data = {
-            "name": "Jane Doe",
-            "patient_id": "XXXXX",
-            "age": 20,
-        }
+        self.patient_one_data = {"name": "Jane Doe", "patient_id": "XXXXX", "age": 20}
 
-        self.patient_two_data = {
-            "name": "Mary Mary",
-            "age": 23,
-            "urgency": 1
-        }
+        self.patient_two_data = {"name": "Mary Mary", "age": 23, "urgency": 1}
 
     def test_saves_when_given_sufficient_data(self):
         patiententry = save_model(self.patient_one_data)
@@ -469,48 +396,28 @@ class SaveModelTest(TestCase):
 
 
 class SaveModelChangesTest(TestCase):
-
     def setUp(self):
-        Patient.objects.create(
-            name="Jane Doe",
-            patient_id="XXXXX",
-            age=20
-        )
-        PatientEntry.objects.create(
-            patient_id=Patient.objects.get(patient_id="XXXXX")
-        )
+        Patient.objects.create(name="Jane Doe", patient_id="XXXXX", age=20)
+        PatientEntry.objects.create(patient_id=Patient.objects.get(patient_id="XXXXX"))
 
     def test_saves_data_when_passed_good_dict(self):
-        changes_dict = {
-            "patient_id": "XXXXX",
-            "name": "Jane Moe",
-        }
+        changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe"}
 
         # Check returns PatientEntry
-        self.assertTrue(
-            isinstance(save_model_changes(changes_dict), PatientEntry)
-            )
+        self.assertTrue(isinstance(save_model_changes(changes_dict), PatientEntry))
         # Check that the name change has persisted.
         self.assertEqual(
-            PatientEntry.objects.get(patient_id="XXXXX").patient_id.name,
-            "Jane Moe"
+            PatientEntry.objects.get(patient_id="XXXXX").patient_id.name, "Jane Moe"
         )
 
     def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
-        changes_dict = {
-            "patient_id": "YXXXX",
-            "name": "Jane Moe",
-        }
+        changes_dict = {"patient_id": "YXXXX", "name": "Jane Moe"}
 
         # Returns none on bad incorrect patient_id
         self.assertIsNone(save_model_changes(changes_dict))
 
     def test_does_not_make_changes_when_dict_has_wrong_fields(self):
-        changes_dict = {
-            "patient_id": "XXXXX",
-            "names": "Janet Moe",
-            "urgent": "DSHLSD",
-        }
+        changes_dict = {"patient_id": "XXXXX", "names": "Janet Moe", "urgent": "DSHLSD"}
 
         patiententry = PatientEntry.objects.get(patient_id="XXXXX")
         self.assertEqual(patiententry, save_model_changes(changes_dict))
@@ -563,7 +470,7 @@ class GetRPDictTest(TestCase):
 
         # Test that the change category and values are stored well
         self.assertTrue(changes_dict.__contains__("name"))
-        self.assertTrue(changes_dict['name'] == "Nyasha")
+        self.assertTrue(changes_dict["name"] == "Nyasha")
 
         # Test that the patient ID is kept well
         self.assertTrue(changes_dict.__contains__("patient_id"))
@@ -574,7 +481,6 @@ class GetRPDictTest(TestCase):
 
 
 class RPEventTest(TestCase):
-
     def setUp(self):
         self.client = Client()
         self.data = SAMPLE_RP_POST_DATA
@@ -582,41 +488,30 @@ class RPEventTest(TestCase):
     def test_rpevent_saves_minimum_data_correctly(self):
 
         response = self.client.post(
-            "/cspatients/api/rpnewpatiententry?secret=momkhulu",
-            self.data,
+            "/cspatients/api/rpnewpatiententry?secret=momkhulu", self.data
         )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
 
         # Check that the Patient, PatientEntry been correctly saved
-        self.assertTrue(
-            Patient.objects.get(patient_id="HLFSH").name == "Jane Doe"
-            )
+        self.assertTrue(Patient.objects.get(patient_id="HLFSH").name == "Jane Doe")
         self.assertTrue(PatientEntry.objects.get(patient_id="HLFSH"))
 
 
 class RPPatientExistsTest(TestCase):
-
     def setUp(self):
         self.client = Client()
         self.existing_patient_data = SAMPLE_RP_POST_DATA
         self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
-        patient = Patient.objects.create(
-            name="Jane Doe",
-            patient_id="HLFSH",
-            age=20
-        )
+        patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
 
-        PatientEntry.objects.create(
-            patient_id=patient
-        )
+        PatientEntry.objects.create(patient_id=patient)
 
     def test_returns_200_for_existing_patient(self):
 
         response = self.client.post(
-            "/cspatients/api/rppatientexists",
-            self.existing_patient_data
+            "/cspatients/api/rppatientexists", self.existing_patient_data
         )
 
         self.assertEqual(response.status_code, 200)
@@ -624,8 +519,7 @@ class RPPatientExistsTest(TestCase):
     def test_returns_404_for_non_existent_patient(self):
 
         response = self.client.post(
-            "/cspatients/api/rppatientexists",
-            self.nonexisting_patient_data
+            "/cspatients/api/rppatientexists", self.nonexisting_patient_data
         )
 
         self.assertEqual(response.status_code, 404)
@@ -636,26 +530,20 @@ class RPEntryChangesTest(TestCase):
     """
         Test the rp_entrychanges endpoint.
     """
+
     def setUp(self):
         self.client = Client()
         self.existing_patient_data = SAMPLE_RP_POST_DATA
         self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
-        patient = Patient.objects.create(
-            name="Jane Doe",
-            patient_id="HLFSH",
-            age=20
-        )
+        patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
 
-        PatientEntry.objects.create(
-            patient_id=patient
-        )
+        PatientEntry.objects.create(patient_id=patient)
 
     def test_changes_name_for_existing_patient(self):
 
         response = self.client.post(
-            "/cspatients/api/rpentrychanges",
-            self.existing_patient_data
+            "/cspatients/api/rpentrychanges", self.existing_patient_data
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
@@ -668,8 +556,7 @@ class RPEntryChangesTest(TestCase):
     def test_returns_400_for_update_to_non_existent_patient(self):
 
         response = self.client.post(
-            "/cspatients/api/rpentrychanges",
-            self.nonexisting_patient_data
+            "/cspatients/api/rpentrychanges", self.nonexisting_patient_data
         )
         # Test the right response code 400
 
@@ -677,42 +564,33 @@ class RPEntryChangesTest(TestCase):
 
 
 class RPEntryDeliveredTest(TestCase):
-
     def setUp(self):
         self.client = Client()
         self.existing_patient_data = SAMPLE_RP_POST_DATA
         self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_2
 
-        patient = Patient.objects.create(
-            name="Jane Doe",
-            patient_id="HLFSH",
-            age=20
-        )
+        patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
 
-        PatientEntry.objects.create(
-            patient_id=patient
-        )
+        PatientEntry.objects.create(patient_id=patient)
 
     def test_patient_who_exists_delivered(self):
 
         response = self.client.post(
-            "/cspatients/api/rpentrydelivered",
-            self.existing_patient_data
+            "/cspatients/api/rpentrydelivered", self.existing_patient_data
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 200)
 
         # Test that the delivery time has been updated
         self.assertTrue(
-            PatientEntry.objects.get(patient_id="HLFSH").delivery_time -
-            timezone.now() < timedelta(seconds=20)
+            PatientEntry.objects.get(patient_id="HLFSH").delivery_time - timezone.now()
+            < timedelta(seconds=20)
         )
 
     def test_delivery_of_patient_who_does_not_exist(self):
 
         response = self.client.post(
-            "/cspatients/api/rppatientdelivered",
-            self.nonexisting_patient_data
+            "/cspatients/api/rppatientdelivered", self.nonexisting_patient_data
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)

@@ -13,7 +13,7 @@ class Patient(models.Model):
 class PatientEntry(models.Model):
     patient_id = models.ForeignKey(
         Patient, to_field="patient_id", on_delete=models.CASCADE
-        )
+    )
     operation = models.CharField(max_length=255, default="CS")
     gravpar = models.CharField(max_length=6, default="G1P1")
     comorbid = models.CharField(max_length=255, null=True)

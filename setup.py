@@ -48,7 +48,7 @@ setup(
         "djangorestframework==3.9.2",
         "environ==1.0",
         "simplejson==3.16.0",
-        "psycopg2==2.7.1"
+        "psycopg2==2.7.1",
     ],
     entry_points={},
 )

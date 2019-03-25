@@ -8,4 +8,4 @@ class ViewConsumer(WebsocketConsumer):
         self.accept()
 
     def view_update(self, event):
-        self.send(text_data=event['content'])
+        self.send(text_data=event["content"])

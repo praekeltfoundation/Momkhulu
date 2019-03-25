@@ -17,7 +17,7 @@ def get_rp_dict(data, context=None):
     """
         Get a label and value dictionary from the request POST
     """
-    data = data['values']
+    data = data["values"]
     try:
         obj = json.loads(data)
     except json.JSONDecodeError:
@@ -29,10 +29,10 @@ def get_rp_dict(data, context=None):
         and not options. If not all All Responses, the label must take
         the value of the chosen category base.
         """
-        if a_dict['category']['base'] == "All Responses":
-            all_dict[a_dict['label']] = a_dict['value']
+        if a_dict["category"]["base"] == "All Responses":
+            all_dict[a_dict["label"]] = a_dict["value"]
         else:
-            all_dict[a_dict['label']] = a_dict['category']['base']
+            all_dict[a_dict["label"]] = a_dict["category"]["base"]
 
     if context == "entrychanges":
         final_dict = {}
@@ -64,11 +64,8 @@ def send_consumers_table():
         "view",
         {
             "type": "view.update",
-            "content":
-            template.render({
-                "patiententrys": view_all_context()
-            })
-        }
+            "content": template.render({"patiententrys": view_all_context()}),
+        },
     )
 
 
@@ -78,9 +75,7 @@ def save_model_changes(changes_dict):
         models. Returns boolean
     """
     try:
-        patiententry = PatientEntry.objects.get(
-            patient_id=changes_dict['patient_id']
-            )
+        patiententry = PatientEntry.objects.get(patient_id=changes_dict["patient_id"])
     except PatientEntry.DoesNotExist:
         return None
     patient = patiententry.patient_id
@@ -100,12 +95,8 @@ def save_model(data):
     """
         Saves a models. Returns patient object or None.
     """
-    patient = PatientSerializer(
-        data=data
-        )
-    patiententry = PatientEntrySerializer(
-        data=data
-    )
+    patient = PatientSerializer(data=data)
+    patiententry = PatientEntrySerializer(data=data)
     if patient.is_valid():
         patient.save()
         if patiententry.is_valid():
