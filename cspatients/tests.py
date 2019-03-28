@@ -57,48 +57,6 @@ SAMPLE_RP_POST_DATA = {
     ]
 }
 
-SAMPLE_RP_POST_DATA_SAVED = {
-    "values": [
-        """[
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Jane Doe",
-                    "label": "name"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "123456",
-                    "label": "patient_id"
-                },
-                {
-                    "category": {
-                        "base": "Success"
-                        },
-                    "value": "",
-                    "label": "exists"
-                },
-                {
-                    "category":{
-                        "base": "name"
-                        },
-                    "value": "1",
-                    "label": "change_category"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Nyasha",
-                    "label": "new_value"
-                }
-            ]"""
-    ]
-}
-
 SAMPLE_RP_POST_DATA_NON_EXISTING = {
     "values": [
         """[
@@ -581,9 +539,6 @@ class AuthenticatedAPITestCase(TestCase):
         self.normaltoken = normaltoken
         self.normalclient.credentials(HTTP_AUTHORIZATION="Token %s" % self.normaltoken)
 
-        self.existing_patient_data = SAMPLE_RP_POST_DATA
-        self.nonexisting_patient_data = SAMPLE_RP_POST_DATA_NON_EXISTING
-
 
 class NewPatientAPITestCase(AuthenticatedAPITestCase):
     def test_new_patient_entry_saves_minimum_data(self):
@@ -620,20 +575,20 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
 
     def test_patient_exists_found(self):
         response = self.normalclient.post(
-            "/cspatients/api/rppatientexists", self.existing_patient_data
+            "/cspatients/api/rppatientexists", SAMPLE_RP_POST_DATA
         )
         self.assertEqual(response.status_code, 200)
 
     def test_patient_exists_not_found(self):
         response = self.normalclient.post(
-            "/cspatients/api/rppatientexists", self.nonexisting_patient_data
+            "/cspatients/api/rppatientexists", SAMPLE_RP_POST_DATA_NON_EXISTING
         )
 
         self.assertEqual(response.status_code, 404)
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(
-            "/cspatients/api/rppatientexists", self.existing_patient_data
+            "/cspatients/api/rppatientexists", SAMPLE_RP_POST_DATA
         )
 
         self.assertEqual(response.status_code, 401)
@@ -647,7 +602,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 
     def test_update_patient_success(self):
         response = self.normalclient.post(
-            "/cspatients/api/rpentrychanges", self.existing_patient_data
+            "/cspatients/api/rpentrychanges", SAMPLE_RP_POST_DATA
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
@@ -658,14 +613,14 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 
     def test_update_patient_not_found(self):
         response = self.normalclient.post(
-            "/cspatients/api/rpentrychanges", self.nonexisting_patient_data
+            "/cspatients/api/rpentrychanges", SAMPLE_RP_POST_DATA_NON_EXISTING
         )
         # Test the right response code 400
         self.assertEqual(response.status_code, 400)
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(
-            "/cspatients/api/rpentrychanges", self.existing_patient_data
+            "/cspatients/api/rpentrychanges", SAMPLE_RP_POST_DATA
         )
 
         self.assertEqual(response.status_code, 401)
@@ -674,7 +629,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 class EntryDeliveredTestCase(AuthenticatedAPITestCase):
     def setUp(self):
         super(EntryDeliveredTestCase, self).setUp()
-        patient = Patient.objects.create(name="Jane Doe", patient_id="123456", age=20)
+        patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
         self.patient_entry = PatientEntry.objects.create(patient_id=patient)
 
     def test_patient_who_exists_delivered(self):
@@ -682,7 +637,7 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.assertIsNone(self.patient_entry.delivery_time)
 
         response = self.normalclient.post(
-            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA_SAVED
+            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA
         )
 
         # Test returns the right response code
@@ -695,7 +650,7 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
     def test_delivery_of_patient_who_does_not_exist(self):
 
         response = self.normalclient.post(
-            "/cspatients/api/rpentrydelivered", self.nonexisting_patient_data
+            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA_NON_EXISTING
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)
@@ -705,7 +660,7 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(
-            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA_SAVED
+            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA
         )
 
         self.assertEqual(response.status_code, 401)
