@@ -2,11 +2,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.utils import timezone
 
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -91,8 +91,6 @@ def form(request):
 
 
 # API VIEWS
-
-
 class NewPatientEntryView(APIView):
     def post(self, request):
         if save_model(get_rp_dict(request.POST)):
@@ -104,43 +102,39 @@ class NewPatientEntryView(APIView):
         return Response(status=status_code)
 
 
-@csrf_exempt
-def rp_patientexists(request):
-    """
-        Returns 200 if Patient exists and 400 if Patient Does Not Exist
-    """
-    try:
-        PatientEntry.objects.get(patient_id=get_rp_dict(request.POST)["patient_id"])
-    except PatientEntry.DoesNotExist:
-        return HttpResponse(status=404)
-    return HttpResponse(status=200)
+class CheckPatientExistsView(APIView):
+    def post(self, request):
+        try:
+            PatientEntry.objects.get(patient_id=get_rp_dict(request.POST)["patient_id"])
+        except PatientEntry.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_200_OK)
 
 
-@csrf_exempt
-def rp_entrychanges(request):
-    status_code = 405
-    if request.method == "POST":
+class UpdatePatientEntryView(APIView):
+    def post(self, request):
         changes_dict = get_rp_dict(request.POST, context="entrychanges")
         if save_model_changes(changes_dict):
-            status_code = 200
+            status_code = status.HTTP_200_OK
             send_consumers_table()
         else:
-            status_code = 400
-    return HttpResponse(status=status_code)
+            status_code = status.HTTP_400_BAD_REQUEST
+        return Response(status=status_code)
 
 
-@csrf_exempt
-def rp_entrydelivered(request):
-    status_code = 405
-    if request.method == "POST":
+class EntryDeliveredView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
         try:
             patiententry = PatientEntry.objects.get(
                 patient_id=get_rp_dict(request.POST)["patient_id"]
             )
         except PatientEntry.DoesNotExist:
-            return HttpResponse(status=404)
+            return Response(status=status.HTTP_404_NOT_FOUND)
         patiententry.delivery_time = timezone.now()
         patiententry.save()
-        status_code = 200
         send_consumers_table()
-    return HttpResponse(status=status_code)
+
+        status_code = status.HTTP_200_OK
+        return Response(status=status_code)
