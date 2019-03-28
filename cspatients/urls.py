@@ -14,7 +14,19 @@ urlpatterns = [
         views.NewPatientEntryView.as_view(),
         name="rp_newpatiententry",
     ),
-    path("api/rppatientexists", views.rp_patientexists, name="rp_patientexits"),
-    path("api/rpentrychanges", views.rp_entrychanges, name="rp_entrychanges"),
-    path("api/rpentrydelivered", views.rp_entrydelivered, name="rp_entrydelivered"),
+    path(
+        "api/rppatientexists",
+        views.CheckPatientExistsView.as_view(),
+        name="rp_patientexits",
+    ),
+    path(
+        "api/rpentrychanges",
+        views.UpdatePatientEntryView.as_view(),
+        name="rp_entrychanges",
+    ),
+    path(
+        "api/rpentrydelivered",
+        views.EntryDeliveredView.as_view(),
+        name="rp_entrydelivered",
+    ),
 ]
