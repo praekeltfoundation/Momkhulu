@@ -18,7 +18,7 @@ services:
       - redis
       - postgresql
   postgresql:
-    image: mdillon/postgis:9.6
+    image: postgres:alpine
     environment:
       - POSTGRES_DB=momkhulu
   redis:
