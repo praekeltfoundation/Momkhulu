@@ -1,7 +1,6 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.utils import timezone
 
@@ -20,35 +19,7 @@ from .util import (
 )
 
 
-def log_in(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect("/cspatients/")
-    context = {"try": False}
-    status_code = 200
-    if request.method == "POST":
-        context["try"] = True
-        user = authenticate(
-            request,
-            username=request.POST["username"],
-            password=request.POST["password"],
-        )
-        if user is not None:
-            login(request, user)
-            next = request.GET.get("next", default="/cspatients/")
-            return HttpResponseRedirect(next)
-        else:
-            status_code = 401
-    return render(request, "cspatients/login.html", context, status=status_code)
-
-
-@login_required(login_url="/cspatients/login")
-def log_out(request):
-    template = loader.get_template("cspatients/logout.html")
-    logout(request)
-    return HttpResponse(template.render())
-
-
-@login_required(login_url="/cspatients/login")
+@login_required(login_url="/accounts/login")
 def view(request):
 
     template = loader.get_template("cspatients/view.html")
@@ -56,7 +27,7 @@ def view(request):
     return HttpResponse(template.render(context), status=200)
 
 
-@login_required(login_url="/cspatients/login")
+@login_required(login_url="/accounts/login")
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     patiententry = (
@@ -73,7 +44,7 @@ def patient(request, patient_id):
     return HttpResponse(template.render(context), status=status_code)
 
 
-@login_required(login_url="/cspatients/login")
+@login_required(login_url="/accounts/login")
 def form(request):
     status_code = 200
     if request.method == "POST":
