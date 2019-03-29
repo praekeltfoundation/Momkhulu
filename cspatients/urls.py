@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
     path("", views.view, name="root"),
-    path("view", views.view, name="view"),
-    path("form", views.form, name="form"),
-    path("patient/<str:patient_id>", views.patient, name="patient"),
+    path("view", views.view, name="cspatient_view"),
+    path("form", views.form, name="cspatient_form"),
+    path("patient/<str:patient_id>", views.patient, name="cspatient_patient"),
     path(
         "api/rpnewpatiententry",
         views.NewPatientEntryView.as_view(),

@@ -2,6 +2,7 @@ from django.test import Client
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.http import QueryDict
+from django.urls import reverse
 from django.utils import timezone
 
 from rest_framework.authtoken.models import Token
@@ -142,92 +143,6 @@ SAMPLE_RP_POST_INVALID_DATA = {
 }
 
 
-class LoginTest(TestCase):
-
-    """
-        Tests for the log_in view.
-    """
-
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(username="Itai", password="itai")
-
-    def test_get_login_page(self):
-        """
-            Test using get method on login view will render the login page
-            if you aren't logged in and will redirect when logged in.
-        """
-        get_response = self.client.get("/cspatients/login")
-        # Must render the log in page
-        self.assertTemplateUsed(get_response, template_name="cspatients/login.html")
-        self.client.force_login(self.user)
-        get_response_logged = self.client.get("/cspatients/login")
-        # Must not show you the login page
-        self.assertTemplateNotUsed(
-            get_response_logged, template_name="cspatients/login.html"
-        )
-        # Must redirect to the root of the cspatients app
-        self.assertRedirects(get_response_logged, "/cspatients/")
-
-    def test_login_with_right_credentials(self):
-        """
-            Test the posting credintials to login
-        """
-        self.client.logout()
-        response = self.client.post(
-            "/cspatients/login", {"username": "Itai", "password": "itai"}
-        )
-        # The user must now be logged in
-        self.assertTrue(self.user.is_authenticated)
-        # The login should redirect to the root of the cspatients app
-        self.assertRedirects(response, "/cspatients/")
-
-    def test_login_with_wrong_credentials(self):
-
-        """
-            Test trying to login in with the wrong details.
-        """
-        self.client.logout()
-        # The user must not be authenticated
-
-        response = self.client.post(
-            "/cspatients/login", {"username": "Itai", "password": "badpassword"}
-        )
-
-        # The returned status code must be 401
-        self.assertEquals(response.status_code, 401)
-        # Must render the login in page again
-        self.assertTemplateUsed(
-            response=response, template_name="cspatients/login.html"
-        )
-
-
-class LogoutTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(username="Itai")
-
-    def test_logout_when_logged_in(self):
-        """
-            Test the logout view. Must log out the user if logged in
-        """
-        self.client.force_login(self.user)
-        response = self.client.get("/cspatients/logout")
-        self.assertTemplateUsed(
-            response=response, template_name="cspatients/logout.html"
-        )
-        self.assertEqual(response.status_code, 200)
-
-    def test_logout_when_not_logged_in(self):
-        response = self.client.get("/cspatients/logout", follow=True)
-        self.assertTemplateNotUsed(
-            response=response, template_name="cspatients/logout.html"
-        )
-        self.assertTemplateUsed(
-            response=response, template_name="cspatients/login.html"
-        )
-
-
 class FormTest(TestCase):
     """
         Tests for the form view.
@@ -252,9 +167,10 @@ class FormTest(TestCase):
             If you not logged in then the form page must not be
             rendered.
         """
-        response = self.client.get("/cspatients/form")
+        response = self.client.get(reverse("cspatient_form"))
+
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/cspatients/login?next=/cspatients/form")
+        self.assertEqual(response.url, "/accounts/login?next=/form")
         self.assertTemplateNotUsed(
             response=response, template_name="cspatients/form.html"
         )
@@ -264,7 +180,9 @@ class FormTest(TestCase):
             Test the GET method when logged in. Must render the form template.
         """
         self.client.force_login(self.user)
-        response = self.client.get("/cspatients/form")
+
+        response = self.client.get(reverse("cspatient_form"))
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response=response, template_name="cspatients/form.html")
 
@@ -273,7 +191,7 @@ class FormTest(TestCase):
             Test the POST method when posted the right information.
         """
         self.client.force_login(self.user)
-        response = self.client.post("/cspatients/form", self.sufficient_data)
+        response = self.client.post(reverse("cspatient_form"), self.sufficient_data)
 
         # Check the status code response of the POST
         self.assertEqual(response.status_code, 201)
@@ -291,7 +209,7 @@ class FormTest(TestCase):
             to save.
         """
         self.client.force_login(self.user)
-        response = self.client.post("/cspatients/form", self.insufficient_data)
+        response = self.client.post(reverse("cspatient_form"), self.insufficient_data)
         # Check the response code of the post
         self.assertEqual(response.status_code, 400)
 
@@ -316,12 +234,12 @@ class ViewTest(TestCase):
         """
             1. Test that you only view the page when you are logged in.
         """
-        response = self.client.get("/cspatients/view")
+        response = self.client.get(reverse("cspatient_view"))
         self.assertTemplateNotUsed(
             response=response, template_name="cspatients/view.html"
         )
         self.client.force_login(self.user)
-        response = self.client.get("/cspatients/view")
+        response = self.client.get(reverse("cspatient_view"))
         self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
 
 
@@ -332,7 +250,9 @@ class PatientViewTest(TestCase):
         self.client.force_login(self.user)
 
     def test_view_non_existing_patient_returns_404(self):
-        response = self.client.get("/cspatients/patient/SHFLFLF")
+        response = self.client.get(
+            reverse("cspatient_patient", kwargs={"patient_id": "SHFLFLF"})
+        )
         self.assertEqual(response.status_code, 404)
         self.assertTemplateUsed(
             response=response, template_name="cspatients/patient.html"
@@ -346,7 +266,9 @@ class PatientViewTest(TestCase):
             patient_id=jane, urgency=2, decision_time=timezone.now()
         )
 
-        response = self.client.get("/cspatients/patient/{}".format(jane.patient_id))
+        response = self.client.get(
+            reverse("cspatient_patient", kwargs={"patient_id": jane.patient_id})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
             response=response, template_name="cspatients/patient.html"
@@ -367,7 +289,9 @@ class PatientViewTest(TestCase):
             decision_time=timezone.now(),
             indication="Second Operation",
         )
-        response = self.client.get("/cspatients/patient/{}".format(jane.patient_id))
+        response = self.client.get(
+            reverse("cspatient_patient", kwargs={"patient_id": jane.patient_id})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertInHTML("Second Operation", str(response.content))
 
@@ -543,7 +467,7 @@ class AuthenticatedAPITestCase(TestCase):
 class NewPatientAPITestCase(AuthenticatedAPITestCase):
     def test_new_patient_entry_saves_minimum_data(self):
         response = self.normalclient.post(
-            "/cspatients/api/rpnewpatiententry", SAMPLE_RP_POST_DATA
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA
         )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
@@ -553,15 +477,13 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         self.assertTrue(PatientEntry.objects.get(patient_id="HLFSH"))
 
     def test_new_patient_entry_without_auth(self):
-        response = self.client.post(
-            "/cspatients/api/rpnewpatiententry", SAMPLE_RP_POST_DATA
-        )
+        response = self.client.post(reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA)
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 401)
 
     def test_new_patient_entry_invalid_data(self):
         response = self.normalclient.post(
-            "/cspatients/api/rpnewpatiententry", SAMPLE_RP_POST_INVALID_DATA
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_INVALID_DATA
         )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 400)
@@ -575,21 +497,19 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
 
     def test_patient_exists_found(self):
         response = self.normalclient.post(
-            "/cspatients/api/rppatientexists", SAMPLE_RP_POST_DATA
+            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA
         )
         self.assertEqual(response.status_code, 200)
 
     def test_patient_exists_not_found(self):
         response = self.normalclient.post(
-            "/cspatients/api/rppatientexists", SAMPLE_RP_POST_DATA_NON_EXISTING
+            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA_NON_EXISTING
         )
 
         self.assertEqual(response.status_code, 404)
 
     def test_patient_exists_no_auth(self):
-        response = self.client.post(
-            "/cspatients/api/rppatientexists", SAMPLE_RP_POST_DATA
-        )
+        response = self.client.post(reverse("rp_patientexits"), SAMPLE_RP_POST_DATA)
 
         self.assertEqual(response.status_code, 401)
 
@@ -602,7 +522,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 
     def test_update_patient_success(self):
         response = self.normalclient.post(
-            "/cspatients/api/rpentrychanges", SAMPLE_RP_POST_DATA
+            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
@@ -613,15 +533,13 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 
     def test_update_patient_not_found(self):
         response = self.normalclient.post(
-            "/cspatients/api/rpentrychanges", SAMPLE_RP_POST_DATA_NON_EXISTING
+            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA_NON_EXISTING
         )
         # Test the right response code 400
         self.assertEqual(response.status_code, 400)
 
     def test_patient_exists_no_auth(self):
-        response = self.client.post(
-            "/cspatients/api/rpentrychanges", SAMPLE_RP_POST_DATA
-        )
+        response = self.client.post(reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA)
 
         self.assertEqual(response.status_code, 401)
 
@@ -637,7 +555,7 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.assertIsNone(self.patient_entry.delivery_time)
 
         response = self.normalclient.post(
-            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA
+            reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA
         )
 
         # Test returns the right response code
@@ -650,7 +568,7 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
     def test_delivery_of_patient_who_does_not_exist(self):
 
         response = self.normalclient.post(
-            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA_NON_EXISTING
+            reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA_NON_EXISTING
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)
@@ -659,8 +577,6 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.assertIsNone(self.patient_entry.delivery_time)
 
     def test_patient_exists_no_auth(self):
-        response = self.client.post(
-            "/cspatients/api/rpentrydelivered", SAMPLE_RP_POST_DATA
-        )
+        response = self.client.post(reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA)
 
         self.assertEqual(response.status_code, 401)
