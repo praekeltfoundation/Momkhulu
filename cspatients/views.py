@@ -19,15 +19,14 @@ from .util import (
 )
 
 
-@login_required(login_url="/accounts/login")
+@login_required()
 def view(request):
-
     template = loader.get_template("cspatients/view.html")
     context = {"patiententrys": view_all_context()}
     return HttpResponse(template.render(context), status=200)
 
 
-@login_required(login_url="/accounts/login")
+@login_required()
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     patiententry = (
@@ -44,7 +43,7 @@ def patient(request, patient_id):
     return HttpResponse(template.render(context), status=status_code)
 
 
-@login_required(login_url="/accounts/login")
+@login_required()
 def form(request):
     status_code = 200
     if request.method == "POST":
