@@ -1,0 +1,25 @@
+version: '2'
+services:
+  momkhulu:
+    image: praekeltfoundation/momkhulu:latest
+    environment:
+      - SECRET_KEY=topsecret
+      - DATABASE_URL=postgresql://postgres:postgres@postgresql/momkhulu
+      - REDIS_URL=redis://redis:6379/0
+      - ALLOWED_HOSTS=localhost
+    expose:
+      - '8000'
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgresql
+      - redis
+    links:
+      - redis
+      - postgresql
+  postgresql:
+    image: mdillon/postgis:9.6
+    environment:
+      - POSTGRES_DB=momkhulu
+  redis:
+    image: redis:alpine
