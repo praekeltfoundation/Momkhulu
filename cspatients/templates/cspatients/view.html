@@ -14,7 +14,7 @@
     function goToPatient(){
         var patient_id = $(this).contents("td.patient-id").html();
         window.location.href = window.location.protocol + "//" +
-        window.location.host + "/cspatients/patient/" + patient_id;
+        window.location.host + "/patient/" + patient_id;
     };
 
     function sleep(ms) {
@@ -36,8 +36,8 @@
         };
 
         setTableClass();
-        
-        // WEB SOCKET FUNCTIONS 
+
+        // WEB SOCKET FUNCTIONS
 
         console.log("Connecting to the viewSocket")
         var viewSocket =  new WebSocket(
@@ -60,7 +60,7 @@
                 console.log("Rendering the new updated table.");
             });
         };
-        
+
         $(".info-row").click(goToPatient);
     });
 </script>
