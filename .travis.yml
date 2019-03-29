@@ -35,6 +35,7 @@ jobs:
       env:
         - IMAGE_NAME=praekeltfoundation/momkhulu
         - REGISTRY_USER=praekeltorgdeploy
+        - SECRET_KEY=placeholder
         - secure: "OVlY7F5guWWyzmP6rjIIOlk0VZBWU7l1RfuQx6RyKmhTqEHwht6lg7QRgOM5UxtPMQDxT7hdY7fHLPZkMxh8t3tYVK4qctZ0FHup5jhgkPopZCWwzrvyQ1tverMll5j1S9nq2RKLxBH7l4pJHtiEsSf+sQOMRpE3JeRZz89Q30L9zJQ1HvCdeYyxgkJWCL5mzf56n5m2nNu7zTM1PmwaHpFElIazxW2s02AIXSjCwv+le9cngLoNqSoZtUX1mkxSkXhs7twg2lR9VgDXAd7p7voyixRn/dKFD7UnapbMUKUBxI1HbUzbky7rWlNz2/OqLe/XFzZ5dmihK3+nWti67DUFGdeBDoXZTZoxPUMbCZuezRs7uEi+20K9/TuO3xldYp14peUiUPuAcIYgGi3ygDQOvS2/XJMcht9rju+C4BEIA0CjHC5VMZD/7uXc7xBHFjgbITNMT8OPUyNHUcB9FRrB92Hb+SRGteqY1mRDMEq+KdeHy709S3vG4wQ8SvzzCs4JGzC/vRvxxDKua37JYYdDllnUVC5GWXZqibqxLR47vxHLqJe0QkedW4rTlsehEzDNRW8pANQ6veBfstohixdPQ7NLGWF5jK5IffGzIqRRq8HHRO/BlS+p/NPeEQ7w5TdHVzdisGCM9RH2ZBM/BXtcm2wNtD5QD62YaTdfcdg="   # yamllint disable-line
 
       before_script:
