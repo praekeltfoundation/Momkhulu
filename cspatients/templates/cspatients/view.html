@@ -41,7 +41,7 @@
 
         console.log("Connecting to the viewSocket")
         var viewSocket =  new WebSocket(
-        "ws://" + window.location.host + "/ws/cspatients/viewsocket/");
+            "wss://" + window.location.host + "/ws/cspatients/viewsocket/");
 
         viewSocket.onopen = function (){
             console.log("Connected to the viewSocket")
