@@ -6,7 +6,7 @@ import os
 
 DEBUG = True
 
-SECRET_KEY = env.str("SECRET_KEY", "asimplesecretkeyfordev")
+SECRET_KEY = os.environ.get("SECRET_KEY", "REPLACEME")
 
 DATABASES = {
     "default": env.db(
