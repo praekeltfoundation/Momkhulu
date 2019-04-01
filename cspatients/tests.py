@@ -17,7 +17,7 @@ import urllib.parse as parse
 # View Tests
 
 SAMPLE_RP_POST_DATA = {
-    "values": [
+    "results": [
         """[
                 {
                     "category": {
@@ -59,7 +59,7 @@ SAMPLE_RP_POST_DATA = {
 }
 
 SAMPLE_RP_POST_DATA_NON_EXISTING = {
-    "values": [
+    "results": [
         """[
                 {
                     "category": {
@@ -101,7 +101,7 @@ SAMPLE_RP_POST_DATA_NON_EXISTING = {
 }
 
 SAMPLE_RP_POST_INVALID_DATA = {
-    "values": [
+    "results": [
         """[
                 {
                     "category": {

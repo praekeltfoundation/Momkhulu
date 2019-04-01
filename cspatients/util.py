@@ -17,7 +17,7 @@ def get_rp_dict(data, context=None):
     """
         Get a label and value dictionary from the request POST
     """
-    data = data["values"]
+    data = data["results"]
     try:
         obj = json.loads(data)
     except json.JSONDecodeError:
