@@ -17,6 +17,7 @@ services:
     links:
       - redis
       - postgresql
+    command: tini -- django-entrypoint.sh daphne momkhulu.asgi:application
   postgresql:
     image: postgres:alpine
     environment:

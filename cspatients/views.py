@@ -63,7 +63,7 @@ def form(request):
 # API VIEWS
 class NewPatientEntryView(APIView):
     def post(self, request):
-        if save_model(get_rp_dict(request.POST)):
+        if save_model(get_rp_dict(request.data)):
             send_consumers_table()
             status_code = status.HTTP_201_CREATED
         else:
@@ -75,7 +75,8 @@ class NewPatientEntryView(APIView):
 class CheckPatientExistsView(APIView):
     def post(self, request):
         try:
-            PatientEntry.objects.get(patient_id=get_rp_dict(request.POST)["patient_id"])
+            patient_id = get_rp_dict(request.data)["patient_id"]
+            PatientEntry.objects.get(patient_id=patient_id)
         except PatientEntry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_200_OK)
@@ -83,7 +84,7 @@ class CheckPatientExistsView(APIView):
 
 class UpdatePatientEntryView(APIView):
     def post(self, request):
-        changes_dict = get_rp_dict(request.POST, context="entrychanges")
+        changes_dict = get_rp_dict(request.data, context="entrychanges")
         if save_model_changes(changes_dict):
             status_code = status.HTTP_200_OK
             send_consumers_table()
@@ -97,9 +98,8 @@ class EntryDeliveredView(APIView):
 
     def post(self, request):
         try:
-            patiententry = PatientEntry.objects.get(
-                patient_id=get_rp_dict(request.POST)["patient_id"]
-            )
+            patient_id = get_rp_dict(request.data)["patient_id"]
+            patiententry = PatientEntry.objects.get(patient_id=patient_id)
         except PatientEntry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         patiententry.delivery_time = timezone.now()
