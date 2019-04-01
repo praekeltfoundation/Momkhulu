@@ -1,7 +1,6 @@
 from django.test import Client
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.http import QueryDict
 from django.urls import reverse
 from django.utils import timezone
 
@@ -12,134 +11,43 @@ from .models import Patient, PatientEntry
 from .serializers import PatientSerializer, PatientEntrySerializer
 from .util import view_all_context, save_model, save_model_changes, get_rp_dict
 
-import urllib.parse as parse
-
 # View Tests
 
 SAMPLE_RP_POST_DATA = {
-    "results": [
-        """[
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Jane Doe",
-                    "label": "name"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "HLFSH",
-                    "label": "patient_id"
-                },
-                {
-                    "category": {
-                        "base": "Success"
-                        },
-                    "value": "",
-                    "label": "exists"
-                },
-                {
-                    "category":{
-                        "base": "name"
-                        },
-                    "value": "1",
-                    "label": "change_category"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Nyasha",
-                    "label": "new_value"
-                }
-            ]"""
-    ]
+    "results": {
+        "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
+        "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "new_value": {
+            "category": "All Responses",
+            "value": "Nyasha",
+            "input": "Nyasha",
+        },
+        "change_category": {"category": "name", "value": "1", "input": "1"},
+    }
 }
 
 SAMPLE_RP_POST_DATA_NON_EXISTING = {
-    "results": [
-        """[
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Jane Moe",
-                    "label": "name"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "XXXXX",
-                    "label": "patient_id"
-                },
-                {
-                    "category": {
-                        "base": "Success"
-                        },
-                    "value": "",
-                    "label": "exists"
-                },
-                {
-                    "category":{
-                        "base": "name"
-                        },
-                    "value": "1",
-                    "label": "change_category"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Nyasha",
-                    "label": "new_value"
-                }
-            ]"""
-    ]
+    "results": {
+        "name": {"category": "All Responses", "value": "Jane Moe", "input": "Jane Moe"},
+        "patient_id": {"category": "All Responses", "value": "XXXXX", "input": "XXXXX"},
+        "change_category": {"category": "name", "value": "A", "input": "A"},
+        "new_value": {
+            "category": "All Responses",
+            "value": "Nyasha",
+            "input": "Nyasha",
+        },
+    }
 }
 
 SAMPLE_RP_POST_INVALID_DATA = {
-    "results": [
-        """[
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "Jane Doe",
-                    "label": "name"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "HLFSH",
-                    "label": "patient_id"
-                },
-                {
-                    "category": {
-                        "base": "Success"
-                        },
-                    "value": "",
-                    "label": "exists"
-                },
-                {
-                    "category":{
-                        "base": "name"
-                        },
-                    "value": "A",
-                    "label": "change_category"
-                },
-                {
-                    "category": {
-                        "base": "All Responses"
-                        },
-                    "value": "abcdefg",
-                    "label": "gravpar"
-                }
-            ]"""
-    ]
+    "results": {
+        "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Moe"},
+        "gravpar_invalid": {
+            "category": "All Responses",
+            "value": "abcdef",
+            "input": "abcdef",
+        },
+    }
 }
 
 
@@ -398,21 +306,15 @@ class GetRPDictTest(TestCase):
         Takes in request.POST method
     """
 
-    def setUp(self):
-        self.client = Client()
-        self.post_query = parse.urlencode(SAMPLE_RP_POST_DATA, doseq=True)
-
     def test_get_rp_event_dict(self):
         """
             The Method should be able to extract the name, and patient ID,
             from the Query dict into a dictionary with just name and
             patient_id
         """
-        # Simulate posting the query string and getting a QueryDict
-        response_dict = QueryDict(query_string=self.post_query)
 
         # Extract the dictionary using the get_rp_dict method
-        event_dict = get_rp_dict(response_dict)
+        event_dict = get_rp_dict(SAMPLE_RP_POST_DATA)
 
         # Test that it gets the appropriate keys and values
 
@@ -429,12 +331,9 @@ class GetRPDictTest(TestCase):
             The Method when passed a context of entrychanges, must be able
             to pick up the change category and the new value
         """
-        # Simulate posting the query string and getting a QueryDict
-        response_dict = QueryDict(query_string=self.post_query)
-
         # Extract the dictionary using the get_rp_dict method and
         # entrychanges context
-        changes_dict = get_rp_dict(response_dict, context="entrychanges")
+        changes_dict = get_rp_dict(SAMPLE_RP_POST_DATA, context="entrychanges")
 
         # Test that the change category and values are stored well
         self.assertTrue(changes_dict.__contains__("name"))
@@ -467,7 +366,7 @@ class AuthenticatedAPITestCase(TestCase):
 class NewPatientAPITestCase(AuthenticatedAPITestCase):
     def test_new_patient_entry_saves_minimum_data(self):
         response = self.normalclient.post(
-            reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA, format="json"
         )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
@@ -477,15 +376,17 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         self.assertTrue(PatientEntry.objects.get(patient_id="HLFSH"))
 
     def test_new_patient_entry_without_auth(self):
-        response = self.client.post(reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA)
+        response = self.client.post(
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA, format="json"
+        )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 401)
 
     def test_new_patient_entry_invalid_data(self):
         response = self.normalclient.post(
-            reverse("rp_newpatiententry"), SAMPLE_RP_POST_INVALID_DATA
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_INVALID_DATA, format="json"
         )
-        # Assert a correct response of 201
+        # Assert a correct response of 400
         self.assertEqual(response.status_code, 400)
 
 
@@ -497,19 +398,21 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
 
     def test_patient_exists_found(self):
         response = self.normalclient.post(
-            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA
+            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA, format="json"
         )
         self.assertEqual(response.status_code, 200)
 
     def test_patient_exists_not_found(self):
         response = self.normalclient.post(
-            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA_NON_EXISTING
+            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA_NON_EXISTING, format="json"
         )
 
         self.assertEqual(response.status_code, 404)
 
     def test_patient_exists_no_auth(self):
-        response = self.client.post(reverse("rp_patientexits"), SAMPLE_RP_POST_DATA)
+        response = self.client.post(
+            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA, format="json"
+        )
 
         self.assertEqual(response.status_code, 401)
 
@@ -522,7 +425,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 
     def test_update_patient_success(self):
         response = self.normalclient.post(
-            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA
+            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA, format="json"
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
@@ -533,13 +436,15 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 
     def test_update_patient_not_found(self):
         response = self.normalclient.post(
-            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA_NON_EXISTING
+            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA_NON_EXISTING, format="json"
         )
         # Test the right response code 400
         self.assertEqual(response.status_code, 400)
 
     def test_patient_exists_no_auth(self):
-        response = self.client.post(reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA)
+        response = self.client.post(
+            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA, format="json"
+        )
 
         self.assertEqual(response.status_code, 401)
 
@@ -555,7 +460,7 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.assertIsNone(self.patient_entry.delivery_time)
 
         response = self.normalclient.post(
-            reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA
+            reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA, format="json"
         )
 
         # Test returns the right response code
@@ -568,7 +473,9 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
     def test_delivery_of_patient_who_does_not_exist(self):
 
         response = self.normalclient.post(
-            reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA_NON_EXISTING
+            reverse("rp_entrydelivered"),
+            data=SAMPLE_RP_POST_DATA_NON_EXISTING,
+            format="json",
         )
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)

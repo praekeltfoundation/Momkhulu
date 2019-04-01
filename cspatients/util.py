@@ -4,8 +4,6 @@ from django.db.models.query import EmptyQuerySet
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-import simplejson as json
-
 from .models import PatientEntry, Patient
 from .serializers import PatientSerializer, PatientEntrySerializer
 
@@ -15,24 +13,20 @@ PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
 
 def get_rp_dict(data, context=None):
     """
-        Get a label and value dictionary from the request POST
+    Get a label and value dictionary from the request POST
     """
-    data = data["results"]
-    try:
-        obj = json.loads(data)
-    except json.JSONDecodeError:
-        return {}
     all_dict = {}
-    for a_dict in obj:
+
+    for key, item in data["results"].items():
         """
         All Responses is a category base for responses that are free text
         and not options. If not all All Responses, the label must take
         the value of the chosen category base.
         """
-        if a_dict["category"]["base"] == "All Responses":
-            all_dict[a_dict["label"]] = a_dict["value"]
+        if item["category"] == "All Responses":
+            all_dict[key] = item["value"]
         else:
-            all_dict[a_dict["label"]] = a_dict["category"]["base"]
+            all_dict[key] = item["category"]
 
     if context == "entrychanges":
         final_dict = {}
