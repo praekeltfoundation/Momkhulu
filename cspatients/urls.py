@@ -23,8 +23,8 @@ urlpatterns = [
         name="rp_entrychanges",
     ),
     path(
-        "api/rpentrydelivered",
-        views.EntryDeliveredView.as_view(),
-        name="rp_entrydelivered",
+        "api/rpentrystatusupdate",
+        views.EntryStatusUpdateView.as_view(),
+        name="rp_entrystatus_update",
     ),
 ]
