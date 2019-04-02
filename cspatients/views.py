@@ -93,18 +93,22 @@ class UpdatePatientEntryView(APIView):
         return Response(status=status_code)
 
 
-class EntryDeliveredView(APIView):
+class EntryStatusUpdateView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
+        data = get_rp_dict(request.data)
         try:
-            patient_id = get_rp_dict(request.data)["patient_id"]
-            patiententry = PatientEntry.objects.get(patient_id=patient_id)
+            patiententry = PatientEntry.objects.get(patient_id=data["patient_id"])
+
+            if data["option"] == "Delivery":
+                patiententry.delivery_time = timezone.now()
+            elif data["option"] == "Completed":
+                patiententry.completion_time = timezone.now()
+
+            patiententry.save()
+            send_consumers_table()
         except PatientEntry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        patiententry.delivery_time = timezone.now()
-        patiententry.save()
-        send_consumers_table()
 
-        status_code = status.HTTP_200_OK
-        return Response(status=status_code)
+        return Response(status=status.HTTP_200_OK)

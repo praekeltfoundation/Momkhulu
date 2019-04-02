@@ -50,6 +50,20 @@ SAMPLE_RP_POST_INVALID_DATA = {
     }
 }
 
+SAMPLE_RP_UPDATE_DELIVERY_DATA = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "option": {"category": "Delivery", "value": "3", "input": "3"},
+    }
+}
+
+SAMPLE_RP_UPDATE_COMPLETED_DATA = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "option": {"category": "Completed", "value": "4", "input": "4"},
+    }
+}
+
 
 class FormTest(TestCase):
     """
@@ -449,9 +463,9 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.status_code, 401)
 
 
-class EntryDeliveredTestCase(AuthenticatedAPITestCase):
+class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
     def setUp(self):
-        super(EntryDeliveredTestCase, self).setUp()
+        super(EntryStatusUpdateTestCase, self).setUp()
         patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
         self.patient_entry = PatientEntry.objects.create(patient_id=patient)
 
@@ -460,7 +474,9 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.assertIsNone(self.patient_entry.delivery_time)
 
         response = self.normalclient.post(
-            reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA, format="json"
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_DELIVERY_DATA,
+            format="json",
         )
 
         # Test returns the right response code
@@ -470,10 +486,27 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.patient_entry.refresh_from_db()
         self.assertIsNotNone(self.patient_entry.delivery_time)
 
+    def test_patient_who_exists_completed(self):
+
+        self.assertIsNone(self.patient_entry.delivery_time)
+
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_COMPLETED_DATA,
+            format="json",
+        )
+
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 200)
+
+        # Test that the delivery time has been updated
+        self.patient_entry.refresh_from_db()
+        self.assertIsNotNone(self.patient_entry.completion_time)
+
     def test_delivery_of_patient_who_does_not_exist(self):
 
         response = self.normalclient.post(
-            reverse("rp_entrydelivered"),
+            reverse("rp_entrystatus_update"),
             data=SAMPLE_RP_POST_DATA_NON_EXISTING,
             format="json",
         )
@@ -484,6 +517,8 @@ class EntryDeliveredTestCase(AuthenticatedAPITestCase):
         self.assertIsNone(self.patient_entry.delivery_time)
 
     def test_patient_exists_no_auth(self):
-        response = self.client.post(reverse("rp_entrydelivered"), SAMPLE_RP_POST_DATA)
+        response = self.client.post(
+            reverse("rp_entrystatus_update"), SAMPLE_RP_UPDATE_DELIVERY_DATA
+        )
 
         self.assertEqual(response.status_code, 401)
