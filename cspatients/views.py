@@ -12,7 +12,8 @@ from rest_framework.views import APIView
 from .models import PatientEntry
 from .util import (
     get_rp_dict,
-    view_all_context,
+    get_all_active_patient_entries,
+    get_all_completed_patient_entries,
     send_consumers_table,
     save_model_changes,
     save_model,
@@ -22,7 +23,10 @@ from .util import (
 @login_required()
 def view(request):
     template = loader.get_template("cspatients/view.html")
-    context = {"patiententrys": view_all_context()}
+    context = {
+        "active": get_all_active_patient_entries(),
+        "completed": get_all_completed_patient_entries(),
+    }
     return HttpResponse(template.render(context), status=200)
 
 

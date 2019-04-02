@@ -1,5 +1,4 @@
 from django.template import loader
-from django.db.models.query import EmptyQuerySet
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -37,14 +36,22 @@ def get_rp_dict(data, context=None):
         return all_dict
 
 
-def view_all_context():
-    rows = []
-    patiententrys = PatientEntry.objects.select_related("patient_id").all()
-    if isinstance(patiententrys, EmptyQuerySet):
-        return False
-    for patiententry in patiententrys:
-        rows.append(patiententry)
-    return sorted(rows, key=lambda x: (x.urgency, x.decision_time))
+def get_all_active_patient_entries():
+    patiententrys = (
+        PatientEntry.objects.filter(completion_time__isnull=True)
+        .select_related("patient_id")
+        .all()
+    )
+    return sorted(patiententrys, key=lambda x: (x.urgency, x.decision_time))
+
+
+def get_all_completed_patient_entries():
+    return (
+        PatientEntry.objects.filter(completion_time__isnull=False)
+        .select_related("patient_id")
+        .all()
+        .order_by("-completion_time")[:10]
+    )
 
 
 def send_consumers_table():
@@ -58,7 +65,12 @@ def send_consumers_table():
         "view",
         {
             "type": "view.update",
-            "content": template.render({"patiententrys": view_all_context()}),
+            "content": template.render(
+                {
+                    "active": get_all_active_patient_entries(),
+                    "completed": get_all_completed_patient_entries(),
+                }
+            ),
         },
     )
 
