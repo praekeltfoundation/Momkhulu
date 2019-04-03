@@ -23,6 +23,7 @@ SAMPLE_RP_POST_DATA = {
         "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
         "gravpar": {"category": "All Responses", "value": "AAAA", "input": "AAAA"},
+        "option": {"category": "Patient Entry", "value": "1", "input": "1"},
     }
 }
 
@@ -36,6 +37,7 @@ SAMPLE_RP_UPDATE_DATA = {
             "input": "Nyasha",
         },
         "change_category": {"category": "name", "value": "1", "input": "1"},
+        "option": {"category": "Patient Entry", "value": "1", "input": "1"},
     }
 }
 

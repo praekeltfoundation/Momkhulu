@@ -127,6 +127,8 @@ def split_patient_and_entry_data(data):
     patient_data = {}
     entry_data = {}
     for key, value in data.items():
+        if key in ("option",):
+            continue
         if key in ("patient_id", "name", "age"):
             patient_data[key] = value
         else:
