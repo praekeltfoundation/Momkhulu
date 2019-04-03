@@ -7,7 +7,7 @@
 
         {% if patiententry %}
         <div>
-        <table id="patient-detail-table" class="table table-striped"> 
+        <table id="patient-detail-table" class="table table-striped">
             <thead class="thead-dark">
                 <tr>
                     <th colspan="2" style="text-align:center;">Patient Details</th>
@@ -16,11 +16,11 @@
             <tbody>
                 <tr>
                     <th scope="row">Name:</th>
-                    <td>{{ patiententry.patient_id.name }}</td>
+                    <td>{{ patiententry.patient.name }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Hospital ID:</th>
-                    <td>{{ patiententry.patient_id.patient_id }}</td> 
+                    <td>{{ patiententry.patient.patient_id }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Urgency:</th>
@@ -28,7 +28,7 @@
                 </tr>
                 <tr>
                     <th scope="row">Age:</th>
-                    <td>{{ patiententry.patient_id.age }}</td>
+                    <td>{{ patiententry.patient.age }}</td>
                 </tr>
                 <tr>
                     <th scope="row">Operation:</th>
@@ -73,10 +73,10 @@
                 <tr>
                     <th scope="row">APGAR 5:</th>
                     <td>{{ patiententry.apgar_5|default_if_none:"-" }}</td>
-                </tr>               
+                </tr>
             </tbody>
         </table>
-        </div> 
+        </div>
         {% else %}
         <div>
             <p>Sorry. No such patient was found.</p>

@@ -22,6 +22,14 @@ SAMPLE_RP_POST_DATA = {
     "results": {
         "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "gravpar": {"category": "All Responses", "value": "AAAA", "input": "AAAA"},
+    }
+}
+
+SAMPLE_RP_UPDATE_DATA = {
+    "results": {
+        "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
+        "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
         "new_value": {
             "category": "All Responses",
             "value": "Nyasha",
@@ -190,7 +198,7 @@ class PatientViewTest(TestCase):
         jane = Patient.objects.create(name="Jane", patient_id="XXXXXX", age=10)
 
         PatientEntry.objects.create(
-            patient_id=jane, urgency=2, decision_time=timezone.now()
+            patient=jane, urgency=2, decision_time=timezone.now()
         )
 
         response = self.client.get(
@@ -205,13 +213,13 @@ class PatientViewTest(TestCase):
     def test_view_two_existing_same_patiententries(self):
         jane = Patient.objects.create(name="Jane", patient_id="XXXXXX", age=10)
         PatientEntry.objects.create(
-            patient_id=jane,
+            patient=jane,
             urgency=2,
             decision_time=timezone.now(),
             indication="First Operation",
         )
         PatientEntry.objects.create(
-            patient_id=jane,
+            patient=jane,
             urgency=3,
             decision_time=timezone.now(),
             indication="Second Operation",
@@ -257,8 +265,8 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(len(patient_entries), 2)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].patient_id.name, "Mary Mary")
-        self.assertEqual(patient_entries[1].patient_id.name, "Jane Doe")
+        self.assertEqual(patient_entries[0].patient.name, "Mary Mary")
+        self.assertEqual(patient_entries[1].patient.name, "Jane Doe")
 
     def test_get_all_completed_patient_entries(self):
         entry1 = save_model(self.patient_one_data)
@@ -277,14 +285,18 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(len(patient_entries), 2)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].patient_id.name, "Mary Mary")
-        self.assertEqual(patient_entries[1].patient_id.name, "Jane Doe")
+        self.assertEqual(patient_entries[0].patient.name, "Mary Mary")
+        self.assertEqual(patient_entries[1].patient.name, "Jane Doe")
 
 
 class SaveModelTest(TestCase):
     def setUp(self):
-        self.patient_one_data = {"name": "Jane Doe", "patient_id": "XXXXX", "age": 20}
-
+        self.patient_one_data = {
+            "name": "Jane Doe",
+            "patient_id": "XXXXX",
+            "age": 20,
+            "urgency": 1,
+        }
         self.patient_two_data = {"name": "Mary Mary", "age": 23, "urgency": 1}
 
     def test_saves_when_given_sufficient_data(self):
@@ -293,7 +305,7 @@ class SaveModelTest(TestCase):
         # Must return the saved patient entry
         self.assertIsNotNone(patiententry)
         # Check that the save persisted in the database
-        self.assertTrue(PatientEntry.objects.get(patient_id="XXXXX"))
+        self.assertEqual(len(PatientEntry.objects.all()), 1)
 
     def test_nothing_saved_with_insufficient_data(self):
         patientryentry = save_model(self.patient_two_data)
@@ -308,18 +320,24 @@ class SaveModelTest(TestCase):
 
 class SaveModelChangesTest(TestCase):
     def setUp(self):
-        Patient.objects.create(name="Jane Doe", patient_id="XXXXX", age=20)
-        PatientEntry.objects.create(patient_id=Patient.objects.get(patient_id="XXXXX"))
+        self.patient = Patient.objects.create(
+            name="Jane Doe", patient_id="XXXXX", age=20
+        )
+        self.patient_entry = PatientEntry.objects.create(
+            patient=self.patient, gravpar="AAAA"
+        )
 
     def test_saves_data_when_passed_good_dict(self):
-        changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe"}
+        changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe", "gravpar": "BBBB"}
 
         # Check returns PatientEntry
-        self.assertTrue(isinstance(save_model_changes(changes_dict), PatientEntry))
+        result = save_model_changes(changes_dict)
+        self.assertTrue(isinstance(result, PatientEntry))
         # Check that the name change has persisted.
-        self.assertEqual(
-            PatientEntry.objects.get(patient_id="XXXXX").patient_id.name, "Jane Moe"
-        )
+        self.patient.refresh_from_db()
+        self.patient_entry.refresh_from_db()
+        self.assertEqual(self.patient.name, "Jane Moe")
+        self.assertEqual(self.patient_entry.gravpar, "BBBB")
 
     def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
         changes_dict = {"patient_id": "YXXXX", "name": "Jane Moe"}
@@ -330,8 +348,11 @@ class SaveModelChangesTest(TestCase):
     def test_does_not_make_changes_when_dict_has_wrong_fields(self):
         changes_dict = {"patient_id": "XXXXX", "names": "Janet Moe", "urgent": "DSHLSD"}
 
-        patiententry = PatientEntry.objects.get(patient_id="XXXXX")
-        self.assertEqual(patiententry, save_model_changes(changes_dict))
+        result = save_model_changes(changes_dict)
+
+        self.patient.refresh_from_db()
+        self.patient_entry.refresh_from_db()
+        self.assertEqual(self.patient_entry, result)
 
 
 class GetRPDictTest(TestCase):
@@ -368,7 +389,7 @@ class GetRPDictTest(TestCase):
         """
         # Extract the dictionary using the get_rp_dict method and
         # entrychanges context
-        changes_dict = get_rp_dict(SAMPLE_RP_POST_DATA, context="entrychanges")
+        changes_dict = get_rp_dict(SAMPLE_RP_UPDATE_DATA, context="entrychanges")
 
         # Test that the change category and values are stored well
         self.assertTrue(changes_dict.__contains__("name"))
@@ -407,8 +428,8 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.status_code, 201)
 
         # Check that the Patient, PatientEntry been correctly saved
-        self.assertTrue(Patient.objects.get(patient_id="HLFSH").name == "Jane Doe")
-        self.assertTrue(PatientEntry.objects.get(patient_id="HLFSH"))
+        self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
+        self.assertEqual(PatientEntry.objects.all().first().gravpar, "AAAA")
 
     def test_new_patient_entry_without_auth(self):
         response = self.client.post(
@@ -429,7 +450,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
     def setUp(self):
         super(CheckPatientExistsAPITestCase, self).setUp()
         patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
-        PatientEntry.objects.create(patient_id=patient)
+        PatientEntry.objects.create(patient=patient)
 
     def test_patient_exists_found(self):
         response = self.normalclient.post(
@@ -456,11 +477,11 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
     def setUp(self):
         super(UpdatePatientEntryAPITestCase, self).setUp()
         patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
-        PatientEntry.objects.create(patient_id=patient)
+        PatientEntry.objects.create(patient=patient)
 
     def test_update_patient_success(self):
         response = self.normalclient.post(
-            reverse("rp_entrychanges"), SAMPLE_RP_POST_DATA, format="json"
+            reverse("rp_entrychanges"), SAMPLE_RP_UPDATE_DATA, format="json"
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
@@ -488,7 +509,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
     def setUp(self):
         super(EntryStatusUpdateTestCase, self).setUp()
         patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
-        self.patient_entry = PatientEntry.objects.create(patient_id=patient)
+        self.patient_entry = PatientEntry.objects.create(patient=patient)
 
     def test_patient_who_exists_delivered(self):
 

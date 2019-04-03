@@ -34,7 +34,7 @@ def view(request):
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     patiententry = (
-        PatientEntry.objects.filter(patient_id=patient_id)
+        PatientEntry.objects.filter(patient__patient_id=patient_id)
         .order_by("-decision_time")
         .first()
     )
@@ -80,7 +80,7 @@ class CheckPatientExistsView(APIView):
     def post(self, request):
         try:
             patient_id = get_rp_dict(request.data)["patient_id"]
-            PatientEntry.objects.get(patient_id=patient_id)
+            PatientEntry.objects.get(patient__patient_id=patient_id)
         except PatientEntry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_200_OK)
@@ -103,7 +103,9 @@ class EntryStatusUpdateView(APIView):
     def post(self, request):
         data = get_rp_dict(request.data)
         try:
-            patiententry = PatientEntry.objects.get(patient_id=data["patient_id"])
+            patiententry = PatientEntry.objects.get(
+                patient__patient_id=data["patient_id"]
+            )
 
             if data["option"] == "Delivery":
                 patiententry.delivery_time = timezone.now()
