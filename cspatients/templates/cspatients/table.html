@@ -16,9 +16,9 @@
         <tbody>
             {% for patiententry in active %}
                 <tr class="urgency-{{patiententry.urgency}} info-row">
-                    <td class="patient-id">{{patiententry.patient_id.patient_id | default_if_none:"-"}}</td>
-                    <td>{{ patiententry.patient_id.name | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.patient_id.age | default_if_none:"-" }}</td>
+                    <td class="patient-id">{{patiententry.patient.patient_id | default_if_none:"-"}}</td>
+                    <td>{{ patiententry.patient.name | default_if_none:"-" }}</td>
+                    <td>{{ patiententry.patient.age | default_if_none:"-" }}</td>
                     <td>{{ patiententry.operation | default_if_none:"-" }}</td>
                     <td>{{ patiententry.gravpar | default_if_none:"-" }}</td>
                     <td>{{ patiententry.location | default_if_none:"-" }}</td>
@@ -55,9 +55,9 @@
         <tbody>
             {% for patiententry in completed %}
                 <tr class="info-row row-completed">
-                    <td class="patient-id">{{patiententry.patient_id.patient_id | default_if_none:"-"}}</td>
-                    <td>{{ patiententry.patient_id.name | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.patient_id.age | default_if_none:"-" }}</td>
+                    <td class="patient-id">{{patiententry.patient.patient_id | default_if_none:"-"}}</td>
+                    <td>{{ patiententry.patient.name | default_if_none:"-" }}</td>
+                    <td>{{ patiententry.patient.age | default_if_none:"-" }}</td>
                     <td>{{ patiententry.operation | default_if_none:"-" }}</td>
                     <td>{{ patiententry.gravpar | default_if_none:"-" }}</td>
                     <td>{{ patiententry.location | default_if_none:"-" }}</td>

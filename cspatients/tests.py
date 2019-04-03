@@ -307,6 +307,27 @@ class SaveModelTest(TestCase):
         # Check that the save persisted in the database
         self.assertEqual(len(PatientEntry.objects.all()), 1)
 
+    def test_saves_duplicate(self):
+        save_model(self.patient_one_data)
+        patiententry = save_model(self.patient_one_data)
+
+        # Must not save the second one
+        self.assertIsNone(patiententry)
+        # Check that the first save persisted in the database
+        self.assertEqual(len(PatientEntry.objects.all()), 1)
+
+    def test_saves_duplicate_completed(self):
+        patiententry = save_model(self.patient_one_data)
+        patiententry.completion_time = timezone.now()
+        patiententry.save()
+
+        patiententry = save_model(self.patient_one_data)
+
+        # Must not save the second one
+        self.assertIsNotNone(patiententry)
+        # Check that the first save persisted in the database
+        self.assertEqual(len(PatientEntry.objects.all()), 2)
+
     def test_nothing_saved_with_insufficient_data(self):
         patientryentry = save_model(self.patient_two_data)
 
