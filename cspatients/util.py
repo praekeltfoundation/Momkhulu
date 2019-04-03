@@ -124,9 +124,15 @@ def save_model(data):
 
 
 def split_patient_and_entry_data(data):
+    """
+    Splits the data from a RapidPro POST request into patient and patient entry
+    related fields.
+    """
     patient_data = {}
     entry_data = {}
     for key, value in data.items():
+        if key in ("option",):
+            continue
         if key in ("patient_id", "name", "age"):
             patient_data[key] = value
         else:
