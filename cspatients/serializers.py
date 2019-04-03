@@ -15,3 +15,7 @@ class PatientEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientEntry
         fields = "__all__"
+
+
+class CreateEntrySerializer(serializers.Serializer):
+    patient_id = serializers.CharField(max_length=255, required=True)
