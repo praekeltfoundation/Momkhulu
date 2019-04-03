@@ -78,7 +78,7 @@ CHANNEL_LAYERS = {
 }
 
 # Database
-
+DATABASES = {"default": env.db(default="postgres://postgres@localhost:5432/momkhulu")}
 
 # Password validation
 

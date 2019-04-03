@@ -22,9 +22,12 @@ jobs:
   include:
     - stage: test
       python: "3.6"
+      addons:
+        postgresql: '9.4'
       # Clear unused build steps
       services:
         - redis-server
+        - postgresql
       deploy: []
       after_success: []
     - stage: docker

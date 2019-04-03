@@ -8,8 +8,13 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from .models import Patient, PatientEntry
-from .serializers import PatientSerializer, PatientEntrySerializer
-from .util import view_all_context, save_model, save_model_changes, get_rp_dict
+from .util import (
+    get_all_active_patient_entries,
+    get_all_completed_patient_entries,
+    save_model,
+    save_model_changes,
+    get_rp_dict,
+)
 
 # View Tests
 
@@ -232,32 +237,48 @@ class ViewAllContextTest(TestCase):
             "urgency": 1,
         }
 
+        self.patient_three_data = {"name": "John", "patient_id": "111111", "age": 20}
+
     def test_context_when_no_patients(self):
-        self.assertFalse(view_all_context())
+        self.assertFalse(get_all_active_patient_entries())
+        self.assertFalse(get_all_completed_patient_entries())
 
-    def test_context_when_patiententrys(self):
-        patient_one = PatientSerializer(data=self.patient_one_data)
-        patiententry_one = PatientEntrySerializer(data=self.patient_one_data)
-        if patient_one.is_valid():
-            patient_one.save()
-            if patiententry_one.is_valid():
-                patiententry_one.save()
-        patient_two = PatientSerializer(data=self.patient_two_data)
-        patiententry_two = PatientEntrySerializer(data=self.patient_two_data)
-        if patient_two.is_valid():
-            patient_two.save()
-            if patiententry_two.is_valid():
-                patiententry_two.save()
+    def test_get_all_active_patient_entries(self):
+        save_model(self.patient_one_data)
+        save_model(self.patient_two_data)
+        entry3 = save_model(self.patient_three_data)
 
-        # Check that view_all_context doesn't return False
-        self.assertTrue(view_all_context)
+        entry3.completion_time = timezone.now()
+        entry3.save()
+
+        patient_entries = get_all_active_patient_entries()
 
         # Check that it returns two objects
-        self.assertEqual(len(view_all_context()), 2)
+        self.assertEqual(len(patient_entries), 2)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(view_all_context()[0].patient_id.name, "Mary Mary")
-        self.assertEqual(view_all_context()[1].patient_id.name, "Jane Doe")
+        self.assertEqual(patient_entries[0].patient_id.name, "Mary Mary")
+        self.assertEqual(patient_entries[1].patient_id.name, "Jane Doe")
+
+    def test_get_all_completed_patient_entries(self):
+        entry1 = save_model(self.patient_one_data)
+        entry2 = save_model(self.patient_two_data)
+        save_model(self.patient_three_data)
+
+        entry1.completion_time = timezone.now()
+        entry1.save()
+
+        entry2.completion_time = timezone.now()
+        entry2.save()
+
+        patient_entries = get_all_completed_patient_entries()
+
+        # Check that it returns two objects
+        self.assertEqual(len(patient_entries), 2)
+
+        # Check that the results are sorted by the urgency
+        self.assertEqual(patient_entries[0].patient_id.name, "Mary Mary")
+        self.assertEqual(patient_entries[1].patient_id.name, "Jane Doe")
 
 
 class SaveModelTest(TestCase):
