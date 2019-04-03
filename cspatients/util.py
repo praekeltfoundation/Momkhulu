@@ -113,6 +113,12 @@ def save_model(data):
         patient_id=patient_data["patient_id"], defaults=patient_data
     )
 
+    # check if we already have a active entry
+    if PatientEntry.objects.filter(
+        patient=patient, completion_time__isnull=True
+    ).exists():
+        return None
+
     entry_data["patient"] = patient
     return PatientEntry.objects.create(**entry_data)
 
