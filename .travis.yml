@@ -11,13 +11,13 @@ before_install:
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
-  - pip install coveralls
+  - pip install codecov
 script:
   - black --check .
   - flake8 .
   - coverage run --source='.' manage.py test
 after_success:
-  - coveralls
+  - codecov
 jobs:
   include:
     - stage: test
