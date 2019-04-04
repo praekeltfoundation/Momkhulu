@@ -1,12 +1,17 @@
-from django.test import Client
-from django.test import TestCase
-from django.contrib.auth.models import User
-from django.urls import reverse
-from django.utils import timezone
+import pytest
 
+from channels.layers import get_channel_layer
+from channels.testing import WebsocketCommunicator
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
+from django.contrib.auth.models import User
+from django.test import Client
+from django.test import TestCase
+from django.urls import reverse
+from django.utils import timezone
+
+from .consumers import ViewConsumer
 from .models import Patient, PatientEntry
 from .util import (
     get_all_active_patient_entries,
@@ -15,6 +20,7 @@ from .util import (
     save_model_changes,
     get_rp_dict,
 )
+
 
 # View Tests
 
@@ -587,3 +593,21 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         )
 
         self.assertEqual(response.status_code, 401)
+
+
+@pytest.mark.asyncio
+async def test_view_consumer():
+    communicator = WebsocketCommunicator(ViewConsumer, "/ws/cspatients/viewsocket/")
+
+    connected, subprotocol = await communicator.connect()
+    assert connected
+
+    channel_layer = get_channel_layer()
+    await channel_layer.group_send(
+        "view", {"type": "view.update", "content": "Testing"}
+    )
+
+    response = await communicator.receive_from()
+    assert response == "Testing"
+
+    await communicator.disconnect()
