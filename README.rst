@@ -1,5 +1,18 @@
 momkhulu
 =============================
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/ambv/black
+
+
+.. image:: https://codecov.io/gh/praekeltfoundation/momkhulu/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/praekeltfoundation/momkhulu
+.. image:: https://travis-ci.com/praekeltfoundation/momkhulu.svg?branch=develop
+    :target: https://travis-ci.com/praekeltfoundation/momkhulu
+    :alt: Build Passing/Failing on TravisCI.com
+    
+.. image:: https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg
+    :target: https://hub.docker.com/r/praekeltfoundation/momkhulu/tags/
+    :alt: Docker Automated build
 
 This is a hospital resource allocation tool. Provides an API which can be
 used with RapidPro. Uses WebSockets for real-time page updates.

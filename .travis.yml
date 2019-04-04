@@ -6,30 +6,31 @@ python:
 cache: pip
 services:
   - redis-server
+env:
+  - secure: "apfZZL+xk22IlmkyYEnCi6J475h/F+ffZ2epFzKq+I5VJUpgrzREX0zuDPRM5OON2mNkQnBWMIV0hFaj0c+lVZ++ZRHfKw70QvuFGb0EDX3fWq1nHakiWAxfeoA/1OooYB0peMS+ZxUBfyjoRSHh4HpqOYsUqQN1BZ61edIR0VAhKmOtiq+VjGahmhoqhTNVny43ka0F8z7BY8IWKaK4pBtjo3mNbBnABSTSqerFW/h37HtAEZhgarWkhwdGy18Jbz/L+0E3VSLanqIjzmHaitCFk5/Knw25Riv5incZtcvGZue/LnnpxSZLcMWwtx3hBz6mYB+Aa4APVQ10SgH3+E4WoB8G4XQZBknyljM0BUT+J8glPO6tF1dm4ID6ZbAVT5eFacyBOOb1IvIxBCT6KG9edNDgUv5m5oljwuFz8fIACQDX93CL+HamZF405SHNuyGTor6huwYr5hrwFvfR2SxXdGc2/D39oL2c283I39y4CZqGqTt2VoY7QS8qHmKLHfQpckHEbbP6ypJ+IeAQ6aJurmz8ebNVMlj2LYXpWZ0gZq54ro0JDLTlcIdcD2zTNwgvfUgm4+w9o4T7Is9/N9gP+GiUUe0ILGyEL1hghOLCba4QlQoA5YNwb8rCB3Ju6Q9V7FFH4z8AGf754qvw3tmgSNZOEO5+BqK91XVdhGo="   # yamllint disable-line
 before_install:
   - pip install --upgrade pip
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
-  - pip install coveralls
+  - pip install codecov
 script:
   - black --check .
   - flake8 .
-  - coverage run --source='.' manage.py test
-after_success:
-  - coveralls
+  - py.test --cov=./
 jobs:
   include:
     - stage: test
       python: "3.6"
       addons:
         postgresql: '9.4'
-      # Clear unused build steps
       services:
         - redis-server
         - postgresql
+      # Clear unused build steps
       deploy: []
-      after_success: []
+      after_success:
+        - codecov
     - stage: docker
       python: "3.6"
       sudo: required
