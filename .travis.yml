@@ -6,6 +6,8 @@ python:
 cache: pip
 services:
   - redis-server
+env:
+  - secure: "apfZZL+xk22IlmkyYEnCi6J475h/F+ffZ2epFzKq+I5VJUpgrzREX0zuDPRM5OON2mNkQnBWMIV0hFaj0c+lVZ++ZRHfKw70QvuFGb0EDX3fWq1nHakiWAxfeoA/1OooYB0peMS+ZxUBfyjoRSHh4HpqOYsUqQN1BZ61edIR0VAhKmOtiq+VjGahmhoqhTNVny43ka0F8z7BY8IWKaK4pBtjo3mNbBnABSTSqerFW/h37HtAEZhgarWkhwdGy18Jbz/L+0E3VSLanqIjzmHaitCFk5/Knw25Riv5incZtcvGZue/LnnpxSZLcMWwtx3hBz6mYB+Aa4APVQ10SgH3+E4WoB8G4XQZBknyljM0BUT+J8glPO6tF1dm4ID6ZbAVT5eFacyBOOb1IvIxBCT6KG9edNDgUv5m5oljwuFz8fIACQDX93CL+HamZF405SHNuyGTor6huwYr5hrwFvfR2SxXdGc2/D39oL2c283I39y4CZqGqTt2VoY7QS8qHmKLHfQpckHEbbP6ypJ+IeAQ6aJurmz8ebNVMlj2LYXpWZ0gZq54ro0JDLTlcIdcD2zTNwgvfUgm4+w9o4T7Is9/N9gP+GiUUe0ILGyEL1hghOLCba4QlQoA5YNwb8rCB3Ju6Q9V7FFH4z8AGf754qvw3tmgSNZOEO5+BqK91XVdhGo="   # yamllint disable-line
 before_install:
   - pip install --upgrade pip
 install:
@@ -15,7 +17,7 @@ install:
 script:
   - black --check .
   - flake8 .
-  - coverage run --source='.' manage.py test
+  - py.test --cov=./
 after_success:
   - codecov
 jobs:
@@ -39,7 +41,6 @@ jobs:
         - IMAGE_NAME=praekeltfoundation/momkhulu
         - REGISTRY_USER=praekeltorgdeploy
         - secure: "OVlY7F5guWWyzmP6rjIIOlk0VZBWU7l1RfuQx6RyKmhTqEHwht6lg7QRgOM5UxtPMQDxT7hdY7fHLPZkMxh8t3tYVK4qctZ0FHup5jhgkPopZCWwzrvyQ1tverMll5j1S9nq2RKLxBH7l4pJHtiEsSf+sQOMRpE3JeRZz89Q30L9zJQ1HvCdeYyxgkJWCL5mzf56n5m2nNu7zTM1PmwaHpFElIazxW2s02AIXSjCwv+le9cngLoNqSoZtUX1mkxSkXhs7twg2lR9VgDXAd7p7voyixRn/dKFD7UnapbMUKUBxI1HbUzbky7rWlNz2/OqLe/XFzZ5dmihK3+nWti67DUFGdeBDoXZTZoxPUMbCZuezRs7uEi+20K9/TuO3xldYp14peUiUPuAcIYgGi3ygDQOvS2/XJMcht9rju+C4BEIA0CjHC5VMZD/7uXc7xBHFjgbITNMT8OPUyNHUcB9FRrB92Hb+SRGteqY1mRDMEq+KdeHy709S3vG4wQ8SvzzCs4JGzC/vRvxxDKua37JYYdDllnUVC5GWXZqibqxLR47vxHLqJe0QkedW4rTlsehEzDNRW8pANQ6veBfstohixdPQ7NLGWF5jK5IffGzIqRRq8HHRO/BlS+p/NPeEQ7w5TdHVzdisGCM9RH2ZBM/BXtcm2wNtD5QD62YaTdfcdg="   # yamllint disable-line
-        - secure: "apfZZL+xk22IlmkyYEnCi6J475h/F+ffZ2epFzKq+I5VJUpgrzREX0zuDPRM5OON2mNkQnBWMIV0hFaj0c+lVZ++ZRHfKw70QvuFGb0EDX3fWq1nHakiWAxfeoA/1OooYB0peMS+ZxUBfyjoRSHh4HpqOYsUqQN1BZ61edIR0VAhKmOtiq+VjGahmhoqhTNVny43ka0F8z7BY8IWKaK4pBtjo3mNbBnABSTSqerFW/h37HtAEZhgarWkhwdGy18Jbz/L+0E3VSLanqIjzmHaitCFk5/Knw25Riv5incZtcvGZue/LnnpxSZLcMWwtx3hBz6mYB+Aa4APVQ10SgH3+E4WoB8G4XQZBknyljM0BUT+J8glPO6tF1dm4ID6ZbAVT5eFacyBOOb1IvIxBCT6KG9edNDgUv5m5oljwuFz8fIACQDX93CL+HamZF405SHNuyGTor6huwYr5hrwFvfR2SxXdGc2/D39oL2c283I39y4CZqGqTt2VoY7QS8qHmKLHfQpckHEbbP6ypJ+IeAQ6aJurmz8ebNVMlj2LYXpWZ0gZq54ro0JDLTlcIdcD2zTNwgvfUgm4+w9o4T7Is9/N9gP+GiUUe0ILGyEL1hghOLCba4QlQoA5YNwb8rCB3Ju6Q9V7FFH4z8AGf754qvw3tmgSNZOEO5+BqK91XVdhGo="   # yamllint disable-line
 
       before_script:
         - docker pull "$IMAGE_NAME" || true
