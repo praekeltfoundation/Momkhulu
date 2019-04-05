@@ -318,10 +318,27 @@ class SaveModelTest(TestCase):
             "age": 20,
             "urgency": 1,
         }
-        self.patient_two_data = {"name": "Mary Mary", "age": 23, "urgency": 1}
 
     def test_saves_when_given_sufficient_data(self):
         patiententry, errors = save_model(self.patient_one_data)
+
+        # Must return the saved patient entry
+        self.assertIsNotNone(patiententry)
+        self.assertEqual(errors, [])
+
+        # Check that the save persisted in the database
+        self.assertEqual(len(PatientEntry.objects.all()), 1)
+
+    def test_saves_when_given_junk_data(self):
+        patiententry, errors = save_model(
+            {
+                "patient_id": "XXXXX",
+                "name": "Mary Mary",
+                "age": 23,
+                "urgency": 1,
+                "response_19": "test",
+            }
+        )
 
         # Must return the saved patient entry
         self.assertIsNotNone(patiententry)
@@ -354,7 +371,9 @@ class SaveModelTest(TestCase):
         self.assertEqual(len(PatientEntry.objects.all()), 2)
 
     def test_nothing_saved_with_insufficient_data(self):
-        patientryentry, errors = save_model(self.patient_two_data)
+        patientryentry, errors = save_model(
+            {"name": "Mary Mary", "age": 23, "urgency": 1}
+        )
 
         # Must return None
         self.assertIsNone(patientryentry)
