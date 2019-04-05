@@ -262,7 +262,7 @@ class ViewAllContextTest(TestCase):
     def test_get_all_active_patient_entries(self):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
-        entry3 = save_model(self.patient_three_data)
+        entry3, _ = save_model(self.patient_three_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()
@@ -277,8 +277,8 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(patient_entries[1].patient.name, "Jane Doe")
 
     def test_get_all_completed_patient_entries(self):
-        entry1 = save_model(self.patient_one_data)
-        entry2 = save_model(self.patient_two_data)
+        entry1, _ = save_model(self.patient_one_data)
+        entry2, _ = save_model(self.patient_two_data)
         save_model(self.patient_three_data)
 
         entry1.completion_time = timezone.now()
@@ -308,39 +308,44 @@ class SaveModelTest(TestCase):
         self.patient_two_data = {"name": "Mary Mary", "age": 23, "urgency": 1}
 
     def test_saves_when_given_sufficient_data(self):
-        patiententry = save_model(self.patient_one_data)
+        patiententry, errors = save_model(self.patient_one_data)
 
         # Must return the saved patient entry
         self.assertIsNotNone(patiententry)
+        self.assertEqual(errors, [])
+
         # Check that the save persisted in the database
         self.assertEqual(len(PatientEntry.objects.all()), 1)
 
     def test_saves_duplicate(self):
         save_model(self.patient_one_data)
-        patiententry = save_model(self.patient_one_data)
+        patiententry, errors = save_model(self.patient_one_data)
 
         # Must not save the second one
         self.assertIsNone(patiententry)
+        self.assertEqual(errors, ["Active entry already exists for this patient"])
         # Check that the first save persisted in the database
         self.assertEqual(len(PatientEntry.objects.all()), 1)
 
     def test_saves_duplicate_completed(self):
-        patiententry = save_model(self.patient_one_data)
+        patiententry, errors = save_model(self.patient_one_data)
         patiententry.completion_time = timezone.now()
         patiententry.save()
 
-        patiententry = save_model(self.patient_one_data)
+        patiententry, errors = save_model(self.patient_one_data)
 
         # Must not save the second one
         self.assertIsNotNone(patiententry)
+        self.assertEqual(errors, [])
         # Check that the first save persisted in the database
         self.assertEqual(len(PatientEntry.objects.all()), 2)
 
     def test_nothing_saved_with_insufficient_data(self):
-        patientryentry = save_model(self.patient_two_data)
+        patientryentry, errors = save_model(self.patient_two_data)
 
         # Must return None
         self.assertIsNone(patientryentry)
+        self.assertEqual(errors, ["Patient ID is required"])
 
         # Check that none of the information is in the database
         with self.assertRaises(Patient.DoesNotExist):
@@ -360,8 +365,10 @@ class SaveModelChangesTest(TestCase):
         changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe", "gravpar": "BBBB"}
 
         # Check returns PatientEntry
-        result = save_model_changes(changes_dict)
+        result, errors = save_model_changes(changes_dict)
         self.assertTrue(isinstance(result, PatientEntry))
+        self.assertEqual(errors, [])
+
         # Check that the name change has persisted.
         self.patient.refresh_from_db()
         self.patient_entry.refresh_from_db()
@@ -371,13 +378,18 @@ class SaveModelChangesTest(TestCase):
     def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
         changes_dict = {"patient_id": "YXXXX", "name": "Jane Moe"}
 
+        result, errors = save_model_changes(changes_dict)
+
         # Returns none on bad incorrect patient_id
-        self.assertIsNone(save_model_changes(changes_dict))
+        self.assertIsNone(result)
+        self.assertEqual(errors, ["Patient entry does not exist"])
 
     def test_does_not_make_changes_when_dict_has_wrong_fields(self):
         changes_dict = {"patient_id": "XXXXX", "names": "Janet Moe", "urgent": "DSHLSD"}
 
-        result = save_model_changes(changes_dict)
+        result, errors = save_model_changes(changes_dict)
+
+        self.assertEqual(errors, [])
 
         self.patient.refresh_from_db()
         self.patient_entry.refresh_from_db()
@@ -455,6 +467,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         )
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["errors"], "")
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
@@ -473,6 +486,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         )
         # Assert a correct response of 400
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["errors"], "Patient ID is required")
 
 
 class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
@@ -514,6 +528,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         )
         # Test the right response code
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["errors"], "")
 
         # Test that that the change has been made
         patient = Patient.objects.get(patient_id="HLFSH")
@@ -525,6 +540,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         )
         # Test the right response code 400
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["errors"], "Patient entry does not exist")
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(

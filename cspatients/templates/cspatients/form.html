@@ -6,6 +6,9 @@
     <hr>
     <h2>Caesarian Patient Form</h2>
     <hr>
+    {% for error in errors %}
+        <h4 style="color:red">{{ error }}</h4>
+    {% endfor %}
     <h3>Enter a new Patient</h3>
     <div class="col-xs-11 col-sm-10 col-md-6 centre">
         <form method="POST">{% csrf_token %}
@@ -28,7 +31,7 @@
             <div class="form-group">
                 <label for="urgency">Urgency</label>
                 <input type="number" class="form-control" name="urgency" id="urgency" placeholder="4" aria-describedby="urgency-help" required>
-                <small id = "urgency-help">Urgency rating from 1-4, 1 most urgent and 4 least urgent.</small> 
+                <small id = "urgency-help">Urgency rating from 1-4, 1 most urgent and 4 least urgent.</small>
             </div>
             <div class="form-group">
                 <label for="indication">Notes</label>

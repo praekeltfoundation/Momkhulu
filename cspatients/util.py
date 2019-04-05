@@ -80,15 +80,16 @@ def save_model_changes(data):
         The function takes in the request.POST object and saves changes in
         models. Returns boolean
     """
-    if not CreateEntrySerializer(data=data).is_valid():
-        return None
+    serializer = CreateEntrySerializer(data=data)
+    if not serializer.is_valid():
+        return None, get_errors_from_serializer(serializer.errors)
 
     patient_data, entry_data = split_patient_and_entry_data(data)
 
     try:
         patiententry = PatientEntry.objects.get(patient__patient_id=data["patient_id"])
     except PatientEntry.DoesNotExist:
-        return None
+        return None, ["Patient entry does not exist"]
     patient = patiententry.patient
     entry_data["patient"] = patient
 
@@ -97,15 +98,16 @@ def save_model_changes(data):
     patiententry.__dict__.update(entry_data)
     patiententry.save()
 
-    return patiententry
+    return patiententry, []
 
 
 def save_model(data):
     """
         Saves a models. Returns patient object.
     """
-    if not CreateEntrySerializer(data=data).is_valid():
-        return None
+    serializer = CreateEntrySerializer(data=data)
+    if not serializer.is_valid():
+        return None, get_errors_from_serializer(serializer.errors)
 
     patient_data, entry_data = split_patient_and_entry_data(data)
 
@@ -117,10 +119,18 @@ def save_model(data):
     if PatientEntry.objects.filter(
         patient=patient, completion_time__isnull=True
     ).exists():
-        return None
+        return None, ["Active entry already exists for this patient"]
 
     entry_data["patient"] = patient
-    return PatientEntry.objects.create(**entry_data)
+    return PatientEntry.objects.create(**entry_data), []
+
+
+def get_errors_from_serializer(serializer_errors):
+    errors = []
+    for key, details in serializer_errors.items():
+        for error in details:
+            errors.append(str(error))
+    return errors
 
 
 def split_patient_and_entry_data(data):

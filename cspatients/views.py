@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -41,39 +41,39 @@ def patient(request, patient_id):
 
     context = {"patiententry": patiententry}
     if patiententry:
-        status_code = 200
+        status_code = status.HTTP_200_OK
     else:
-        status_code = 404
+        status_code = status.HTTP_404_NOT_FOUND
     return HttpResponse(template.render(context), status=status_code)
 
 
 @login_required()
 def form(request):
-    status_code = 200
+    errors = []
+    status_code = status.HTTP_200_OK
     if request.method == "POST":
-        if save_model(request.POST):
+        entry, errors = save_model(request.POST)
+        if entry:
+            status_code = status.HTTP_201_CREATED
             send_consumers_table()
-            status_code = 201
         else:
-            status_code = 400
+            status_code = status.HTTP_400_BAD_REQUEST
     return render(
-        request,
-        "cspatients/form.html",
-        context={"status_code": status_code},
-        status=status_code,
+        request, "cspatients/form.html", context={"errors": errors}, status=status_code
     )
 
 
 # API VIEWS
 class NewPatientEntryView(APIView):
     def post(self, request):
-        if save_model(get_rp_dict(request.data)):
+        entry, errors = save_model(get_rp_dict(request.data))
+        if entry:
             send_consumers_table()
             status_code = status.HTTP_201_CREATED
         else:
             status_code = status.HTTP_400_BAD_REQUEST
 
-        return Response(status=status_code)
+        return JsonResponse({"errors": ", ".join(errors)}, status=status_code)
 
 
 class CheckPatientExistsView(APIView):
@@ -89,12 +89,13 @@ class CheckPatientExistsView(APIView):
 class UpdatePatientEntryView(APIView):
     def post(self, request):
         changes_dict = get_rp_dict(request.data, context="entrychanges")
-        if save_model_changes(changes_dict):
+        entry, errors = save_model_changes(changes_dict)
+        if entry:
             status_code = status.HTTP_200_OK
             send_consumers_table()
         else:
             status_code = status.HTTP_400_BAD_REQUEST
-        return Response(status=status_code)
+        return JsonResponse({"errors": ", ".join(errors)}, status=status_code)
 
 
 class EntryStatusUpdateView(APIView):
