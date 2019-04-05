@@ -30,7 +30,8 @@ def get_rp_dict(data, context=None):
     if context == "entrychanges":
         final_dict = {}
         final_dict[all_dict["change_category"]] = all_dict["new_value"]
-        final_dict["patient_id"] = all_dict.get("patient_id")
+        if "patient_id" in all_dict:
+            final_dict["patient_id"] = all_dict["patient_id"]
         return final_dict
     else:
         return all_dict
