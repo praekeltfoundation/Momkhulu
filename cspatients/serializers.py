@@ -24,3 +24,4 @@ class CreateEntrySerializer(serializers.Serializer):
         super(CreateEntrySerializer, self).__init__(*args, **kwargs)
 
         self.fields["patient_id"].error_messages["required"] = "Patient ID is required"
+        self.fields["patient_id"].error_messages["null"] = "Patient ID is required"

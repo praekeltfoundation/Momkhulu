@@ -71,6 +71,19 @@ SAMPLE_RP_POST_INVALID_DATA = {
     }
 }
 
+SAMPLE_RP_UPDATE_INVALID_DATA = {
+    "results": {
+        "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
+        "new_value": {
+            "category": "All Responses",
+            "value": "Nyasha",
+            "input": "Nyasha",
+        },
+        "change_category": {"category": "name", "value": "1", "input": "1"},
+        "option": {"category": "Patient Entry", "value": "1", "input": "1"},
+    }
+}
+
 SAMPLE_RP_UPDATE_DELIVERY_DATA = {
     "results": {
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
@@ -533,6 +546,14 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         # Test that that the change has been made
         patient = Patient.objects.get(patient_id="HLFSH")
         self.assertTrue(patient.name == "Nyasha")
+
+    def test_update_patient_invalid_data(self):
+        response = self.normalclient.post(
+            reverse("rp_entrychanges"), SAMPLE_RP_UPDATE_INVALID_DATA, format="json"
+        )
+        # Test the right response code 400
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["errors"], "Patient ID is required")
 
     def test_update_patient_not_found(self):
         response = self.normalclient.post(

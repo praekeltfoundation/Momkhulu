@@ -30,7 +30,7 @@ def get_rp_dict(data, context=None):
     if context == "entrychanges":
         final_dict = {}
         final_dict[all_dict["change_category"]] = all_dict["new_value"]
-        final_dict["patient_id"] = all_dict["patient_id"]
+        final_dict["patient_id"] = all_dict.get("patient_id")
         return final_dict
     else:
         return all_dict
@@ -126,6 +126,9 @@ def save_model(data):
 
 
 def get_errors_from_serializer(serializer_errors):
+    """
+    Extracts the errors from the serializer errors into a list of strings.
+    """
     errors = []
     for key, details in serializer_errors.items():
         for error in details:
