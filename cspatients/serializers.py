@@ -19,3 +19,8 @@ class PatientEntrySerializer(serializers.ModelSerializer):
 
 class CreateEntrySerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=255, required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(CreateEntrySerializer, self).__init__(*args, **kwargs)
+
+        self.fields["patient_id"].error_messages["required"] = "Patient ID is required"
