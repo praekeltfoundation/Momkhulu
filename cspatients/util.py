@@ -88,7 +88,9 @@ def save_model_changes(data):
     patient_data, entry_data = split_patient_and_entry_data(data)
 
     try:
-        patiententry = PatientEntry.objects.get(patient__patient_id=data["patient_id"])
+        patiententry = PatientEntry.objects.get(
+            patient__patient_id=data["patient_id"], completion_time__isnull=True
+        )
     except PatientEntry.DoesNotExist:
         return None, ["Patient entry does not exist"]
     patient = patiententry.patient
