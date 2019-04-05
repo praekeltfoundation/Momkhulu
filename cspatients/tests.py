@@ -388,6 +388,23 @@ class SaveModelChangesTest(TestCase):
         self.assertEqual(self.patient.name, "Jane Moe")
         self.assertEqual(self.patient_entry.gravpar, "BBBB")
 
+    def test_saves_data_multiple_entries(self):
+        PatientEntry.objects.create(
+            patient=self.patient, completion_time=timezone.now()
+        )
+        changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe", "gravpar": "BBBB"}
+
+        # Check returns PatientEntry
+        result, errors = save_model_changes(changes_dict)
+        self.assertTrue(isinstance(result, PatientEntry))
+        self.assertEqual(errors, [])
+
+        # Check that the name change has persisted.
+        self.patient.refresh_from_db()
+        self.patient_entry.refresh_from_db()
+        self.assertEqual(self.patient.name, "Jane Moe")
+        self.assertEqual(self.patient_entry.gravpar, "BBBB")
+
     def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
         changes_dict = {"patient_id": "YXXXX", "name": "Jane Moe"}
 
