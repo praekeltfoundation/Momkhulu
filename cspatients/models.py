@@ -5,6 +5,8 @@ class Patient(models.Model):
     patient_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     age = models.IntegerField(default=20)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -28,6 +30,8 @@ class PatientEntry(models.Model):
     clinician = models.CharField(max_length=255, null=True)
     apgar_1 = models.IntegerField(null=True)
     apgar_5 = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.patient.name) + " having " + self.operation
