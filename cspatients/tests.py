@@ -505,8 +505,10 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
     def setUp(self):
         super(CheckPatientExistsAPITestCase, self).setUp()
-        patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
-        PatientEntry.objects.create(patient=patient)
+        self.patient = Patient.objects.create(
+            name="Jane Doe", patient_id="HLFSH", age=20
+        )
+        PatientEntry.objects.create(patient=self.patient)
 
     def test_patient_exists_found(self):
         response = self.normalclient.post(
@@ -520,6 +522,16 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+    def test_patient_exists_multiple_entries(self):
+        PatientEntry.objects.create(
+            patient=self.patient, completion_time=timezone.now()
+        )
+        response = self.normalclient.post(
+            reverse("rp_patientexits"), SAMPLE_RP_POST_DATA, format="json"
+        )
+
+        self.assertEqual(response.status_code, 200)
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(
