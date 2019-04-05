@@ -107,7 +107,7 @@ class EntryStatusUpdateView(APIView):
         data = get_rp_dict(request.data)
         try:
             patiententry = PatientEntry.objects.get(
-                patient__patient_id=data["patient_id"]
+                patient__patient_id=data["patient_id"], completion_time__isnull=True
             )
 
             if data["option"] == "Delivery":

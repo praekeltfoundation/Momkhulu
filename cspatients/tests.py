@@ -586,8 +586,10 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
 class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
     def setUp(self):
         super(EntryStatusUpdateTestCase, self).setUp()
-        patient = Patient.objects.create(name="Jane Doe", patient_id="HLFSH", age=20)
-        self.patient_entry = PatientEntry.objects.create(patient=patient)
+        self.patient = Patient.objects.create(
+            name="Jane Doe", patient_id="HLFSH", age=20
+        )
+        self.patient_entry = PatientEntry.objects.create(patient=self.patient)
 
     def test_patient_who_exists_delivered(self):
 
@@ -635,6 +637,18 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
         # Test that the delivery time has not been updated
         self.assertIsNone(self.patient_entry.delivery_time)
+
+    def test_delivery_of_patient_multiple_entries(self):
+        PatientEntry.objects.create(
+            patient=self.patient, completion_time=timezone.now()
+        )
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_DELIVERY_DATA,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(
