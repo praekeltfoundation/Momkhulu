@@ -80,7 +80,9 @@ class CheckPatientExistsView(APIView):
     def post(self, request):
         try:
             patient_id = get_rp_dict(request.data)["patient_id"]
-            PatientEntry.objects.get(patient__patient_id=patient_id)
+            PatientEntry.objects.get(
+                patient__patient_id=patient_id, completion_time__isnull=True
+            )
         except PatientEntry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_200_OK)
