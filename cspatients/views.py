@@ -35,7 +35,7 @@ def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     patiententry = (
         PatientEntry.objects.filter(patient__patient_id=patient_id)
-        .order_by("-decision_time")
+        .order_by("-created_at")
         .first()
     )
 
