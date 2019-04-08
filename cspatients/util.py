@@ -146,12 +146,14 @@ def split_patient_and_entry_data(data):
     """
     patient_data = {}
     entry_data = {}
+
+    patient_fields = [f.name for f in Patient._meta.get_fields()]
+    patient_entry_fields = [f.name for f in PatientEntry._meta.get_fields()]
+
     for key, value in data.items():
-        if key in ("option",):
-            continue
-        if key in ("patient_id", "name", "age"):
+        if key in patient_fields:
             patient_data[key] = value
-        else:
+        elif key in patient_entry_fields:
             entry_data[key] = value
 
     return patient_data, entry_data
