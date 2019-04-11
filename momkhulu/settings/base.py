@@ -1,5 +1,8 @@
-import os
+import djcelery
 import environ
+import os
+
+from kombu import Exchange, Queue
 
 
 root = environ.Path(__file__) - 3
@@ -21,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "djcelery",
     "rest_framework",
     "rest_framework.authtoken",
 ]
@@ -119,3 +123,26 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
+
+# Celery configuration options
+CELERY_RESULT_BACKEND = "djcelery.backends.database:DatabaseBackend"
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+
+BROKER_URL = env.str("BROKER_URL", "redis://localhost:6379/0")
+
+CELERY_DEFAULT_QUEUE = "momkhulu"
+CELERY_QUEUES = (Queue("momkhulu", Exchange("momkhulu"), routing_key="momkhulu"),)
+
+CELERY_ALWAYS_EAGER = False
+
+# Tell Celery where to find the tasks
+CELERY_IMPORTS = ("cspatients.tasks",)
+
+CELERY_CREATE_MISSING_QUEUES = True
+CELERY_ROUTES = {"celery.backend_cleanup": {"queue": "mediumpriority"}}
+
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+
+djcelery.setup_loader()

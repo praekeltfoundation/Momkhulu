@@ -10,11 +10,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import PatientEntry
+from .tasks import post_patient_update
 from .util import (
     get_rp_dict,
     get_all_active_patient_entries,
     get_all_completed_patient_entries,
-    send_consumers_table,
     save_model_changes,
     save_model,
 )
@@ -55,7 +55,7 @@ def form(request):
         entry, errors = save_model(request.POST)
         if entry:
             status_code = status.HTTP_201_CREATED
-            send_consumers_table()
+            post_patient_update.delay()
         else:
             status_code = status.HTTP_400_BAD_REQUEST
     return render(
@@ -68,7 +68,7 @@ class NewPatientEntryView(APIView):
     def post(self, request):
         entry, errors = save_model(get_rp_dict(request.data))
         if entry:
-            send_consumers_table()
+            post_patient_update.delay()
             status_code = status.HTTP_201_CREATED
         else:
             status_code = status.HTTP_400_BAD_REQUEST
@@ -94,7 +94,8 @@ class UpdatePatientEntryView(APIView):
         entry, errors = save_model_changes(changes_dict)
         if entry:
             status_code = status.HTTP_200_OK
-            send_consumers_table()
+
+            post_patient_update.delay()
         else:
             status_code = status.HTTP_400_BAD_REQUEST
         return JsonResponse({"errors": ", ".join(errors)}, status=status_code)
@@ -116,7 +117,7 @@ class EntryStatusUpdateView(APIView):
                 patiententry.completion_time = timezone.now()
 
             patiententry.save()
-            send_consumers_table()
+            post_patient_update.delay()
         except PatientEntry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
