@@ -53,6 +53,7 @@ setup(
         "simplejson==3.16.0",
         "psycopg2==2.7.1",
         "raven==6.9.0",
+        "requests==2.21.0",
     ],
     entry_points={},
 )
