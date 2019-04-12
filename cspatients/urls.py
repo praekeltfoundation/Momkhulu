@@ -27,4 +27,5 @@ urlpatterns = [
         views.EntryStatusUpdateView.as_view(),
         name="rp_entrystatus_update",
     ),
+    path("health_details", views.detailed_health, name="detailed-health"),
 ]

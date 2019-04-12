@@ -1,13 +1,16 @@
 import pytest
+import responses
 
 from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import Client
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -692,6 +695,50 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         )
 
         self.assertEqual(response.status_code, 401)
+
+
+class DetailedHealthViewTest(APITestCase):
+    def setUp(self):
+        self.api_client = APIClient()
+
+    def mock_queue_lookup(self, name="momkhulu", messages=1256, rate=1.25):
+        responses.add(
+            responses.GET,
+            "{}{}".format(settings.RABBITMQ_MANAGEMENT_INTERFACE, name),
+            json={
+                "messages": messages,
+                "messages_details": {"rate": rate},
+                "name": name,
+            },
+            status=200,
+            match_querystring=True,
+        )
+
+    @responses.activate
+    def test_detailed_health_endpoint_not_stuck(self):
+        self.mock_queue_lookup()
+
+        response = self.api_client.get(reverse("detailed-health"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()["queues"][0]["stuck"])
+
+    @responses.activate
+    def test_detailed_health_endpoint_stuck(self):
+        self.mock_queue_lookup(rate=0.0)
+
+        response = self.api_client.get(reverse("detailed-health"))
+
+        self.assertEqual(response.status_code, 500)
+        self.assertTrue(response.json()["queues"][0]["stuck"])
+
+    @override_settings(RABBITMQ_MANAGEMENT_INTERFACE=False)
+    def test_detailed_health_endpoint_deactivated(self):
+        response = self.api_client.get(reverse("detailed-health"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["update"], "queues not checked")
+        self.assertEqual(response.json()["queues"], [])
 
 
 @pytest.mark.asyncio

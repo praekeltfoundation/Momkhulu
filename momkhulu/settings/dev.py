@@ -14,3 +14,5 @@ CELERY_EAGER_PROPAGATES_EXCEPTIONS = False  # To test error handling
 CELERY_ALWAYS_EAGER = True
 BROKER_BACKEND = "memory"
 CELERY_RESULT_BACKEND = "djcelery.backends.database:DatabaseBackend"
+
+RABBITMQ_MANAGEMENT_INTERFACE = "http://user:pass@rabbitmq:15672/api/queues//my_vhost/"
