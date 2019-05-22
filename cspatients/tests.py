@@ -5,6 +5,7 @@ from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
+from freezegun import freeze_time
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -542,6 +543,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 
 
 class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
+    @freeze_time("2019-01-01")
     def setUp(self):
         super(CheckPatientExistsAPITestCase, self).setUp()
         self.patient = Patient.objects.create(
@@ -555,12 +557,35 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+        self.assertEqual(
+            response.json(),
+            {
+                "operation": "CS",
+                "gravpar": "G1P1",
+                "comorbid": None,
+                "indication": None,
+                "decision_time": "2019-01-01T00:00:00Z",
+                "discharge_time": None,
+                "delivery_time": None,
+                "completion_time": None,
+                "urgency": 4,
+                "location": None,
+                "outstanding_data": None,
+                "clinician": None,
+                "apgar_1": None,
+                "apgar_5": None,
+                "name": "Jane Doe",
+                "age": 20,
+            },
+        )
+
     def test_patient_exists_not_found(self):
         response = self.normalclient.post(
             reverse("rp_patientexits"), SAMPLE_RP_POST_DATA_NON_EXISTING, format="json"
         )
 
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {})
 
     def test_patient_exists_multiple_entries(self):
         PatientEntry.objects.create(
@@ -571,6 +596,27 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "operation": "CS",
+                "gravpar": "G1P1",
+                "comorbid": None,
+                "indication": None,
+                "decision_time": "2019-01-01T00:00:00Z",
+                "discharge_time": None,
+                "delivery_time": None,
+                "completion_time": None,
+                "urgency": 4,
+                "location": None,
+                "outstanding_data": None,
+                "clinician": None,
+                "apgar_1": None,
+                "apgar_5": None,
+                "name": "Jane Doe",
+                "age": 20,
+            },
+        )
 
     def test_patient_exists_no_auth(self):
         response = self.client.post(
