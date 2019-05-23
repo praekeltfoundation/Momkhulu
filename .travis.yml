@@ -39,7 +39,7 @@ jobs:
       env:
         - IMAGE_NAME=praekeltfoundation/momkhulu
         - REGISTRY_USER=praekeltorgdeploy
-        - secure: "SgdU1fwW3exJhQqXnKGy5TdvMypkeutioMTIt4M9fUR5Chf/yftq9t2DTjBzuSYq7PCQMCVFzhZQxxC8D2xbjOtvW5LxLzY3q0k+ci8dXpnNLqq7sm9vWC2rqsZ70+aKTBcebaJtNG9EjpyPcC+JjdT0wpFq7dDMztTmHS0Htn7eMGmxNGxYI1LhiUpEQ9NPpMCvzWrkBOAH9T1+Mhn1wYaJaqc8fNogjfW5qmulhJL296jtF1NLomLYTYJyIRZxo2Lw1Z99KPZH095F6MB3O1EDpCGpFgQr8+8LN4m9f/DxaQ/Crj9iREBe516j86DDW/sUY26CvMbJxoHAyFLP7+sQXInIjihwRe7CtIn/o+8kPPRvaUbxPJ9cvBcnC//GBGF9K2LqwexU45Pa02B+R4NE9a+yLspXpu7MV0qDfMU2350v2uWyB7WTKK35xZPDxhfdEubHl0pNXnJ37hYW2AynTioxQ17idyj1ZRblUlNhbmIyqMDxov5BZKiJySS+4vQ1Y8GBbh+UAgr1mQlHVztSVwdiuN9vemFWRPu0XpsTtSMfgtWob+l4qFxuX0PzZaQIqRPfgkVDinwPSq4H2H7hSFOnLK+IVzusVUEX8vBP32hJtbvr/Z5pv9UGAuoFICyxZgZuIe78tNHwCxI3lTs5vYaWAELOY4bmPVO6/0Q="   # yamllint disable-line
+        - secure: "XRNccZNYtg9UuSjtyyenGRTnkoIlYhVTO7ZzFRBqXj3h4T8AQ1NBUp4xISiC8yMpioR9J7YtrjmttVHhvVlpZmChDye8HGY69jokB5WuH0pyxU8qh+ztumYuf2ZVNv13eBFozZ0Cy7bpXQCFUrcywHY6crlnCTOA796ObBPWezSBxyCjWiJz51i+ZTOrVAaQQPI5fdYzGCre2fwc16x77DXyrfkRURjIOZ0WrdlDCV5CEy3vVt8PxV9I9ZmOK6tevADF8qq53Eh43iVpzgP+kO27rDJQzb+VvtSm/7ed0/StbLHMSlFkovM+3djOXvB+XNJrS/dSG3Ic6tTKjgJi/OSOBb3GT6ezdclOUQG3/c4oJNLb2RAkBdb0469+13JSWPudSJNzbug3hx7U5g8gmDUCZ0JzNsgzqkiHFEK6wyAWf+eHuxBV4FkTkF6aZ41vTaEjn85c7tmxAtffnoVnC8k13p2sSpSvnGH4Sr0k+kM+bONaV6cwccJ0XMgU98wHNqeHNoP/LvqzYtlODWQev3vQyhrMiAB2cN4ydNlSBD5ShSFyOioVY/KlbqKpW21m5bN8rs1o4uBdu1ZMEe55kgoRQ34zV8Q3l2rkxk1iNH2EMhSqyKP8pUjCQmrtF/VUmHf7bEjUJP9PO1p/3PJrZj+9bCRN/2IC563QG8LBlPI="   # yamllint disable-line
 
       before_script:
         - docker pull "$IMAGE_NAME" || true
