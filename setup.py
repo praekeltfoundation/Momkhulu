@@ -48,7 +48,7 @@ setup(
         "Django>=2.1.7,<2.2",
         "django-celery==3.2.2",
         "django-environ==0.4.5",
-        "djangorestframework==3.9.2",
+        "djangorestframework>=3.9.1,<4",
         "environ==1.0",
         "simplejson==3.16.0",
         "psycopg2==2.7.1",
