@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import PatientEntry
+from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
     get_rp_dict,
@@ -81,14 +82,24 @@ class NewPatientEntryView(APIView):
 
 class CheckPatientExistsView(APIView):
     def post(self, request):
+        patient_data = {}
+        return_status = status.HTTP_200_OK
+
         try:
             patient_id = get_rp_dict(request.data)["patient_id"]
-            PatientEntry.objects.get(
+            patient_entry = PatientEntry.objects.get(
                 patient__patient_id=patient_id, completion_time__isnull=True
             )
+
+            patient_entry_serializer = PatientEntrySerializer(patient_entry)
+            patient_serializer = PatientSerializer(patient_entry.patient)
+
+            patient_data = patient_entry_serializer.data
+            patient_data.update(patient_serializer.data)
         except PatientEntry.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        return Response(status=status.HTTP_200_OK)
+            return_status = status.HTTP_404_NOT_FOUND
+
+        return JsonResponse(patient_data, status=return_status)
 
 
 class UpdatePatientEntryView(APIView):

@@ -6,7 +6,7 @@ from cspatients.models import Patient, PatientEntry
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = "__all__"
+        exclude = ("created_at", "updated_at", "id", "patient_id")
 
 
 class PatientEntrySerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class PatientEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PatientEntry
-        fields = "__all__"
+        exclude = ("created_at", "updated_at", "id", "patient")
 
 
 class CreateEntrySerializer(serializers.Serializer):
