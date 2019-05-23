@@ -39,7 +39,7 @@ jobs:
       env:
         - IMAGE_NAME=praekeltfoundation/momkhulu
         - REGISTRY_USER=praekeltorgdeploy
-        - secure: "TaFCOGqWiJ8rFtDIXXNiBv6Da4zI67VwJR5kO5r5oYNVf8HroPGjB9HfLcmfpD5a4+zQKNFfjRZwDHR50BzASkhdd0BwKn0sCTsUgIZ/hlOfodZVQJDdUcf9ZY2jqJzsqm4hPlvlxcibKGlSBnx7wyo12rJmuKmA0iP++e+tqPbODOzA6TRJHvRHEvB/ZuDm5ETCNAGJ4zP1if7T4D6LCy47wDnKCIbg4X46jJDor6tfzbdznrWb30So6dn1029ezomRdOu5dPz5s7157aRzgfg6kESuRTMj9Mhs+X6URPC12S7ahPn989HzI78k0LnJPAHusPFWw6u/hLDKWnPT2Dnl4EOZZjsxFEldqq4YO+RNzWzGuudlEjJm7ZW913VC0fjAEvwhvmEEU7l4riNTLbbkt7dDRpwuyP1sR4cU7atHq5u4s8ZdNVaxghUfSSziBNcu6yiktdQ52wjMZUpiAU0Rj9j2MBpUuoQjvj+27rnTY6hnRBHXFAFQ3rWz3/FTw2DyLrBS4sRb3YdL1Cn/pqLGbgK3dUC4IddJBVXg2vyChQ21f9RLvy3bMS3n3UpkMzsm+EB9GaqyxPoYDw5hzNeI/r2CTO7dXD42FWEGQ9eAnz4AFpdi6RQ2ghX+PqnKbhm1vuTHd8lUbLl045WUUlwimOFffHxaICyJocaZw8A="   # yamllint disable-line
+        - secure: "scvnAM1hGK4Yr9/wTcB5ys57UKckuL2da6/qzW1h4hBXEzOBBY6LiCWKPyqadabuAWUksEL20huYLTydViGzqcaiL17WrfYnKNwxXIM+0+cDUoFe2ODnBhQmd54KZFMkBsQfb4kSG1+03yVuVrgGYom/Xb9yJ9yvwYrnaVcaUYJBhZD/8Jd1u/oXlkx1WDeU0sngY7q872sfFUOwI0GLzM+EbhGy4gRMn6dTR9ZfwMoD4V2qRPriTyWsC5ntnePT3Owd7kCOf0rRXiUgYHwizy/sQM4xQ69BKRd8zYo+xG/7+kT9sF4MSeRMzQ8iNK4w6rVZ8ff4PFwdJchkS2ZLQs+GWxTE/cbOMwMSx5Gtfc5NzQeWCfcY9KLx5hWuYht/oEeHMVcV62qNZodz6LAXYemk/kZXVWKnVI6mw+grg5RYlrkQWkWsaD0ns8rFphl/m4zIFoffJMo7btj10hKU1RdVhAkGDS90rWnpAk/OkR8RCeBZoYrV8t1hKJsdAV3z7mmbUNXOSPuP7cQwjTJB+lHzQuycuRrJX2qie6q8c9y3MNikUlWS4GQEnTrCjEgF4QinAyx7f0HPnA/fXdmP80RluoBib75J+kkY8Uan+gidJnFmXX8bw0673U7UlUeJxcQhtLKV4Nu/A0ohq7i4LzFUenyCrEykRxTIVb6WaOA="   # yamllint disable-line
 
       before_script:
         - docker pull "$IMAGE_NAME" || true
@@ -48,7 +48,7 @@ jobs:
 
       before_deploy:
         - pip install docker-ci-deploy==0.3.0
-        - echo -n $REGISTRY_PASS | docker login -username "$REGISTRY_USER" --password-stdin # yamllint disable-line
+        - echo -n $REGISTRY_PASS | docker login -u "$REGISTRY_USER" --password-stdin # yamllint disable-line
       deploy:
         - provider: script
           script: dcd --version "$(git rev-parse --short HEAD)" --version-latest "$IMAGE_NAME" # yamllint disable-line
