@@ -1,4 +1,5 @@
 import requests
+from os import environ
 
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
@@ -136,6 +137,12 @@ class EntryStatusUpdateView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response(status=status.HTTP_200_OK)
+
+
+def health(request):
+    app_id = environ.get("MARATHON_APP_ID", None)
+    ver = environ.get("MARATHON_APP_VERSION", None)
+    return JsonResponse({"id": app_id, "version": ver})
 
 
 def detailed_health(request):

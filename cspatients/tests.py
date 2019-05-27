@@ -1,8 +1,11 @@
+import json
 import pytest
 import responses
+from os import environ
 
 from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 from freezegun import freeze_time
@@ -741,6 +744,36 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         )
 
         self.assertEqual(response.status_code, 401)
+
+
+class HealthViewTest(APITestCase):
+    def setUp(self):
+        self.api_client = APIClient()
+
+    def test_health_endpoint(self):
+        response = self.api_client.get(reverse("health"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        result = json.loads(response.content)
+
+        self.assertTrue("id" in result)
+        self.assertEqual(result["id"], None)
+
+        self.assertTrue("version" in result)
+        self.assertEqual(result["version"], None)
+
+    def test_health_endpoint_with_vars(self):
+        environ["MARATHON_APP_ID"] = "marathon-app-id"
+        environ["MARATHON_APP_VERSION"] = "marathon-app-version"
+
+        response = self.api_client.get(reverse("health"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        result = json.loads(response.content)
+
+        self.assertTrue("id" in result)
+        self.assertEqual(result["id"], environ["MARATHON_APP_ID"])
+
+        self.assertTrue("version" in result)
+        self.assertEqual(result["version"], environ["MARATHON_APP_VERSION"])
 
 
 class DetailedHealthViewTest(APITestCase):
