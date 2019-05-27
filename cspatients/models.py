@@ -18,6 +18,8 @@ class PatientEntry(models.Model):
     )
     operation = models.CharField(max_length=255, default="CS")
     gravpar = models.CharField(max_length=6, default="G1P1")
+    gravidity = models.CharField(max_length=6, default="1")
+    parity = models.CharField(max_length=6, default="0")
     comorbid = models.CharField(max_length=255, null=True)
     indication = models.CharField(max_length=255, null=True)
     decision_time = models.DateTimeField(auto_now_add=True)
