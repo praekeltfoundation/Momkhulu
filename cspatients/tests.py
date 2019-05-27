@@ -569,6 +569,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "indication": None,
                 "decision_time": "2019-01-01T00:00:00Z",
                 "discharge_time": None,
+                "gravidity": 1,
                 "delivery_time": None,
                 "completion_time": None,
                 "urgency": 4,
@@ -578,6 +579,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "apgar_1": None,
                 "apgar_5": None,
                 "name": "Jane Doe",
+                "parity": 0,
                 "age": 20,
             },
         )
@@ -608,6 +610,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "indication": None,
                 "decision_time": "2019-01-01T00:00:00Z",
                 "discharge_time": None,
+                "gravidity": 1,
                 "delivery_time": None,
                 "completion_time": None,
                 "urgency": 4,
@@ -617,6 +620,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "apgar_1": None,
                 "apgar_5": None,
                 "name": "Jane Doe",
+                "parity": 0,
                 "age": 20,
             },
         )
