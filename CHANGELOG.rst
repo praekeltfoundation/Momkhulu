@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.3
+------------
+ * Add health endpoint
+
 0.0.2
 ------------
  * Updated Django Rest Framework
