@@ -1,13 +1,12 @@
-import requests
 from os import environ
 
+import requests
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
-from django.template import loader
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.template import loader
 from django.utils import timezone
-
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -17,11 +16,11 @@ from .models import PatientEntry
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
-    get_rp_dict,
     get_all_active_patient_entries,
     get_all_completed_patient_entries,
-    save_model_changes,
+    get_rp_dict,
     save_model,
+    save_model_changes,
 )
 
 

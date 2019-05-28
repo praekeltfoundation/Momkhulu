@@ -1,33 +1,30 @@
 import json
-import pytest
-import responses
 from os import environ
 
+import pytest
+import responses
 from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
-from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient, APITestCase
-from freezegun import freeze_time
-
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import Client
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
+from freezegun import freeze_time
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient, APITestCase
 
 from .consumers import ViewConsumer
 from .models import Patient, PatientEntry
 from .util import (
     get_all_active_patient_entries,
     get_all_completed_patient_entries,
+    get_rp_dict,
     save_model,
     save_model_changes,
-    get_rp_dict,
 )
-
 
 # View Tests
 

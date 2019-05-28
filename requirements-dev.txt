@@ -7,3 +7,4 @@ flake8==3.5.0
 black
 pre-commit
 freezegun
+isort==4.3.4

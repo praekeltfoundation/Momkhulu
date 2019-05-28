@@ -1,9 +1,8 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.template import loader
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-
-from .models import PatientEntry, Patient
+from .models import Patient, PatientEntry
 from .serializers import CreateEntrySerializer
 
 PATIENT_FIELDS = Patient.__dict__.keys()

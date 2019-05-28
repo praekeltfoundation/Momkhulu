@@ -1,9 +1,8 @@
-import djcelery
-import environ
 import os
 
+import djcelery
+import environ
 from kombu import Exchange, Queue
-
 
 root = environ.Path(__file__) - 3
 BASE_DIR = root()
