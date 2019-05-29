@@ -415,6 +415,8 @@ class SaveModelChangesTest(TestCase):
         self.patient_entry.refresh_from_db()
         self.assertEqual(self.patient.name, "Jane Moe")
         self.assertEqual(self.patient_entry.gravpar, "G1P1")
+        self.assertEqual(str(self.patient), "XXXXX - Jane Moe")
+        self.assertEqual(str(self.patient_entry), "XXXXX - Jane Moe having CS")
 
     def test_saves_data_multiple_entries(self):
         PatientEntry.objects.create(
