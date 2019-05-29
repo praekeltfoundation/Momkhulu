@@ -32,6 +32,9 @@ class PatientEntry(models.Model):
     clinician = models.CharField(max_length=255, null=True)
     apgar_1 = models.IntegerField(null=True)
     apgar_5 = models.IntegerField(null=True)
+    foetus = models.IntegerField(null=True)
+    baby_weight_grams = models.IntegerField(null=True)
+    nicu = models.BooleanField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

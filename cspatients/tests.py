@@ -91,6 +91,20 @@ SAMPLE_RP_UPDATE_INVALID_DATA = {
 SAMPLE_RP_UPDATE_DELIVERY_DATA = {
     "results": {
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "delivery_time": {
+            "name": "delivery_time",
+            "category": "All Responses",
+            "value": "2019-05-12 10:22+00:00",
+        },
+        "baby_weight_grams": {
+            "name": "baby_weight_grams",
+            "category": "All Responses",
+            "value": "2400",
+        },
+        "foetus": {"name": "foetus", "category": "All Responses", "value": "1"},
+        "nicu": {"name": "nicu", "category": "Yes", "value": "2"},
+        "apgar_1": {"name": "apgar_1", "category": "All Responses", "value": "8"},
+        "apgar_5": {"name": "apgar_5", "category": "All Responses", "value": "9"},
         "option": {"category": "Delivery", "value": "3", "input": "3"},
     }
 }
@@ -98,6 +112,11 @@ SAMPLE_RP_UPDATE_DELIVERY_DATA = {
 SAMPLE_RP_UPDATE_COMPLETED_DATA = {
     "results": {
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "completion_time": {
+            "name": "completion_time",
+            "category": "All Responses",
+            "value": "2019-05-12 10:22+00:00",
+        },
         "option": {"category": "Completed", "value": "4", "input": "4"},
     }
 }
@@ -578,6 +597,9 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "name": "Jane Doe",
                 "parity": 0,
                 "age": 20,
+                "foetus": None,
+                "nicu": None,
+                "baby_weight_grams": None,
             },
         )
 
@@ -619,6 +641,9 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "name": "Jane Doe",
                 "parity": 0,
                 "age": 20,
+                "foetus": None,
+                "nicu": None,
+                "baby_weight_grams": None,
             },
         )
 
@@ -695,7 +720,15 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
         # Test that the delivery time has been updated
         self.patient_entry.refresh_from_db()
-        self.assertIsNotNone(self.patient_entry.delivery_time)
+
+        self.assertEqual(
+            self.patient_entry.delivery_time,
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+        )
+        self.assertEqual(self.patient_entry.apgar_1, 8)
+        self.assertEqual(self.patient_entry.apgar_5, 9)
+        self.assertEqual(self.patient_entry.baby_weight_grams, 2400)
+        self.assertTrue(self.patient_entry.nicu)
 
     def test_patient_who_exists_completed(self):
 
@@ -712,7 +745,11 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
         # Test that the delivery time has been updated
         self.patient_entry.refresh_from_db()
-        self.assertIsNotNone(self.patient_entry.completion_time)
+
+        self.assertEqual(
+            self.patient_entry.completion_time,
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+        )
 
     def test_delivery_of_patient_who_does_not_exist(self):
 
