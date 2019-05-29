@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template import loader
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -126,9 +125,14 @@ class EntryStatusUpdateView(APIView):
             )
 
             if data["option"] == "Delivery":
-                patiententry.delivery_time = timezone.now()
+                patiententry.delivery_time = data["delivery_time"]
+                patiententry.apgar_1 = data["apgar_1"]
+                patiententry.apgar_5 = data["apgar_5"]
+                patiententry.foetus = data["foetus"]
+                patiententry.baby_weight_grams = data["baby_weight_grams"]
+                patiententry.nicu = data["nicu"] == "Yes"
             elif data["option"] == "Completed":
-                patiententry.completion_time = timezone.now()
+                patiententry.completion_time = data["completion_time"]
 
             patiententry.save()
             post_patient_update.delay()
