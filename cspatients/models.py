@@ -9,7 +9,7 @@ class Patient(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return "{} - {}".format(self.patient_id, self.name)
 
 
 class PatientEntry(models.Model):
@@ -35,5 +35,9 @@ class PatientEntry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        self.gravpar = "G{}P{}".format(self.gravidity, self.parity)
+        super(PatientEntry, self).save(*args, **kwargs)
+
     def __str__(self):
-        return str(self.patient.name) + " having " + self.operation
+        return "{} having {}".format(self.patient, self.operation)
