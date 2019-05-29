@@ -1,4 +1,3 @@
-import datetime
 import json
 from os import environ
 
@@ -724,7 +723,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
         self.assertEqual(
             self.patient_entry.delivery_time,
-            datetime.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
         self.assertEqual(self.patient_entry.apgar_1, 8)
         self.assertEqual(self.patient_entry.apgar_5, 9)
@@ -749,7 +748,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
         self.assertEqual(
             self.patient_entry.completion_time,
-            datetime.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
 
     def test_delivery_of_patient_who_does_not_exist(self):
