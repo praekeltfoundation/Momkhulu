@@ -17,7 +17,6 @@ class PatientEntry(models.Model):
         Patient, related_name="patient_entries", on_delete=models.CASCADE
     )
     operation = models.CharField(max_length=255, default="CS")
-    gravpar = models.CharField(max_length=6, default="G1P1")
     parity = models.IntegerField(default=0)
     gravidity = models.IntegerField(default=1)
     comorbid = models.CharField(max_length=255, null=True)
@@ -35,9 +34,9 @@ class PatientEntry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        self.gravpar = "G{}P{}".format(self.gravidity, self.parity)
-        super(PatientEntry, self).save(*args, **kwargs)
+    @property
+    def gravpar(self):
+        return "G{}P{}".format(self.gravidity, self.parity)
 
     def __str__(self):
         return "{} having {}".format(self.patient, self.operation)

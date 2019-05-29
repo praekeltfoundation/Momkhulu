@@ -393,9 +393,7 @@ class SaveModelChangesTest(TestCase):
         self.patient = Patient.objects.create(
             name="Jane Doe", patient_id="XXXXX", age=20
         )
-        self.patient_entry = PatientEntry.objects.create(
-            patient=self.patient, gravpar="AAAA"
-        )
+        self.patient_entry = PatientEntry.objects.create(patient=self.patient)
 
     def test_saves_data_when_passed_good_dict(self):
         changes_dict = {
