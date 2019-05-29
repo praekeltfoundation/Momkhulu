@@ -5,6 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("cspatients", "0007_add_gravidity_and_parity_to_patiententry")]
+    dependencies = [("cspatients", "0008_add_patient_entry_fields")]
 
     operations = [migrations.RemoveField(model_name="patiententry", name="gravpar")]
