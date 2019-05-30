@@ -412,12 +412,15 @@ class SaveModelChangesTest(TestCase):
         self.patient = Patient.objects.create(
             name="Jane Doe", patient_id="XXXXX", age=20
         )
-        self.patient_entry = PatientEntry.objects.create(
-            patient=self.patient, gravpar="AAAA"
-        )
+        self.patient_entry = PatientEntry.objects.create(patient=self.patient)
 
     def test_saves_data_when_passed_good_dict(self):
-        changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe", "gravpar": "BBBB"}
+        changes_dict = {
+            "patient_id": "XXXXX",
+            "name": "Jane Moe",
+            "gravidity": "1",
+            "parity": "1",
+        }
 
         # Check returns PatientEntry
         result, errors = save_model_changes(changes_dict)
@@ -428,13 +431,20 @@ class SaveModelChangesTest(TestCase):
         self.patient.refresh_from_db()
         self.patient_entry.refresh_from_db()
         self.assertEqual(self.patient.name, "Jane Moe")
-        self.assertEqual(self.patient_entry.gravpar, "BBBB")
+        self.assertEqual(self.patient_entry.gravpar, "G1P1")
+        self.assertEqual(str(self.patient), "XXXXX - Jane Moe")
+        self.assertEqual(str(self.patient_entry), "XXXXX - Jane Moe having CS")
 
     def test_saves_data_multiple_entries(self):
         PatientEntry.objects.create(
             patient=self.patient, completion_time=timezone.now()
         )
-        changes_dict = {"patient_id": "XXXXX", "name": "Jane Moe", "gravpar": "BBBB"}
+        changes_dict = {
+            "patient_id": "XXXXX",
+            "name": "Jane Moe",
+            "gravidity": "2",
+            "parity": "2",
+        }
 
         # Check returns PatientEntry
         result, errors = save_model_changes(changes_dict)
@@ -445,7 +455,7 @@ class SaveModelChangesTest(TestCase):
         self.patient.refresh_from_db()
         self.patient_entry.refresh_from_db()
         self.assertEqual(self.patient.name, "Jane Moe")
-        self.assertEqual(self.patient_entry.gravpar, "BBBB")
+        self.assertEqual(self.patient_entry.gravpar, "G2P2")
 
     def test_returns_none_for_patient_dict_with_wrong_patient_id(self):
         changes_dict = {"patient_id": "YXXXX", "name": "Jane Moe"}
@@ -543,7 +553,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
-        self.assertEqual(PatientEntry.objects.all().first().gravpar, "AAAA")
+        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
 
     def test_new_patient_entry_without_auth(self):
         response = self.client.post(
@@ -580,7 +590,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
             response.json(),
             {
                 "operation": "CS",
-                "gravpar": "G1P1",
+                "gravpar": "G1P0",
                 "comorbid": None,
                 "indication": None,
                 "decision_time": "2019-01-01T00:00:00Z",
@@ -624,7 +634,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
             response.json(),
             {
                 "operation": "CS",
-                "gravpar": "G1P1",
+                "gravpar": "G1P0",
                 "comorbid": None,
                 "indication": None,
                 "decision_time": "2019-01-01T00:00:00Z",

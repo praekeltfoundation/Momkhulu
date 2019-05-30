@@ -1,4 +1,3 @@
-from django.db import models
 from rest_framework import serializers
 
 from cspatients.models import Patient, PatientEntry
@@ -11,7 +10,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class PatientEntrySerializer(serializers.ModelSerializer):
-    decision_time = models.DateTimeField()
+    gravpar = serializers.ReadOnlyField()
 
     class Meta:
         model = PatientEntry
