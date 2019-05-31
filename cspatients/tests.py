@@ -898,6 +898,17 @@ class DetailedHealthViewTest(APITestCase):
         self.assertEqual(response.json()["queues"], [])
 
 
+class TestModels(TestCase):
+    def test_profile(self):
+        User.objects.create_user(
+            "test_user", "testuser@example.com", "1234", is_active=False
+        )
+        profile = Profile.objects.first()
+        profile.msisdn = "+12065550109"
+
+        self.assertEqual(str(profile), "test_user: +12065550109")
+
+
 @pytest.mark.asyncio
 async def test_view_consumer():
     communicator = WebsocketCommunicator(ViewConsumer, "/ws/cspatients/viewsocket/")
