@@ -14,6 +14,20 @@ class Patient(models.Model):
 
 
 class PatientEntry(models.Model):
+    ELECTIVE = 1
+    COLD = 2
+    HOT_YELLOW = 3
+    HOT_ORANGE = 4
+    IMMEDIATE = 5
+
+    URGENCY_CHOICES = (
+        (ELECTIVE, "Elective"),
+        (COLD, "Cold"),
+        (HOT_YELLOW, "Hot"),
+        (HOT_ORANGE, "Hot"),
+        (IMMEDIATE, "Immediate"),
+    )
+
     patient = models.ForeignKey(
         Patient, related_name="patient_entries", on_delete=models.CASCADE
     )
@@ -26,7 +40,7 @@ class PatientEntry(models.Model):
     discharge_time = models.DateTimeField(null=True)
     delivery_time = models.DateTimeField(null=True)
     completion_time = models.DateTimeField(null=True)
-    urgency = models.IntegerField(default=4)
+    urgency = models.IntegerField(default=4, choices=URGENCY_CHOICES)
     location = models.CharField(max_length=255, null=True)
     outstanding_data = models.CharField(max_length=255, null=True)
     clinician = models.CharField(max_length=255, null=True)

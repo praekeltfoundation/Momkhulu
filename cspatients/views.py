@@ -16,7 +16,6 @@ from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
     get_all_active_patient_entries,
-    get_all_completed_patient_entries,
     get_rp_dict,
     save_model,
     save_model_changes,
@@ -26,10 +25,7 @@ from .util import (
 @login_required()
 def view(request):
     template = loader.get_template("cspatients/view.html")
-    context = {
-        "active": get_all_active_patient_entries(),
-        "completed": get_all_completed_patient_entries(),
-    }
+    context = {"patient_entries": get_all_active_patient_entries()}
     return HttpResponse(template.render(context), status=200)
 
 

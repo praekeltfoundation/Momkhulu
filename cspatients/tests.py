@@ -20,7 +20,6 @@ from .consumers import ViewConsumer
 from .models import Patient, PatientEntry, Profile
 from .util import (
     get_all_active_patient_entries,
-    get_all_completed_patient_entries,
     get_rp_dict,
     save_model,
     save_model_changes,
@@ -296,7 +295,6 @@ class ViewAllContextTest(TestCase):
 
     def test_context_when_no_patients(self):
         self.assertFalse(get_all_active_patient_entries())
-        self.assertFalse(get_all_completed_patient_entries())
 
     def test_get_all_active_patient_entries(self):
         save_model(self.patient_one_data)
@@ -309,31 +307,12 @@ class ViewAllContextTest(TestCase):
         patient_entries = get_all_active_patient_entries()
 
         # Check that it returns two objects
-        self.assertEqual(len(patient_entries), 2)
+        self.assertEqual(len(patient_entries), 3)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].patient.name, "Mary Mary")
-        self.assertEqual(patient_entries[1].patient.name, "Jane Doe")
-
-    def test_get_all_completed_patient_entries(self):
-        entry1, _ = save_model(self.patient_one_data)
-        entry2, _ = save_model(self.patient_two_data)
-        save_model(self.patient_three_data)
-
-        entry1.completion_time = timezone.now()
-        entry1.save()
-
-        entry2.completion_time = timezone.now()
-        entry2.save()
-
-        patient_entries = get_all_completed_patient_entries()
-
-        # Check that it returns two objects
-        self.assertEqual(len(patient_entries), 2)
-
-        # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].patient.name, "Mary Mary")
-        self.assertEqual(patient_entries[1].patient.name, "Jane Doe")
+        self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
+        self.assertEqual(patient_entries[1].patient.name, "Mary Mary")
+        self.assertEqual(patient_entries[2].patient.name, "John")
 
 
 class SaveModelTest(TestCase):

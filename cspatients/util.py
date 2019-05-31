@@ -37,21 +37,11 @@ def get_rp_dict(data, context=None):
 
 
 def get_all_active_patient_entries():
-    patiententrys = (
-        PatientEntry.objects.filter(completion_time__isnull=True)
-        .select_related("patient")
-        .all()
+    patiententrys = PatientEntry.objects.select_related("patient").all()
+    sorted_entries = sorted(
+        patiententrys, key=lambda x: (x.urgency, x.decision_time), reverse=True
     )
-    return sorted(patiententrys, key=lambda x: (x.urgency, x.decision_time))
-
-
-def get_all_completed_patient_entries():
-    return (
-        PatientEntry.objects.filter(completion_time__isnull=False)
-        .select_related("patient")
-        .all()
-        .order_by("-completion_time")[:10]
-    )
+    return sorted(sorted_entries, key=lambda x: (x.completion_time is not None))
 
 
 def send_consumers_table():
@@ -66,10 +56,7 @@ def send_consumers_table():
         {
             "type": "view.update",
             "content": template.render(
-                {
-                    "active": get_all_active_patient_entries(),
-                    "completed": get_all_completed_patient_entries(),
-                }
+                {"patient_entries": get_all_active_patient_entries()}
             ),
         },
     )
