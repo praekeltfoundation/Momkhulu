@@ -122,6 +122,7 @@ SAMPLE_RP_UPDATE_COMPLETED_DATA = {
 }
 
 SAMPLE_RP_CHECKLIST_DATA = {"contact": {"urn": "whatsapp:12065550109"}}
+SAMPLE_RP_CHECKLIST_DATA_INACTIVE = {"contact": {"urn": "whatsapp:12065550108"}}
 
 
 class FormTest(TestCase):
@@ -543,6 +544,8 @@ class AuthenticatedAPITestCase(TestCase):
         self.normaltoken = normaltoken
         self.normalclient.credentials(HTTP_AUTHORIZATION="Token %s" % self.normaltoken)
 
+        Profile.objects.create(**{"user": self.normaluser, "msisdn": "+12065550109"})
+
 
 class NewPatientAPITestCase(AuthenticatedAPITestCase):
     def test_new_patient_entry_saves_minimum_data(self):
@@ -798,8 +801,6 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
 class WhitelistCheckTestCase(AuthenticatedAPITestCase):
     def test_whitelist_check_exists(self):
-        Profile.objects.all().update(msisdn="+12065550109")
-
         response = self.normalclient.post(
             reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
         )
@@ -807,7 +808,9 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
 
     def test_whitelist_check_not_exists(self):
         response = self.normalclient.post(
-            reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
+            reverse("rp_whitelist_check"),
+            SAMPLE_RP_CHECKLIST_DATA_INACTIVE,
+            format="json",
         )
         self.assertEqual(response.status_code, 404)
 
@@ -815,10 +818,12 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
         new_user = User.objects.create_user(
             "test_user", "testuser@example.com", "1234", is_active=False
         )
-        Profile.objects.filter(user=new_user).update(msisdn="+12065550109")
+        Profile.objects.create(**{"user": new_user, "msisdn": "+12065550108"})
 
         response = self.normalclient.post(
-            reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
+            reverse("rp_whitelist_check"),
+            SAMPLE_RP_CHECKLIST_DATA_INACTIVE,
+            format="json",
         )
         print(response.content)
         self.assertEqual(response.status_code, 404)
@@ -900,11 +905,10 @@ class DetailedHealthViewTest(APITestCase):
 
 class TestModels(TestCase):
     def test_profile(self):
-        User.objects.create_user(
+        new_user = User.objects.create_user(
             "test_user", "testuser@example.com", "1234", is_active=False
         )
-        profile = Profile.objects.first()
-        profile.msisdn = "+12065550109"
+        profile = Profile.objects.create(**{"user": new_user, "msisdn": "+12065550109"})
 
         self.assertEqual(str(profile), "test_user: +12065550109")
 
