@@ -18,10 +18,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 </head>
 <body>
-    <p><a style="float: right" href="{% url 'logout' %}">logout</a></p>
-    <h1>Momkhulu</h1>
-    <hr>
-    <br>
+
+    <div style="margin: 20px; height: 35px">
+        <h2 style="float: left; color: #848484">Momkhulu</h2>
+        <p style="float: right; color: #00a7ff">
+            <a href="{% url 'logout' %}">Log out</a>
+        </p>
+    </div>
     {% block content %}
 
     {% endblock %}

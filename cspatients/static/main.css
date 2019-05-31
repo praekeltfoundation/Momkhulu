@@ -1,18 +1,5 @@
 body{
-    font-family: "Open Sans", sans-serif;
     box-sizing: border-box;
-    padding-top: 30px;
-}
-
-h1, h2, h3, h4{
-    font-family: "Lato", sans-serif;
-    text-align: center;
-    font-weight: bold;
-}
-
-
-hr{
-    color: grey;
 }
 
 .centre{
@@ -32,31 +19,52 @@ table{
 
 /* Table Heading */
 
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 0;
+}
+
 th{
     font-family: "Lato", sans-serif;
+    background-color: white;
+    border-top: 1px solid #f2f2f2;
+    color: #848484;
 }
 
 /* Table Rows */
 tr{
-    border: 1px solid grey;
     border-top: none;
     font-family: inherit;
+    background-color: white;
+    color: #bcbaba;
+}
+
+.urgency{
+    color: white;
+}
+
+.urgency-5{
+    background-color: red;
 }
 
 .urgency-4{
-    background-color: green;
-}
-
-.urgency-3{
-    background-color: greenyellow;
-}
-
-.urgency-2{
     background-color: orange;
 }
 
+.urgency-3{
+    background-color: yellow;
+}
+
+.urgency-2{
+    background-color: green;
+}
+
 .urgency-1{
-    background-color: orangered;
+    background-color: blue;
+}
+
+.urgency-0{
+    background-color: #bcbaba;
 }
 
 td{
@@ -111,4 +119,6 @@ td{
     padding-top: 30px;
     text-align: center;
     font-family: "Inconsolata", monospace;
+    background-color: #f2f2f2;
+    padding-bottom: 30px;
 }

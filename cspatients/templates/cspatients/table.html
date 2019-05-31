@@ -1,29 +1,29 @@
-<div class="table-responsive centre">
+<div class="table-responsive">
     <table id="decision-table" class="table table-hover patients-table">
-        <thead class="thead-dark">
+        <thead>
             <tr>
-                <th scope="col">Patient ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Age</th>
+                <th scope="col">Surname</th>
                 <th scope="col">Operation</th>
-                <th scope="col">Grav/Par</th>
                 <th scope="col">Location</th>
                 <th scope="col">Indication</th>
+                <th scope="col">Status</th>
                 <th scope="col">Decision Time</th>
                 <th scope="col">Clinician</th>
             </tr>
         </thead>
         <tbody>
-            {% for patiententry in active %}
-                <tr class="urgency-{{patiententry.urgency}} info-row">
-                    <td class="patient-id">{{patiententry.patient.patient_id | default_if_none:"-"}}</td>
-                    <td>{{ patiententry.patient.name | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.patient.age | default_if_none:"-" }}</td>
+            {% for patiententry in patient_entries %}
+                <tr class="info-row">
+                    <td><a href="{% url 'cspatient_patient' patiententry.patient.patient_id %}">{{ patiententry.patient.name | default_if_none:"-" }}</td></a></td>
                     <td>{{ patiententry.operation | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.gravpar | default_if_none:"-" }}</td>
                     <td>{{ patiententry.location | default_if_none:"-" }}</td>
                     <td>{{ patiententry.indication | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.decision_time | time:"H:i"|default_if_none:"-" }}</td>
+                    {% if patiententry.completion_time %}
+                        <td style="padding: 6px"><div class="urgency urgency-0" style="padding: 6px;text-align: center;">COMPLETE</div></td>
+                    {% else %}
+                        <td style="padding: 6px"><div class="urgency urgency-{{ patiententry.urgency }}" style="padding: 6px;text-align: center;">{{patiententry.get_urgency_display}}</div></td>
+                    {% endif %}
+                    <td>{{ patiententry.decision_time | time:"H:i"|default_if_none:"--:--" }}</td>
                     <td>{{ patiententry.clinician | default_if_none:"-" }}</td>
                 </tr>
             {% endfor %}
@@ -32,41 +32,3 @@
 
 </div>
 <br>
-<hr>
-<!-- The delivered table -->
-<h3>Completed Patients List</h3>
-
-<div class="table-responsive centre">
-    <table id="completed-table" class="table table-hover patients-table">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Age</th>
-                <th scope="col">Operation</th>
-                <th scope="col">Grav/Par</th>
-                <th scope="col">Location</th>
-                <th scope="col">Indication</th>
-                <th scope="col">Decision Time</th>
-                <th scope="col">Complete Time</th>
-                <th scope="col">Clinician</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for patiententry in completed %}
-                <tr class="info-row row-completed">
-                    <td class="patient-id">{{patiententry.patient.patient_id | default_if_none:"-"}}</td>
-                    <td>{{ patiententry.patient.name | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.patient.age | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.operation | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.gravpar | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.location | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.indication | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.decision_time | time:"H:i" | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.completion_time | time:"H:i" | default_if_none:"-" }}</td>
-                    <td>{{ patiententry.clinician | default_if_none:"-" }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
