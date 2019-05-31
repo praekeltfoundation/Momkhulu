@@ -17,7 +17,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 
 from .consumers import ViewConsumer
-from .models import Patient, PatientEntry
+from .models import Patient, PatientEntry, Profile
 from .util import (
     get_all_active_patient_entries,
     get_all_completed_patient_entries,
@@ -120,6 +120,8 @@ SAMPLE_RP_UPDATE_COMPLETED_DATA = {
         "option": {"category": "Completed", "value": "4", "input": "4"},
     }
 }
+
+SAMPLE_RP_CHECKLIST_DATA = {"contact": {"urn": "whatsapp:12065550109"}}
 
 
 class FormTest(TestCase):
@@ -794,6 +796,34 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.status_code, 401)
 
 
+class WhitelistCheckTestCase(AuthenticatedAPITestCase):
+    def test_whitelist_check_exists(self):
+        Profile.objects.all().update(msisdn="+12065550109")
+
+        response = self.normalclient.post(
+            reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_whitelist_check_not_exists(self):
+        response = self.normalclient.post(
+            reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_whitelist_check_exists_inactive(self):
+        new_user = User.objects.create_user(
+            "test_user", "testuser@example.com", "1234", is_active=False
+        )
+        Profile.objects.filter(user=new_user).update(msisdn="+12065550109")
+
+        response = self.normalclient.post(
+            reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
+        )
+        print(response.content)
+        self.assertEqual(response.status_code, 404)
+
+
 class HealthViewTest(APITestCase):
     def setUp(self):
         self.api_client = APIClient()
@@ -866,6 +896,17 @@ class DetailedHealthViewTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["update"], "queues not checked")
         self.assertEqual(response.json()["queues"], [])
+
+
+class TestModels(TestCase):
+    def test_profile(self):
+        User.objects.create_user(
+            "test_user", "testuser@example.com", "1234", is_active=False
+        )
+        profile = Profile.objects.first()
+        profile.msisdn = "+12065550109"
+
+        self.assertEqual(str(profile), "test_user: +12065550109")
 
 
 @pytest.mark.asyncio

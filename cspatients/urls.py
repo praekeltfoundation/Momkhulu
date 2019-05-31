@@ -27,6 +27,11 @@ urlpatterns = [
         views.EntryStatusUpdateView.as_view(),
         name="rp_entrystatus_update",
     ),
+    path(
+        "api/rpwhitelistcheck",
+        views.WhitelistCheckView.as_view(),
+        name="rp_whitelist_check",
+    ),
     path("health", views.health, name="health"),
     path("health_details", views.detailed_health, name="detailed-health"),
 ]

@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import PatientEntry
+from .models import PatientEntry, Profile
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
@@ -137,6 +137,19 @@ class EntryStatusUpdateView(APIView):
             patiententry.save()
             post_patient_update.delay()
         except PatientEntry.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class WhitelistCheckView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            msisdn = request.data["contact"]["urn"].split(":")[1]
+            Profile.objects.get(msisdn__contains=msisdn, user__is_active=True)
+        except Profile.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response(status=status.HTTP_200_OK)
