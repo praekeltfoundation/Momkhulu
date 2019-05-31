@@ -1,4 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Patient(models.Model):
@@ -43,3 +46,22 @@ class PatientEntry(models.Model):
 
     def __str__(self):
         return "{} having {}".format(self.patient, self.operation)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    msisdn = models.CharField("MSISDN(+country code)", max_length=30, blank=True)
+
+    def __str__(self):
+        return "{}: {}".format(self.user.username, self.msisdn)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
