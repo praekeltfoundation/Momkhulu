@@ -33,7 +33,7 @@ def view(request):
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     patiententry = (
-        PatientEntry.objects.prefetch_related("entry_babies")
+        PatientEntry.objects.prefetch_related("entry_babies", "patient")
         .filter(patient__patient_id=patient_id)
         .order_by("-created_at")
         .first()

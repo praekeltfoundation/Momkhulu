@@ -22,23 +22,23 @@
                     </li>
                     <li class="list-group-item py-2">
                         SURNAME <br/>
-                        {{ patiententry.patient.name }}
+                        <div>{{ patiententry.patient.name }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         PATIENT ID <br/>
-                        {{ patiententry.patient.patient_id }}
+                        <div>{{ patiententry.patient.patient_id }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         AGE <br/>
-                        {{ patiententry.patient.age }}
+                        <div>{{ patiententry.patient.age }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         GRAVPAR <br/>
-                        {{ patiententry.gravpar|default_if_none:"-" }}
+                        <div>{{ patiententry.gravpar|default_if_none:"-" }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         ADDITIONAL INFORMATION <br/>
-                        {{ patiententry.outstanding_data|default_if_none:"-" }}
+                        <div>{{ patiententry.outstanding_data|default_if_none:"-" }}</div>
                     </li>
                 </ul>
             </div>
@@ -50,7 +50,7 @@
                     <li class="list-group-item py-2">
                         <div style="float: left">
                             OPERATION <br/>
-                            {{ patiententry.operation }}
+                            <div>{{ patiententry.operation }}</div>
                         </div>
                         {% if patiententry.completion_time %}
                             <div class="urgency urgency-0" style="padding: 6px;text-align: center;width: 200px; float: right">COMPLETE</div>
@@ -60,37 +60,35 @@
                     </li>
                     <li class="list-group-item py-2">
                         LOCATION <br/>
-                        {{ patiententry.location|default_if_none:"-" }}
+                        <div>{{ patiententry.location|default_if_none:"-" }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         INDICATION <br/>
-                        {{ patiententry.indication|default_if_none:"-" }}
+                        <div>{{ patiententry.indication|default_if_none:"-" }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         CLINICIAN <br/>
-                        {{ patiententry.clinician|default_if_none:"-" }}
+                        <div>{{ patiententry.clinician|default_if_none:"-" }}</div>
                     </li>
                     <li class="list-group-item py-2">
                         <div style="width: 50%;float: left;">
                             DECISION TIME <br/>
-                            {{ patiententry.decision_time|time:"H:i" }}
+                            <div>{{ patiententry.decision_time|time:"H:i" }}</div>
                         </div>
                         <div style="width: 50%;float: left;">
                             TIME OUT OF THEATRE <br/>
-                            {{ patiententry.discharge_time|time:"H:i" }}
+                            <div>{{ patiententry.discharge_time|time:"H:i" }}</div>
                         </div>
                     </li>
                     <li class="list-group-item py-2">
                         <div style="width: 50%;float: left;">
                             DATE OF DELIVERY <br/>
-                            {{ patiententry.decision_time|date:"Y-m-d" }}
+                            <div>{{ patiententry.decision_time|date:"Y-m-d" }}</div>
                         </div>
                         <div style="width: 50%;float: left;">
                             NUMBER OF BABIES <br/>
-                            {{ patiententry.foetus|default_if_none:"-" }}
+                            <div>{{ patiententry.foetus|default_if_none:"-" }}</div>
                         </div>
-
-
                     </li>
                 </ul>
             </div>
@@ -102,23 +100,23 @@
                         </li>
                         <li class="list-group-item py-2">
                             TIME OF DELIVERY <br/>
-                            {{ baby.delivery_time|time:"H:i" }}
+                            <div>{{ baby.delivery_time|time:"H:i" }}</div>
                         </li>
                         <li class="list-group-item py-2">
                             WEIGHT OF BABY <br/>
-                            {{ baby.baby_weight_grams }}
+                            <div>{{ baby.baby_weight_grams }}</div>
                         </li>
                         <li class="list-group-item py-2">
                             APGAR 1 <br/>
-                            {{ baby.apgar_1 }}
+                            <div>{{ baby.apgar_1 }}</div>
                         </li>
                         <li class="list-group-item py-2">
                             APGAR 5 <br/>
-                            {{ baby.apgar_5 }}
+                            <div>{{ baby.apgar_5 }}</div>
                         </li>
                         <li class="list-group-item py-2">
                             NICU <br/>
-                            {{ baby.nicu }}
+                            <div>{{ baby.nicu }}</div>
                         </li>
                     </ul>
                 {% endfor %}
