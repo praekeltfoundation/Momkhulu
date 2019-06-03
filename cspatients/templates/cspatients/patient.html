@@ -3,103 +3,131 @@
 {% block content %}
 
 <div class="container-fluid">
-    <div class="centre col-sm-11 col-md-8">
-
+    <div class="row">
+        <div style="background-color: #f7f7f7; text-align: center; width: 100%">
+            <p style="padding: 15px; float: left; color: #00a7ff">
+                <a href="{% url 'cspatient_view' %}">&lt; Back to the triage board</a>
+            </p>
+            <div style="padding: 15px; width: 30%; display: inline-block">
+                <h3>Patient Details</h3>
+            </div>
+            <div style="float: right; width: 218.78px;"><br/></div>
+        </div>
         {% if patiententry %}
-        <div>
-        <table id="patient-detail-table" class="table table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th colspan="2" style="text-align:center;">Patient Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Name:</th>
-                    <td>{{ patiententry.patient.name }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Hospital ID:</th>
-                    <td>{{ patiententry.patient.patient_id }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Urgency:</th>
-                    <td>{{ patiententry.urgency }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Age:</th>
-                    <td>{{ patiententry.patient.age }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Operation:</th>
-                    <td>{{ patiententry.operation }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Location:</th>
-                    <td>{{ patiententry.location }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Indication:</th>
-                    <td>{{ patiententry.indication }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">GravPar:</th>
-                    <td>{{ patiententry.gravpar }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Comorbidities:</th>
-                    <td>{{ patiententry.comorbid|default_if_none:"-" }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Responsible Clinician:</th>
-                    <td>{{ patiententry.clinician|default_if_none:"-"}}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Decision Time:</th>
-                    <td>{{ patiententry.decision_time|time:"H:i" }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Outstanding Info:</th>
-                    <td>{{ patiententry.outstanding_data|default_if_none:"-" }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Delivery Time:</th>
-                    <td>{{ patiententry.delivery_time|time:"H:i" }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">APGAR 1:</th>
-                    <td>{{ patiententry.apgar_1|default_if_none:"-" }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">APGAR 5:</th>
-                    <td>{{ patiententry.apgar_5|default_if_none:"-" }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="width:100%; background-color: #f7f7f7;">
+            <div style="float:left; width:50%; padding: 0px 10px 0px 20px;">
+                <ul class="list-group">
+                    <li class="list-group-item py-2">
+                        <h4>Personal Details</h4>
+                    </li>
+                    <li class="list-group-item py-2">
+                        SURNAME <br/>
+                        <div>{{ patiententry.patient.name }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        PATIENT ID <br/>
+                        <div>{{ patiententry.patient.patient_id }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        AGE <br/>
+                        <div>{{ patiententry.patient.age }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        GRAVPAR <br/>
+                        <div>{{ patiententry.gravpar|default_if_none:"-" }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        ADDITIONAL INFORMATION <br/>
+                        <div>{{ patiententry.outstanding_data|default_if_none:"-" }}</div>
+                    </li>
+                </ul>
+            </div>
+            <div style="float:left; width:50%;padding: 0px 20px 0px 10px;">
+                <ul class="list-group">
+                    <li class="list-group-item py-2">
+                        <h4>Surgery Details</h4>
+                    </li>
+                    <li class="list-group-item py-2">
+                        <div style="float: left">
+                            OPERATION <br/>
+                            <div>{{ patiententry.operation }}</div>
+                        </div>
+                        {% if patiententry.completion_time %}
+                            <div class="urgency urgency-0" style="padding: 6px;text-align: center;width: 200px; float: right">COMPLETE</div>
+                        {% else %}
+                            <div class="urgency urgency-{{ patiententry.urgency }}" style="padding: 6px;text-align: center;width: 200px; float: right">{{patiententry.get_urgency_display}}</div>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item py-2">
+                        LOCATION <br/>
+                        <div>{{ patiententry.location|default_if_none:"-" }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        INDICATION <br/>
+                        <div>{{ patiententry.indication|default_if_none:"-" }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        CLINICIAN <br/>
+                        <div>{{ patiententry.clinician|default_if_none:"-" }}</div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        <div style="width: 50%;float: left;">
+                            DECISION TIME <br/>
+                            <div>{{ patiententry.decision_time|time:"H:i" }}</div>
+                        </div>
+                        <div style="width: 50%;float: left;">
+                            TIME OUT OF THEATRE <br/>
+                            <div>{{ patiententry.discharge_time|time:"H:i" }}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item py-2">
+                        <div style="width: 50%;float: left;">
+                            DATE OF DELIVERY <br/>
+                            <div>{{ patiententry.decision_time|date:"Y-m-d" }}</div>
+                        </div>
+                        <div style="width: 50%;float: left;">
+                            NUMBER OF BABIES <br/>
+                            <div>{{ patiententry.foetus|default_if_none:"-" }}</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div style="width: 100%; float: left;padding: 20px;">
+                {% for baby in patiententry.entry_babies.all %}
+                    <ul class="list-group">
+                        <li class="list-group-item py-2">
+                            <h5>Delivery Details: Baby {{ baby.baby_number }}</h5>
+                        </li>
+                        <li class="list-group-item py-2">
+                            TIME OF DELIVERY <br/>
+                            <div>{{ baby.delivery_time|time:"H:i" }}</div>
+                        </li>
+                        <li class="list-group-item py-2">
+                            WEIGHT OF BABY <br/>
+                            <div>{{ baby.baby_weight_grams }}</div>
+                        </li>
+                        <li class="list-group-item py-2">
+                            APGAR 1 <br/>
+                            <div>{{ baby.apgar_1 }}</div>
+                        </li>
+                        <li class="list-group-item py-2">
+                            APGAR 5 <br/>
+                            <div>{{ baby.apgar_5 }}</div>
+                        </li>
+                        <li class="list-group-item py-2">
+                            NICU <br/>
+                            <div>{{ baby.nicu }}</div>
+                        </li>
+                    </ul>
+                {% endfor %}
+            </div>
         </div>
         {% else %}
-        <div>
+        <div style="text-align: center;width: 100%;">
             <p>Sorry. No such patient was found.</p>
         </div>
         {% endif %}
     </div>
 </div>
-
-<script>
-    $( function(){
-
-        function setTableClass(){
-            var screenWidth = document.body.clientWidth;
-            console.log(screenWidth)
-            if (screenWidth < 576){
-                $("#patient-details-table").addClass("table-sm");
-            }else{
-                $("#patient-details-table").removeClass("table-sm");
-            };
-        };
-
-        setTableClass();
-    });
-</script>
 
 {% endblock %}
