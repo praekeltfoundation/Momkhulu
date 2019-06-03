@@ -17,7 +17,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 
 from .consumers import ViewConsumer
-from .models import Patient, PatientEntry, Profile
+from .models import Baby, Patient, PatientEntry, Profile
 from .util import (
     get_all_active_patient_entries,
     get_rp_dict,
@@ -90,6 +90,12 @@ SAMPLE_RP_UPDATE_INVALID_DATA = {
 SAMPLE_RP_UPDATE_DELIVERY_DATA = {
     "results": {
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "foetus": {"name": "foetus", "category": "All Responses", "value": "2"},
+        "baby_number": {
+            "name": "baby_number",
+            "category": "All Responses",
+            "value": "1",
+        },
         "delivery_time": {
             "name": "delivery_time",
             "category": "All Responses",
@@ -100,7 +106,6 @@ SAMPLE_RP_UPDATE_DELIVERY_DATA = {
             "category": "All Responses",
             "value": "2400",
         },
-        "foetus": {"name": "foetus", "category": "All Responses", "value": "1"},
         "nicu": {"name": "nicu", "category": "Yes", "value": "2"},
         "apgar_1": {"name": "apgar_1", "category": "All Responses", "value": "8"},
         "apgar_5": {"name": "apgar_5", "category": "All Responses", "value": "9"},
@@ -580,20 +585,15 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "decision_time": "2019-01-01T00:00:00Z",
                 "discharge_time": None,
                 "gravidity": 1,
-                "delivery_time": None,
                 "completion_time": None,
                 "urgency": 4,
                 "location": None,
                 "outstanding_data": None,
                 "clinician": None,
-                "apgar_1": None,
-                "apgar_5": None,
                 "name": "Jane Doe",
                 "parity": 0,
                 "age": 20,
                 "foetus": None,
-                "nicu": None,
-                "baby_weight_grams": None,
             },
         )
 
@@ -624,20 +624,15 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "decision_time": "2019-01-01T00:00:00Z",
                 "discharge_time": None,
                 "gravidity": 1,
-                "delivery_time": None,
                 "completion_time": None,
                 "urgency": 4,
                 "location": None,
                 "outstanding_data": None,
                 "clinician": None,
-                "apgar_1": None,
-                "apgar_5": None,
                 "name": "Jane Doe",
                 "parity": 0,
                 "age": 20,
                 "foetus": None,
-                "nicu": None,
-                "baby_weight_grams": None,
             },
         )
 
@@ -701,7 +696,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
     def test_patient_who_exists_delivered(self):
 
-        self.assertIsNone(self.patient_entry.delivery_time)
+        self.assertEqual(self.patient_entry.entry_babies.count(), 0)
 
         response = self.normalclient.post(
             reverse("rp_entrystatus_update"),
@@ -712,21 +707,59 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         # Test returns the right response code
         self.assertEqual(response.status_code, 200)
 
-        # Test that the delivery time has been updated
-        self.patient_entry.refresh_from_db()
+        # Test that the baby records have been created correctly
+        self.assertEqual(Baby.objects.count(), 1)
 
+        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=1)
         self.assertEqual(
-            self.patient_entry.delivery_time,
+            baby_1.delivery_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
-        self.assertEqual(self.patient_entry.apgar_1, 8)
-        self.assertEqual(self.patient_entry.apgar_5, 9)
-        self.assertEqual(self.patient_entry.baby_weight_grams, 2400)
-        self.assertTrue(self.patient_entry.nicu)
+        self.assertEqual(baby_1.apgar_1, 8)
+        self.assertEqual(baby_1.apgar_5, 9)
+        self.assertEqual(baby_1.baby_weight_grams, 2400)
+        self.assertTrue(baby_1.nicu)
+
+    def test_patient_who_exists_delivered_update(self):
+        Baby.objects.create(
+            **{
+                "patiententry": self.patient_entry,
+                "baby_number": 1,
+                "apgar_1": 1,
+                "apgar_5": 2,
+                "baby_weight_grams": 0,
+                "delivery_time": timezone.now(),
+                "nicu": False,
+            }
+        )
+
+        self.assertEqual(self.patient_entry.entry_babies.count(), 1)
+
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_DELIVERY_DATA,
+            format="json",
+        )
+
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 200)
+
+        # Test that the baby records have been updated correctly
+        self.assertEqual(Baby.objects.count(), 1)
+
+        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=1)
+        self.assertEqual(
+            baby_1.delivery_time,
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+        )
+        self.assertEqual(baby_1.apgar_1, 8)
+        self.assertEqual(baby_1.apgar_5, 9)
+        self.assertEqual(baby_1.baby_weight_grams, 2400)
+        self.assertTrue(baby_1.nicu)
 
     def test_patient_who_exists_completed(self):
 
-        self.assertIsNone(self.patient_entry.delivery_time)
+        self.assertIsNone(self.patient_entry.completion_time)
 
         response = self.normalclient.post(
             reverse("rp_entrystatus_update"),
@@ -755,8 +788,8 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)
 
-        # Test that the delivery time has not been updated
-        self.assertIsNone(self.patient_entry.delivery_time)
+        # Test that no baby records were created
+        self.assertEqual(self.patient_entry.entry_babies.count(), 0)
 
     def test_delivery_of_patient_multiple_entries(self):
         PatientEntry.objects.create(
