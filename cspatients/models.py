@@ -1,7 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 
 class Patient(models.Model):
@@ -40,17 +38,12 @@ class PatientEntry(models.Model):
     indication = models.CharField(max_length=255, null=True)
     decision_time = models.DateTimeField(auto_now_add=True)
     discharge_time = models.DateTimeField(null=True)
-    delivery_time = models.DateTimeField(null=True)
     completion_time = models.DateTimeField(null=True)
     urgency = models.IntegerField(default=4, choices=URGENCY_CHOICES)
     location = models.CharField(max_length=255, null=True)
     outstanding_data = models.CharField(max_length=255, null=True)
     clinician = models.CharField(max_length=255, null=True)
-    apgar_1 = models.IntegerField(null=True)
-    apgar_5 = models.IntegerField(null=True)
     foetus = models.IntegerField(null=True)
-    baby_weight_grams = models.IntegerField(null=True)
-    nicu = models.BooleanField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -62,20 +55,24 @@ class PatientEntry(models.Model):
         return "{} having {}".format(self.patient, self.operation)
 
 
+class Baby(models.Model):
+    patiententry = models.ForeignKey(
+        PatientEntry, related_name="entry_babies", on_delete=models.CASCADE
+    )
+    baby_number = models.IntegerField()
+    delivery_time = models.DateTimeField()
+    apgar_1 = models.IntegerField()
+    apgar_5 = models.IntegerField()
+    baby_weight_grams = models.IntegerField()
+    nicu = models.BooleanField()
+
+    class Meta:
+        unique_together = ("patiententry", "baby_number")
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     msisdn = models.CharField("MSISDN(+country code)", max_length=30, blank=True)
 
     def __str__(self):
         return "{}: {}".format(self.user.username, self.msisdn)
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()

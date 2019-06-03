@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import PatientEntry, Profile
+from .models import Baby, PatientEntry, Profile
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
@@ -121,12 +121,20 @@ class EntryStatusUpdateView(APIView):
             )
 
             if data["option"] == "Delivery":
-                patiententry.delivery_time = data["delivery_time"]
-                patiententry.apgar_1 = data["apgar_1"]
-                patiententry.apgar_5 = data["apgar_5"]
                 patiententry.foetus = data["foetus"]
-                patiententry.baby_weight_grams = data["baby_weight_grams"]
-                patiententry.nicu = data["nicu"] == "Yes"
+
+                _, _ = Baby.objects.update_or_create(
+                    patiententry=patiententry,
+                    baby_number=data["baby_number"],
+                    defaults={
+                        "apgar_1": data["apgar_1"],
+                        "apgar_5": data["apgar_5"],
+                        "baby_weight_grams": data["baby_weight_grams"],
+                        "delivery_time": data["delivery_time"],
+                        "nicu": data["nicu"] == "Yes",
+                    },
+                )
+
             elif data["option"] == "Completed":
                 patiententry.completion_time = data["completion_time"]
 
