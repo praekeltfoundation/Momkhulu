@@ -44,27 +44,27 @@ tr{
 }
 
 .urgency-5{
-    background-color: red;
+    background-color: #ff1c00;
 }
 
 .urgency-4{
-    background-color: orange;
+    background-color: #ff9001;
 }
 
 .urgency-3{
-    background-color: yellow;
+    background-color: #f8d001;
 }
 
 .urgency-2{
-    background-color: green;
+    background-color: #49c856;
 }
 
 .urgency-1{
-    background-color: blue;
+    background-color: #04a0ff;
 }
 
 .urgency-0{
-    background-color: #bcbaba;
+    background-color: #b4b4b4;
 }
 
 td{
@@ -119,6 +119,6 @@ td{
     padding-top: 30px;
     text-align: center;
     font-family: "Inconsolata", monospace;
-    background-color: #f2f2f2;
+    background-color: #f7f7f7;
     padding-bottom: 30px;
 }
