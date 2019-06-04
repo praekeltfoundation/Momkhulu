@@ -16,3 +16,4 @@ BROKER_BACKEND = "memory"
 CELERY_RESULT_BACKEND = "djcelery.backends.database:DatabaseBackend"
 
 RABBITMQ_MANAGEMENT_INTERFACE = "http://user:pass@rabbitmq:15672/api/queues//my_vhost/"
+MOMKHULU_GROUP_INVITE_LINK = "http://fakewhatsapp/the-group-id"
