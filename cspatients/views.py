@@ -25,7 +25,11 @@ from .util import (
 @login_required()
 def view(request):
     template = loader.get_template("cspatients/view.html")
-    context = {"patient_entries": get_all_active_patient_entries()}
+    search = None
+    if "search" in request.GET and request.GET["search"]:
+        search = request.GET["search"]
+
+    context = {"patient_entries": get_all_active_patient_entries(search)}
     return HttpResponse(template.render(context), status=200)
 
 
@@ -33,7 +37,8 @@ def view(request):
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
     patiententry = (
-        PatientEntry.objects.filter(patient__patient_id=patient_id)
+        PatientEntry.objects.prefetch_related("entry_babies", "patient")
+        .filter(patient__patient_id=patient_id)
         .order_by("-created_at")
         .first()
     )

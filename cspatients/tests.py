@@ -12,6 +12,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from freezegun import freeze_time
+from mock import patch
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
@@ -228,6 +229,19 @@ class ViewTest(TestCase):
         response = self.client.get(reverse("cspatient_view"))
         self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
 
+    @patch("cspatients.views.get_all_active_patient_entries")
+    def test_get_view_filter(self, mock_get_patients):
+        """
+            Test that request is using the filter
+        """
+        mock_get_patients.return_value = []
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("cspatient_view"), {"search": "1234"})
+        self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
+
+        mock_get_patients.assert_called_with("1234")
+
 
 class PatientViewTest(TestCase):
     def setUp(self):
@@ -318,6 +332,16 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
         self.assertEqual(patient_entries[1].patient.name, "Mary Mary")
         self.assertEqual(patient_entries[2].patient.name, "John")
+
+    def test_get_all_active_patient_entries_filter(self):
+        save_model(self.patient_one_data)
+        save_model(self.patient_two_data)
+        save_model(self.patient_three_data)
+
+        patient_entries = get_all_active_patient_entries("jane")
+
+        self.assertEqual(len(patient_entries), 1)
+        self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
 
 
 class SaveModelTest(TestCase):
@@ -583,7 +607,6 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "comorbid": None,
                 "indication": None,
                 "decision_time": "2019-01-01T00:00:00Z",
-                "discharge_time": None,
                 "gravidity": 1,
                 "completion_time": None,
                 "urgency": 4,
@@ -622,7 +645,6 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "comorbid": None,
                 "indication": None,
                 "decision_time": "2019-01-01T00:00:00Z",
-                "discharge_time": None,
                 "gravidity": 1,
                 "completion_time": None,
                 "urgency": 4,

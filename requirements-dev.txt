@@ -8,3 +8,4 @@ black
 pre-commit
 freezegun
 isort==4.3.4
+mock==2.0.0
