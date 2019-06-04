@@ -7,13 +7,10 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgresql/momkhulu
       - REDIS_URL=redis://redis:6379/0
       - ALLOWED_HOSTS=localhost
-      - .:/app
     expose:
       - '8000'
     ports:
       - 8000:8000
-    volumes:
-      - ".:/app"
     depends_on:
       - postgresql
       - redis
