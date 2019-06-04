@@ -43,11 +43,11 @@ tr{
     color: white;
 }
 
-.urgency-5{
+.urgency-1{
     background-color: #ff1c00;
 }
 
-.urgency-4{
+.urgency-2{
     background-color: #ff9001;
 }
 
@@ -55,11 +55,11 @@ tr{
     background-color: #f8d001;
 }
 
-.urgency-2{
+.urgency-4{
     background-color: #49c856;
 }
 
-.urgency-1{
+.urgency-5{
     background-color: #04a0ff;
 }
 

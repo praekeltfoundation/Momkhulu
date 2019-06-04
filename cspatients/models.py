@@ -14,11 +14,11 @@ class Patient(models.Model):
 
 
 class PatientEntry(models.Model):
-    ELECTIVE = 1
-    COLD = 2
+    ELECTIVE = 5
+    COLD = 4
     HOT_YELLOW = 3
-    HOT_ORANGE = 4
-    IMMEDIATE = 5
+    HOT_ORANGE = 2
+    IMMEDIATE = 1
 
     URGENCY_CHOICES = (
         (ELECTIVE, "Elective"),
