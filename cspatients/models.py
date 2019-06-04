@@ -37,7 +37,6 @@ class PatientEntry(models.Model):
     comorbid = models.CharField(max_length=255, null=True)
     indication = models.CharField(max_length=255, null=True)
     decision_time = models.DateTimeField(auto_now_add=True)
-    discharge_time = models.DateTimeField(null=True)
     completion_time = models.DateTimeField(null=True)
     urgency = models.IntegerField(default=4, choices=URGENCY_CHOICES)
     location = models.CharField(max_length=255, null=True)

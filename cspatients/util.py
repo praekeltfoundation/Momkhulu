@@ -1,5 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.db.models import Q
 from django.template import loader
 
 from .models import Patient, PatientEntry
@@ -36,8 +37,13 @@ def get_rp_dict(data, context=None):
         return all_dict
 
 
-def get_all_active_patient_entries():
+def get_all_active_patient_entries(search=None):
     patiententrys = PatientEntry.objects.select_related("patient").all()
+    if search:
+        patiententrys = patiententrys.filter(
+            Q(patient__patient_id__contains=search) | Q(patient__name__icontains=search)
+        )
+
     sorted_entries = sorted(
         patiententrys, key=lambda x: (x.urgency, x.decision_time), reverse=True
     )
