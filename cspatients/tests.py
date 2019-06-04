@@ -840,6 +840,11 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+        result = json.loads(response.content)
+        self.assertEqual(
+            result, {"group_invite_link": "http://fakewhatsapp/the-group-id"}
+        )
+
     def test_whitelist_check_not_exists(self):
         response = self.normalclient.post(
             reverse("rp_whitelist_check"),
@@ -847,6 +852,9 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 404)
+
+        result = json.loads(response.content)
+        self.assertEqual(result, {})
 
     def test_whitelist_check_exists_inactive(self):
         new_user = User.objects.create_user(
@@ -859,8 +867,10 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
             SAMPLE_RP_CHECKLIST_DATA_INACTIVE,
             format="json",
         )
-        print(response.content)
         self.assertEqual(response.status_code, 404)
+
+        result = json.loads(response.content)
+        self.assertEqual(result, {})
 
 
 class HealthViewTest(APITestCase):
