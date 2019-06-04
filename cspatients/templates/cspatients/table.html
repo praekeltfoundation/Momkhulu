@@ -1,6 +1,16 @@
 <div class="table-responsive">
-    <form method="get" action="">
-        <input style="width: 240px" type="text" name="search" placeholder="Search Patient ID or Surname" style="float: left;">
+    <form class="form-inline" method="get" action="">
+        <input name="search" value="{{ search }}" style="width: 240px; float: left;" class="form-control" type="text" placeholder="Search Patient ID or Surname">
+        <select name="status" style="width: 240px" class="form-control status-select">
+            <option value="0">View All Urgencies</option>
+            <option value="1">Elective</option>
+            <option value="2">Cold</option>
+            <option value="3">Hot(Yellow)</option>
+            <option value="4">Hot(Orange)</option>
+            <option value="5">Immediate</option>
+            <option value="complete">Complete</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Submit</button>
         <a href="{% url 'cspatient_view' %}">Reset</a>
     </form>
     <table id="decision-table" class="table table-hover patients-table">
@@ -10,7 +20,7 @@
                 <th scope="col">Operation</th>
                 <th scope="col">Location</th>
                 <th scope="col">Indication</th>
-                <th scope="col">Status</th>
+                <th scope="col">Urgency</th>
                 <th scope="col">Decision Time</th>
                 <th scope="col">Clinician</th>
             </tr>
@@ -36,3 +46,7 @@
 
 </div>
 <br>
+
+<script>
+    $('.status-select').val('{{ status }}');
+</script>
