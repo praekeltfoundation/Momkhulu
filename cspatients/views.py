@@ -26,12 +26,17 @@ from .util import (
 def view(request):
     template = loader.get_template("cspatients/view.html")
     search = None
+    status = None
     if "search" in request.GET and request.GET["search"]:
         search = request.GET["search"]
 
+    if "status" in request.GET and request.GET.get("status", "0") != "0":
+        status = request.GET["status"]
+
     context = {
-        "patient_entries": get_all_active_patient_entries(search),
-        "user": request.user,
+        "patient_entries": get_all_active_patient_entries(search, status),
+        "search": search or "",
+        "status": status or "0",
     }
     return HttpResponse(template.render(context), status=200)
 
