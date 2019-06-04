@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+
 body{
     box-sizing: border-box;
 }
@@ -44,27 +46,27 @@ tr{
 }
 
 .urgency-5{
-    background-color: red;
+    background-color: #ff1c00;
 }
 
 .urgency-4{
-    background-color: orange;
+    background-color: #ff9001;
 }
 
 .urgency-3{
-    background-color: yellow;
+    background-color: #f8d001;
 }
 
 .urgency-2{
-    background-color: green;
+    background-color: #49c856;
 }
 
 .urgency-1{
-    background-color: blue;
+    background-color: #04a0ff;
 }
 
 .urgency-0{
-    background-color: #bcbaba;
+    background-color: #b4b4b4;
 }
 
 td{
@@ -119,6 +121,109 @@ td{
     padding-top: 30px;
     text-align: center;
     font-family: "Inconsolata", monospace;
-    background-color: #f2f2f2;
+    background-color: #f7f7f7;
     padding-bottom: 30px;
 }
+
+
+.navbar-laravel
+{
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+}
+
+.navbar-brand , .nav-link, .my-form, .login-form
+{
+    font-family: Raleway, sans-serif;
+}
+
+.my-form
+{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.my-form .row
+{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.login-form
+{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.login-form .row
+{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.btn{
+    width: 67%;
+    padding: 5px 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 12px 0;
+}
+
+.resizedTextBox{
+    width: 100px; height: 20px;
+}
+
+.input{
+    width: 50%;
+}
+
+.thick{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.light{
+  font-weight: lighter;
+  color: grey;
+  text-align: center;
+  font-size: 13px;
+}
+
+.size{
+  font-size: 15px;
+  font-weight: bold;
+}
+
+div.a{
+  line-height: 70%;
+}
+
+.right{
+  text-align: right;
+}
+
+.center{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr.line{
+  border-top: 1px  solid grey;
+  opacity: 0.3;
+}
+
+.maincolour{
+  color: #00a7ff;
+}
+
+.field-icon{
+  color: #00a7ff;
+  position:relative;
+}
+
+.btn-x1{
+    padding:10px 20px;
+    font-size: 16;
+    font-weight: bold;
+    border-radius: 10px;
+}
+

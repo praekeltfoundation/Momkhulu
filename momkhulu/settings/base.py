@@ -81,7 +81,16 @@ CHANNEL_LAYERS = {
 }
 
 # Database
-DATABASES = {"default": env.db(default="postgres://postgres@localhost:5432/momkhulu")}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'bbcbbc96',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 
