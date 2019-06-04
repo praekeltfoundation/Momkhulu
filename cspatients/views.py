@@ -161,13 +161,18 @@ class WhitelistCheckView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
+        data = {}
+        return_status = status.HTTP_200_OK
+
         try:
             msisdn = request.data["contact"]["urn"].split(":")[1]
             Profile.objects.get(msisdn__contains=msisdn, user__is_active=True)
-        except Profile.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        return Response(status=status.HTTP_200_OK)
+            data["group_invite_link"] = settings.MOMKHULU_GROUP_INVITE_LINK
+        except Profile.DoesNotExist:
+            return_status = status.HTTP_404_NOT_FOUND
+
+        return Response(data, status=return_status)
 
 
 def health(request):
