@@ -16,7 +16,7 @@
               <div>
                 <label for="id_password" class="col-md-5 col-form-label text-md-right size">Password</label>
                 <span toggle="#id_password" class="fa fa-fw fa-eye field-icon toggle-password offset-md-3"></span>
-                <a class="maincolour" href="#"> Show</a>
+                <input type="checkbox" onclick="showPassword()">Show Password
 
                 <div class="text-md-right">
                   <input type="password" name="password" id="id_password" class="form-control col-md-6 offset-md-3"
@@ -43,4 +43,14 @@
       </div>
     </div>
   </main>
+  <script type="text/javascript">
+    function showPassword() {
+      var x = document.getElementById("id_password");
+      if (x.type === "password") {
+        x.type = "text";
+      } else {
+        x.type = "password";
+      }
+    }
+  </script>
   {% endblock %}
