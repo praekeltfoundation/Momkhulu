@@ -1,0 +1,75 @@
+form {
+  position: relative;
+  vertical-align: middle;
+}
+fieldset {
+  clear: both;
+  border: none;
+  margin: 10px;
+  word-break: break-word;
+  word-wrap: break-word;
+  padding: 0;
+  display: inline-block;
+}
+label {
+  padding: 0;
+  vertical-align: middle;
+  word-break: break-word;
+  word-wrap: break-word;
+  display: block;
+}
+textarea {
+  margin: 0 auto;
+  padding: 1em;
+  width: auto;
+}
+select {
+  height: 45px;
+  border-radius: 0;
+  outline: none;
+  text-transform: capitalize;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  background: #fff;
+}
+select[value="value"] {
+  text-transform: capitalize;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  margin: 0;
+}
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+input[type="week"],
+input[type="date"],
+input[type="month"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="url"],
+select {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+}
+input[type="search"] {
+  width: 100%;
+}
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+button {
+  
+}
+
+*[disabled],
+*[readonly] {
+  background: transparent;
+  opacity: 1
+}

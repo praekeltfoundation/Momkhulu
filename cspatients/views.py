@@ -38,6 +38,7 @@ def view(request):
         "patient_entries": get_all_active_patient_entries(search, status),
         "search": search or "",
         "status": status or "0",
+        "user": request.user,
     }
     return HttpResponse(template.render(context), status=200)
 
@@ -52,7 +53,7 @@ def patient(request, patient_id):
         .first()
     )
 
-    context = {"patiententry": patiententry}
+    context = {"patiententry": patiententry, "user": request.user}
     if patiententry:
         status_code = status.HTTP_200_OK
     else:
@@ -72,7 +73,10 @@ def form(request):
         else:
             status_code = status.HTTP_400_BAD_REQUEST
     return render(
-        request, "cspatients/form.html", context={"errors": errors}, status=status_code
+        request,
+        "cspatients/form.html",
+        context={"errors": errors, "user": request.user},
+        status=status_code,
     )
 
 
