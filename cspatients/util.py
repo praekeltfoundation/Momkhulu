@@ -37,12 +37,20 @@ def get_rp_dict(data, context=None):
         return all_dict
 
 
-def get_all_active_patient_entries(search=None):
+def get_all_active_patient_entries(search=None, status=None):
     patiententrys = PatientEntry.objects.select_related("patient").all()
     if search:
         patiententrys = patiententrys.filter(
             Q(patient__patient_id__contains=search) | Q(patient__name__icontains=search)
         )
+
+    if status:
+        if status == "complete":
+            patiententrys = patiententrys.filter(completion_time__isnull=False)
+        else:
+            patiententrys = patiententrys.filter(
+                urgency=status, completion_time__isnull=True
+            )
 
     sorted_entries = sorted(
         patiententrys, key=lambda x: (x.urgency, x.decision_time), reverse=True

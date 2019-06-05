@@ -1,4 +1,3 @@
-import json
 from os import environ
 
 import pytest
@@ -237,10 +236,12 @@ class ViewTest(TestCase):
         mock_get_patients.return_value = []
 
         self.client.force_login(self.user)
-        response = self.client.get(reverse("cspatient_view"), {"search": "1234"})
+        response = self.client.get(
+            reverse("cspatient_view"), {"search": "1234", "status": "1"}
+        )
         self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
 
-        mock_get_patients.assert_called_with("1234")
+        mock_get_patients.assert_called_with("1234", "1")
 
 
 class PatientViewTest(TestCase):
@@ -338,10 +339,23 @@ class ViewAllContextTest(TestCase):
         save_model(self.patient_two_data)
         save_model(self.patient_three_data)
 
-        patient_entries = get_all_active_patient_entries("jane")
+        patient_entries = get_all_active_patient_entries("jane", "4")
 
         self.assertEqual(len(patient_entries), 1)
         self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
+
+    def test_get_all_active_patient_entries_filter_complete(self):
+        save_model(self.patient_one_data)
+        save_model(self.patient_two_data)
+        entry3, _ = save_model(self.patient_three_data)
+
+        entry3.completion_time = timezone.now()
+        entry3.save()
+
+        patient_entries = get_all_active_patient_entries(None, "complete")
+
+        self.assertEqual(len(patient_entries), 1)
+        self.assertEqual(patient_entries[0].patient.name, "John")
 
 
 class SaveModelTest(TestCase):
@@ -840,9 +854,8 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        result = json.loads(response.content)
         self.assertEqual(
-            result, {"group_invite_link": "http://fakewhatsapp/the-group-id"}
+            response.json(), {"group_invite_link": "http://fakewhatsapp/the-group-id"}
         )
 
     def test_whitelist_check_not_exists(self):
@@ -853,8 +866,7 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
         )
         self.assertEqual(response.status_code, 404)
 
-        result = json.loads(response.content)
-        self.assertEqual(result, {})
+        self.assertEqual(response.json(), {})
 
     def test_whitelist_check_exists_inactive(self):
         new_user = User.objects.create_user(
@@ -868,9 +880,7 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, 404)
-
-        result = json.loads(response.content)
-        self.assertEqual(result, {})
+        self.assertEqual(response.json(), {})
 
 
 class HealthViewTest(APITestCase):
@@ -880,7 +890,7 @@ class HealthViewTest(APITestCase):
     def test_health_endpoint(self):
         response = self.api_client.get(reverse("health"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        result = json.loads(response.content)
+        result = response.json()
 
         self.assertTrue("id" in result)
         self.assertEqual(result["id"], None)
@@ -894,7 +904,7 @@ class HealthViewTest(APITestCase):
 
         response = self.api_client.get(reverse("health"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        result = json.loads(response.content)
+        result = response.json()
 
         self.assertTrue("id" in result)
         self.assertEqual(result["id"], environ["MARATHON_APP_ID"])
