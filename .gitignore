@@ -82,3 +82,4 @@ momkhulu/settings.py
 sample_rp_post_data.txt
 .env
 pip-wheel-metadata/
+node_modules/*
