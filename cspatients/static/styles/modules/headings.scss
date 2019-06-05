@@ -1,0 +1,18 @@
+.heading {
+  display: inline-block;
+  &__title {
+    color: #848484;
+  }
+
+  &__subtitle {
+    font-size: 28px;
+    font-weight: bold;
+    padding: 1em;
+    &--highlighted {
+      color: #00a7ff;
+    }
+    &--macro {
+      color: #00a7ff;
+    }
+  }
+}

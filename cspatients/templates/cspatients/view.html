@@ -1,65 +1,60 @@
-{% extends "cspatients/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-
 <div class="container-fluid">
-    <div class="row">
-        <div style="width:100%; text-align: center; padding-top: 15px; background-color: #f7f7f7">
-            <h3>Momkhulu Triage Board</h3>
-            <div style="color: #939393">Mowbray Maternity Hospital</div>
-        </div>
-        <div id="table-div" style="width:100%; padding: 15px; background-color: #f7f7f7">
-            {% include "cspatients/table.html" %}
-        </div>
+  <div class="row">
+    <div style="width:100%; text-align: center; padding-top: 15px; background-color: #f7f7f7">
+      <h3>Momkhulu Triage Board</h3>
+      <div style="color: #939393">Mowbray Maternity Hospital</div>
     </div>
+    <div id="table-div" style="width:100%; padding: 15px; background-color: #f7f7f7">
+      {% include "cspatients/table.html" %}
+    </div>
+  </div>
 </div>
 
-<script>
-
-    function sleep(ms) {
+  {% block extra_js %}
+    <script type="text/javascript">
+      function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
-    };
+      };
 
-    $( function(){
-
+      $( function(){
         // RESPONSIVE DESIGN
-
         function setTableClass(){
-            var screenWidth = document.body.clientWidth;
-            console.log(screenWidth)
-            if (screenWidth < 576){
-                $(".patients-table").addClass("table-sm");
-            }else{
-                $(".patients-table").removeClass("table-sm");
-            };
+          var screenWidth = document.body.clientWidth;
+          console.log(screenWidth)
+          if (screenWidth < 576){
+              $(".patients-table").addClass("table-sm");
+          }else{
+              $(".patients-table").removeClass("table-sm");
+          };
         };
-
         setTableClass();
 
         // WEB SOCKET FUNCTIONS
-
         console.log("Connecting to the viewSocket")
         var viewSocket =  new WebSocket(
-            "wss://" + window.location.host + "/ws/cspatients/viewsocket/");
+          "wss://" + window.location.host + "/ws/cspatients/viewsocket/");
 
         viewSocket.onopen = function (){
-            console.log("Connected to the viewSocket")
+          console.log("Connected to the viewSocket")
         }
         // If the socket closes, the page will sleep for 30 seconds and then refresh
         viewSocket.onclose =  async function(e){
-            await sleep(30000);
-            window.location.reload(true);
+          await sleep(30000);
+          window.location.reload(true);
         };
 
         viewSocket.onmessage = function(e){
-            console.log("The table has been received.");
-            console.log(e);
-            $("#table-div").html(function(){
-                return e.data;
-                console.log("Rendering the new updated table.");
-            });
+          console.log("The table has been received.");
+          console.log(e);
+          $("#table-div").html(function(){
+            return e.data;
+            console.log("Rendering the new updated table.");
+          });
         };
-    });
-</script>
-
+      });
+    </script>
+  {% endblock %}
 {% endblock %}
