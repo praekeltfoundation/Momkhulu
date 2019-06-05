@@ -3,7 +3,7 @@
   <div class="login login-form">
     <div class="container">
       <h3 class="heading heading__subtitle">Log in</h3>
-      <p class="heading heading__description"> Login to access the Momkhulu Triage Board.</p>
+      <p class="heading heading__description">Need a Momkhulu account? </p>
       <form method="post">
       {% csrf_token %}
         <fieldset class="form-group">
@@ -11,11 +11,14 @@
           <input type="text" id="id_username" name="username" placeholder="Enter your e-mail address" required autofocus>
         </fieldset>
         <fieldset class="form-group">
-          <label for="id_password" class="form-label">Password</label>
-          <label class="form-label form-label">
-            <span toggle="#id_password" class="form-label"></span>
-            <input type="checkbox" onclick="showPassword()">Show Password
-          </label>
+          <div class="form-group--inner">
+            <label for="id_password" class="form-label">Password</label>
+            <div class="reveal__password">
+              <span toggle="#id_password"></span>
+              <input id="show_pass_trigger" type="checkbox" onclick="showPassword()">
+              <label for="show_pass_trigger" class="form-label form-label--show">Show</label>
+            </div>
+          </div>
           <input type="password" name="password" id="id_password" placeholder="Enter your password" required value="secret">
           <small id="password-caps-warning" class="form-text text-danger d-none">
             Warning: Caps lock enabled

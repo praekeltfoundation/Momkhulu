@@ -1,6 +1,7 @@
 .heading {
+  color: #000;
   &__title {
-    color: $color_gray;
+    color: #000;
   }
   &__subtitle {
     font-size: 28px;
@@ -14,6 +15,6 @@
     }
   }
   &__description {
-
+    color: $color_gray;
   }
 }

@@ -1,7 +1,6 @@
 .footer-wrapper {
-  padding-top: 30px;
+  background-color: #f7f7f7; //Color
   text-align: center;
-  font-family: "Inconsolata", monospace;
-  background-color: #f7f7f7;
-  padding-bottom: 30px;
+  font-family: $inconsolataFamily;
+  padding: 30px 0;
 }
