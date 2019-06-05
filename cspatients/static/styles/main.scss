@@ -1,6 +1,16 @@
-@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+@import url('https://fonts.googleapis.com/css?family=Inconsolata|Lato|Open+Sans|Raleway&display=swap');
+
+$latoFamily : 'Lato', sans-serif;
+
+
+$latoFamily         :     'Lato', Helvetica, Arial, sans-serif;
+$ralewayFamily      :     'Raleway', Helvetica, Arial, sans-serif;
+$openSansFamily     :     'Open Sans', Helvetica, Arial, sans-serif;
+$inconsolataFamily  :     'Inconsolata', monospace, Helvetica, Arial, sans-serif;
+
+
 html,body {
-  background-color: #fff;
+  background-color: #f7f7f7;
   height: auto;
 }
 
@@ -10,7 +20,7 @@ html,body {
 
 body {
   font-size: 16px;
-  font-family: 'Noto Sans', Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-weight: normal;
   margin: 0 auto;
   line-height: 1.5;
