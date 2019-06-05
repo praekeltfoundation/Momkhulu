@@ -16,18 +16,18 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
 </head>
 <body>
-  <header class="main__wrapper">
+  <header class="header">
       <h2 class="heading heading__title">Momkhulu</h2>
-      {% if user.is_authenticated %}
-        <h6 class="heading__subtitle--highlighted">
-          <a class="call-to-action__button call-to-action__button--primary" href="{% url 'logout' %}">Log out</a>
-        </h6>
-      {% endif %}
   </header>
-  <section class="main__wrapper">
+  <section class="content-inner">
+    {% if user.is_authenticated %}
+      <h6 class="heading__subtitle--highlighted">
+        <a class="call-to-action__button call-to-action__button--primary" href="{% url 'logout' %}">Log out</a>
+      </h6>
+    {% endif %}
     {% block content %}{% endblock %}
   </section>
-  <footer class="main__wrapper">
+  <footer class="footer">
     {% include "cspatients/footer.html" %}
   </footer>
 </body>
