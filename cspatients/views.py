@@ -15,6 +15,7 @@ from .models import Baby, PatientEntry, Profile
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
+    generate_password_reset_url,
     get_all_active_patient_entries,
     get_rp_dict,
     save_model,
@@ -172,8 +173,11 @@ class WhitelistCheckView(APIView):
 
         try:
             msisdn = request.data["contact"]["urn"].split(":")[1]
-            Profile.objects.get(msisdn__contains=msisdn, user__is_active=True)
+            profile = Profile.objects.get(msisdn__contains=msisdn, user__is_active=True)
 
+            data["reset_password_link"] = generate_password_reset_url(
+                request, profile.user
+            )
             data["group_invite_link"] = settings.MOMKHULU_GROUP_INVITE_LINK
         except Profile.DoesNotExist:
             return_status = status.HTTP_404_NOT_FOUND
