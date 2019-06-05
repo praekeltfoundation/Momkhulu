@@ -19,6 +19,7 @@ script:
   - isort -c -rc .
   - flake8 .
   - py.test --cov=./
+  - python manage.py makemigrations --dry-run | grep 'No changes detected' || (echo 'There are changes which require migrations.' && exit 1)   # yamllint disable-line
 jobs:
   include:
     - stage: test
