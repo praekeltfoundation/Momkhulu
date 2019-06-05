@@ -8,17 +8,15 @@
       {% csrf_token %}
         <fieldset class="form-group">
           <label for="id_username" class="form-label">E-mail</label>
-          <input type="text" id="id_username" name="username" class="form-control"
-            placeholder="Enter your e-mail address" required autofocus>
+          <input type="text" id="id_username" name="username" placeholder="Enter your e-mail address" required autofocus>
         </fieldset>
         <fieldset class="form-group">
           <label for="id_password" class="form-label">Password</label>
-
-          <span toggle="#id_password" class="form-label">--</span>
-          <input type="checkbox" onclick="showPassword()">
-            Show Password
-          <input type="password" name="password" id="id_password" class="form-control col-md-6 offset-md-3"
-              placeholder="Enter your password" required value="secret">
+          <label class="form-label form-label">
+            <span toggle="#id_password" class="form-label"></span>
+            <input type="checkbox" onclick="showPassword()">Show Password
+          </label>
+          <input type="password" name="password" id="id_password" placeholder="Enter your password" required value="secret">
           <small id="password-caps-warning" class="form-text text-danger d-none">
             Warning: Caps lock enabled
           </small>

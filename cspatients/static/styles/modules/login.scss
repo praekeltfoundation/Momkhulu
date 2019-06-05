@@ -1,6 +1,14 @@
 .login {
   text-align: center;
   position: relative;
-  form {}
-  .form-group {}
+  form {
+    text-align: left;
+  }
+  .form-label {
+    padding: 0 10px;
+    display: inline-block;
+    @media screen and (min-width: 40.000em) {
+      padding: 0 1em;
+    }
+  }
 }

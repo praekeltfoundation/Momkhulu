@@ -1,10 +1,11 @@
 .call-to-action {
   &__button {
     &--primary {
-
       background-color: $color_vivid_blue;
-      color: $color_grey;
+      border-radius: 5px;
+      color: #fff;
       padding: 15px 1em;
+      width: 100%;
     }
   }
 }

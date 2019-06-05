@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Inconsolata|Lato|Open+Sans|Raleway&display=swap');
 
-$latoFamily : 'Lato', sans-serif;
-
-
 $latoFamily         :     'Lato', Helvetica, Arial, sans-serif;
 $ralewayFamily      :     'Raleway', Helvetica, Arial, sans-serif;
 $openSansFamily     :     'Open Sans', Helvetica, Arial, sans-serif;
@@ -20,7 +17,7 @@ html,body {
 
 body {
   font-size: 16px;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: $openSansFamily;
   font-weight: normal;
   margin: 0 auto;
   line-height: 1.5;
@@ -31,6 +28,14 @@ body {
 
 h1, h2, h3, h4, h5, h6  {
   margin: 0;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.4rem;
 }
 
 a {
