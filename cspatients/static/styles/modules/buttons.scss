@@ -1,6 +1,9 @@
 .call-to-action {
   &__button {
     &--primary {
+
+      background-color: $color_vivid_blue;
+      color: $color_grey;
       padding: 15px 1em;
     }
   }
