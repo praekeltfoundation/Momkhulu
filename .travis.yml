@@ -14,11 +14,14 @@ install:
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
   - pip install codecov
+before_script:
+  - psql -U postgres -c "CREATE DATABASE momkhulu;"
 script:
   - black --check .
   - isort -c -rc .
   - flake8 .
   - py.test --cov=./
+  - python manage.py makemigrations --dry-run | grep 'No changes detected' || (echo 'There are changes which require migrations.' && exit 1)   # yamllint disable-line
 jobs:
   include:
     - stage: test
