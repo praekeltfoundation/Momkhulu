@@ -1,0 +1,242 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
+/*
+* Normalize
+*/
+body {
+  box-sizing: border-box;
+}
+
+
+/* HEADER */
+header.main__wrapper {
+  background: #fff;
+  border: 2px solid red;
+  padding: 15px;
+}
+
+
+
+/* TABLE */
+
+/* Table Heading */
+
+.centre {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table {
+    font-family: inherit;
+}
+
+.red-msg {
+    color: red;
+}
+
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 0;
+}
+
+th{
+    font-family: "Lato", sans-serif;
+    background-color: white;
+    border-top: 1px solid #f2f2f2;
+    color: #848484;
+}
+
+/* Table Rows */
+tr{
+    border-top: none;
+    font-family: inherit;
+    background-color: white;
+    color: #bcbaba;
+}
+
+.urgency{
+    color: white;
+}
+
+.urgency-5{
+    background-color: #ff1c00;
+}
+
+.urgency-4{
+    background-color: #ff9001;
+}
+
+.urgency-3{
+    background-color: #f8d001;
+}
+
+.urgency-2{
+    background-color: #49c856;
+}
+
+.urgency-1{
+    background-color: #04a0ff;
+}
+
+.urgency-0{
+    background-color: #b4b4b4;
+}
+
+td{
+    padding: 5px;
+}
+
+.row-completed{
+    background-color: lightgray;
+}
+
+@media (max-width: 768px){
+    .patients-table{
+        font-size: 0.6rem;
+    }
+
+    .patients-table{
+        font-size: 0.6rem
+    }
+
+    h1{
+        font-size: 2rem;
+    }
+
+    h3{
+        font-size: 1.4rem;
+    }
+}
+
+/* Patient View Page */
+
+#patient-detail-table tbody th{
+    width: 30%;
+}
+
+
+/* Log in Page */
+
+#login_container{
+    padding-top: 30px;
+
+    font-weight: bold;
+}
+
+#login_container label{
+    font-weight: bold;
+}
+
+
+/* Footer Template */
+
+.footer{
+    padding-top: 30px;
+    text-align: center;
+    font-family: "Inconsolata", monospace;
+    background-color: #f7f7f7;
+    padding-bottom: 30px;
+}
+
+
+.navbar-laravel
+{
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+}
+
+.navbar-brand , .nav-link, .my-form, .login-form
+{
+    font-family: Raleway, sans-serif;
+}
+
+.my-form
+{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.my-form .row
+{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.login-form
+{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    background-color: #f7f7f7;
+}
+
+.login-form .row
+{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.btn{
+    width: 67%;
+    padding: 5px 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 12px 0;
+}
+
+.resizedTextBox{
+    width: 100px; height: 20px;
+}
+
+.input{
+    width: 50%;
+}
+
+.thick{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.light{
+  font-weight: lighter;
+  color: grey;
+  text-align: center;
+  font-size: 13px;
+}
+
+.size{
+  font-size: 16px;
+  font-weight: bold;
+}
+
+div.a{
+  line-height: 70%;
+}
+
+.right{
+  text-align: right;
+}
+
+.center{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+hr.line{
+  border-top: 1px  solid grey;
+  opacity: 0.3;
+}
+
+.maincolour{
+  color: #00a7ff;
+}
+
+.field-icon{
+  color: #00a7ff;
+  position:relative;
+}
+
+.btn-x1{
+    padding:10px 20px;
+    font-size: 16;
+    font-weight: bold;
+    border-radius: 10px;
+}
