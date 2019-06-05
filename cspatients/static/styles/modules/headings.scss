@@ -7,14 +7,12 @@
     font-size: 28px;
     font-weight: bold;
     padding: 1em;
+    text-align: center;
     &--highlighted {
       color: $color_blue;
     }
     &--macro {
       color: $color_blue;
     }
-  }
-  &__description {
-    color: $color_gray;
   }
 }

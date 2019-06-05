@@ -3,8 +3,8 @@
   <div class="login login-form">
     <div class="container">
       <h3 class="heading heading__subtitle">Log in</h3>
-      <p class="heading heading__description">Need a Momkhulu account? </p>
-      <form method="post">
+      <p class="call-to-action__description">Need a Momkhulu account? </p>
+      <form method="post" novalidate>
       {% csrf_token %}
         <fieldset class="form-group">
           <label for="id_username" class="form-label">E-mail</label>
@@ -25,9 +25,9 @@
           </small>
         </fieldset>
         <button type="submit" class="call-to-action__button  call-to-action__button--primary">Log in</button>
+        <p class="call-to-action__description">Forgot your password? <a href="/accounts/password_reset/" class="call-to-action__nav call-to-action__nav--text"> Reset it</a>.</p>
       </form>
       <div class="terms-of-use">
-        <p>Forgot your password? <a href="/accounts/password_reset/"> Reset it.</a></p>
         <h3 class="heading heading__subtitle">Terms of Use</h3>
         <p>By logging in, if you agree to the following:
           You are responsible for maintaining the confidentiality of your
@@ -35,8 +35,7 @@
           that occur under your account.</p>
         <p>You are responsible for keeping patient information confidential and not sharing it
           outside if this dashboard. You agree to ensure that the device used to
-            access your account and patient information is
-            password protected.</p>
+          access your account and patient information is password protected.</p>
       </div>
     </div>
   </div>
