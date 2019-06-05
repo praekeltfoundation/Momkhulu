@@ -11,17 +11,17 @@ var bless             =   require('gulp-bless'),
     rename            =   require("gulp-rename"),
     sourcemaps        =   require('gulp-sourcemaps'),
     minify            =   require('gulp-minify');
-    function styles() {
-      return gulp.src('/cspatients/static/styles/main.s+(a|c)ss')
-        .pipe(sourcemaps.init())
-          .pipe(sassGlob())
-          .pipe(sass().on('error', sass.logError))
-          .pipe(bless())
-          .pipe(cleanCSSMinify())
-        .pipe(sourcemaps.write('/maps'))
-        .pipe(gulp.dest('/cspatients/static/'))
-        .pipe(rename({ suffix: ".min" }))
-        .pipe(notify({ message: `Styles task complete: Done`}));
-    }
-  gulp.task('styles');
+
+  gulp.task('styles', function() {
+    return gulp.src('cspatients/static/styles/main.s+(a|c)ss')
+      .pipe(sourcemaps.init())
+        .pipe(sassGlob())
+        .pipe(sass().on('error', sass.logError))
+        .pipe(bless())
+        .pipe(cleanCSSMinify())
+      .pipe(sourcemaps.write('/maps'))
+      .pipe(gulp.dest('cspatients/static/'))
+      .pipe(rename({ suffix: ".min" }))
+      .pipe(notify({ message: `Styles task complete: Done`}));
+  });
   gulp.task('default', ['styles']);
