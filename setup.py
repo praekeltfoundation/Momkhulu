@@ -42,7 +42,7 @@ setup(
     zip_safe=False,
     install_requires=[
         "celery==3.1.26post2",
-        "daphne==2.2.0",
+        "daphne==2.2",
         "channels==2.1.7",
         "channels-redis==2.3.3",
         "cryptography==2.7",
