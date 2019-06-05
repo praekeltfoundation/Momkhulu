@@ -37,6 +37,7 @@ def view(request):
         "patient_entries": get_all_active_patient_entries(search, status),
         "search": search or "",
         "status": status or "0",
+        "user": request.user,
     }
     return HttpResponse(template.render(context), status=200)
 
