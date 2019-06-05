@@ -1,7 +1,11 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Q
 from django.template import loader
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from .models import Patient, PatientEntry
 from .serializers import CreateEntrySerializer
@@ -157,3 +161,11 @@ def split_patient_and_entry_data(data):
             entry_data[key] = value
 
     return patient_data, entry_data
+
+
+def generate_password_reset_url(request, user):
+    uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+    token = default_token_generator.make_token(user)
+
+    path = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
+    return request.build_absolute_uri(path)

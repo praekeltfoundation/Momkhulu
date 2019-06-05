@@ -848,15 +848,28 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
 
 class WhitelistCheckTestCase(AuthenticatedAPITestCase):
-    def test_whitelist_check_exists(self):
+    @patch("cspatients.util.force_bytes")
+    @patch("cspatients.util.default_token_generator.make_token")
+    def test_whitelist_check_exists(self, mock_make_token, mock_bytes):
+        mock_make_token.return_value = "fancy-token"
+        mock_bytes.return_value = b"1"
+
         response = self.normalclient.post(
             reverse("rp_whitelist_check"), SAMPLE_RP_CHECKLIST_DATA, format="json"
         )
         self.assertEqual(response.status_code, 200)
 
+        result = response.json()
         self.assertEqual(
-            response.json(), {"group_invite_link": "http://fakewhatsapp/the-group-id"}
+            result["group_invite_link"], "http://fakewhatsapp/the-group-id"
         )
+        self.assertEqual(
+            result["reset_password_link"],
+            "http://testserver/accounts/reset/MQ/fancy-token/",
+        )
+
+        mock_make_token.assert_called_with(self.normaluser)
+        mock_bytes.assert_called_with(self.normaluser.pk)
 
     def test_whitelist_check_not_exists(self):
         response = self.normalclient.post(
