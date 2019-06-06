@@ -1,0 +1,37 @@
+table {
+  font-family: inherit;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 0;
+}
+
+th {
+  background-color: white;
+  border-top: 1px solid $color_light_gray;
+  color: $color_gray;
+}
+
+tr {
+  border-top: none;
+  font-family: inherit;
+  background-color: white;
+}
+
+td {
+  padding: 5px;
+}
+
+#patient-detail-table tbody th {
+  width: 30%;
+}
+
+#login_container {
+  padding-top: 30px;
+  font-weight: bold;
+}
+
+#login_container label {
+  font-weight: bold;
+}
