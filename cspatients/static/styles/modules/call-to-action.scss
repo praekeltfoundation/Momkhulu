@@ -1,0 +1,25 @@
+.call-to-action {
+  &__description {
+    color: $color_gray;
+    margin: 1em 0;
+    text-align: center;
+  }
+  &__button {
+    &--primary {
+      background-color: $color_vivid_blue;
+      border-radius: 5px;
+      color: #fff;
+      padding: 15px 1em;
+      width: 100%;
+    }
+  }
+  &__nav {
+    &--text {
+      font-size: 18px;
+      text-decoration: underline;
+      &:hover, &:focus, &:active {
+         color: #0062cc;
+      }
+    }
+  }
+}

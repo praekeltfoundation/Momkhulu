@@ -1,19 +1,18 @@
 .heading {
+  color: #000;
   &__title {
-    color: $color_gray;
+    color: #000;
   }
   &__subtitle {
     font-size: 28px;
     font-weight: bold;
     padding: 1em;
+    text-align: center;
     &--highlighted {
       color: $color_blue;
     }
     &--macro {
       color: $color_blue;
     }
-  }
-  &__description {
-
   }
 }
