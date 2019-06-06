@@ -185,6 +185,42 @@ class WhitelistCheckView(APIView):
         return Response(data, status=return_status)
 
 
+class MultiSelectView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        valid = True
+        selected_items = []
+
+        def clean_and_split(str):
+            return [x.strip() for x in str.split(",") if x]
+
+        def is_int(s):
+            try:
+                int(s)
+                return True
+            except ValueError:
+                return False
+
+        selections = clean_and_split(request.GET.get("selections", ""))
+        options = clean_and_split(request.GET.get("options", ""))
+
+        for item in selections:
+            if not is_int(item):
+                valid = False
+            elif int(item) > len(options):
+                valid = False
+
+        if valid:
+            for item in selections:
+                selected_items.append(options[int(item) - 1])
+
+        return Response(
+            {"valid": valid, "value": ", ".join(selected_items)},
+            status=status.HTTP_200_OK,
+        )
+
+
 def health(request):
     app_id = environ.get("MARATHON_APP_ID", None)
     ver = environ.get("MARATHON_APP_VERSION", None)

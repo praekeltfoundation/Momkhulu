@@ -32,6 +32,7 @@ urlpatterns = [
         views.WhitelistCheckView.as_view(),
         name="rp_whitelist_check",
     ),
+    path("api/rpmultiselect", views.MultiSelectView.as_view(), name="rp_multiselect"),
     path("health", views.health, name="health"),
     path("health_details", views.detailed_health, name="detailed-health"),
 ]

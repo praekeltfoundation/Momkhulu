@@ -896,6 +896,44 @@ class WhitelistCheckTestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.json(), {})
 
 
+class MultiSelectTestCase(AuthenticatedAPITestCase):
+    def test_multi_select_valid(self):
+        response = self.normalclient.get(
+            reverse("rp_multiselect"),
+            {"selections": "1, 3,", "options": "test 1, test 2, test 3"},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        result = response.json()
+
+        self.assertEqual(result["valid"], True)
+        self.assertEqual(result["value"], "test 1, test 3")
+
+    def test_multi_select_invalid_selection(self):
+        response = self.normalclient.get(
+            reverse("rp_multiselect"),
+            {"selections": "1,5", "options": "test 1, test 2, test 3"},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        result = response.json()
+
+        self.assertEqual(result["valid"], False)
+        self.assertEqual(result["value"], "")
+
+    def test_multi_select_invalid_character(self):
+        response = self.normalclient.get(
+            reverse("rp_multiselect"),
+            {"selections": "1,a", "options": "test 1, test 2, test 3"},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        result = response.json()
+
+        self.assertEqual(result["valid"], False)
+        self.assertEqual(result["value"], "")
+
+
 class HealthViewTest(APITestCase):
     def setUp(self):
         self.api_client = APIClient()
