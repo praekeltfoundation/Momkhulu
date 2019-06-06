@@ -73,17 +73,21 @@
                   <li class="list-group-item py-2">
                       <div style="width: 50%;float: left;">
                           DECISION TIME <br/>
-                          <div>{{ patiententry.decision_time|time:"H:i" }}</div>
+                          <div>{{ patiententry.decision_time|date:"Y-m-d" }} {{ patiententry.decision_time|time:"H:i" }}</div>
                       </div>
                       <div style="width: 50%;float: left;">
                           TIME OUT OF THEATRE <br/>
-                          <div>{{ patiententry.completion_time|time:"H:i" }}</div>
+                          <div>{{ patiententry.completion_time|date:"Y-m-d" }} {{ patiententry.completion_time|time:"H:i" }}</div>
                       </div>
                   </li>
                   <li class="list-group-item py-2">
                       <div style="width: 50%;float: left;">
                           DATE OF DELIVERY <br/>
-                          <div>{{ patiententry.decision_time|date:"Y-m-d" }}</div>
+                          <div>
+                            {% for baby in patiententry.entry_babies.all|slice:":1" %}
+                              {{ baby.delivery_time|date:"Y-m-d" }}
+                            {% endfor %}
+                          </div>
                       </div>
                       <div style="width: 50%;float: left;">
                           NUMBER OF BABIES <br/>
