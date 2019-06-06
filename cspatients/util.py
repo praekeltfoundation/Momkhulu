@@ -175,7 +175,7 @@ def clean_and_split_string(str):
     return [x.strip() for x in str.split(",") if x]
 
 
-def is_int(s):
+def can_convert_string_to_int(s):
     try:
         int(s)
         return True

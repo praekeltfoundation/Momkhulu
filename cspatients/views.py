@@ -15,11 +15,11 @@ from .models import Baby, PatientEntry, Profile
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
+    can_convert_string_to_int,
     clean_and_split_string,
     generate_password_reset_url,
     get_all_active_patient_entries,
     get_rp_dict,
-    is_int,
     save_model,
     save_model_changes,
 )
@@ -198,7 +198,7 @@ class MultiSelectView(APIView):
         options = clean_and_split_string(request.GET.get("options", ""))
 
         for item in selections:
-            if not is_int(item):
+            if not can_convert_string_to_int(item):
                 valid = False
             elif int(item) > len(options):
                 valid = False
