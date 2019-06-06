@@ -15,9 +15,11 @@ from .models import Baby, PatientEntry, Profile
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
+    clean_and_split_string,
     generate_password_reset_url,
     get_all_active_patient_entries,
     get_rp_dict,
+    is_int,
     save_model,
     save_model_changes,
 )
@@ -192,18 +194,8 @@ class MultiSelectView(APIView):
         valid = True
         selected_items = []
 
-        def clean_and_split(str):
-            return [x.strip() for x in str.split(",") if x]
-
-        def is_int(s):
-            try:
-                int(s)
-                return True
-            except ValueError:
-                return False
-
-        selections = clean_and_split(request.GET.get("selections", ""))
-        options = clean_and_split(request.GET.get("options", ""))
+        selections = clean_and_split_string(request.GET.get("selections", ""))
+        options = clean_and_split_string(request.GET.get("options", ""))
 
         for item in selections:
             if not is_int(item):
