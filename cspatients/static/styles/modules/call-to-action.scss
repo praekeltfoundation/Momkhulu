@@ -48,5 +48,19 @@
         text-decoration: underline;
       }
     }
+    &--back {
+      color: #0069d9;
+      font-size: 18px;
+      text-decoration: underline;
+      &:before {
+        background: url("/static/img/icons/chevron-down.png") no-repeat 0 0/20px;
+        content: " ";
+        display: inline-block;
+        margin: 1em 5em 1em 1em;
+        transform: rotate(90deg);
+        padding: 10px;
+        vertical-align: middle;
+      }
+    }
   }
 }

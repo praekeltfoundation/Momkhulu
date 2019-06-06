@@ -9,7 +9,7 @@ html,body {
 }
 
 body {
-  color: $color_gray;
+  color: $color_dark_gray;
   font-size: 16px;
   font-family: $openSansFamily;
   font-weight: normal;
@@ -20,7 +20,12 @@ body {
   width: 100%;
 }
 
-h1, h2, h3, h4, h5, h6,p  {
+h1, h2, h3, h4, h5, h6  {
+  margin: 0;
+  line-height: 1.7;
+}
+
+p {
   margin: 0;
 }
 

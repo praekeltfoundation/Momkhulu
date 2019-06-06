@@ -1,0 +1,14 @@
+.patient-board {
+  padding: 0 1.5em;
+  &--wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__personal {
+    width: 50%;
+    margin-right: 2em;
+  }
+  &__surgery {
+    width: 50%;
+  }
+}
