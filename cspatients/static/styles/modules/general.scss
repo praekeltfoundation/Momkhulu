@@ -54,22 +54,10 @@
 .navbar-laravel {
   box-shadow: 0 2px 4px rgba(0,0,0,.04);
 }
-.navbar-brand,
-.nav-link,
-.my-form,
-.login-form {
-  //font-family: Raleway, sans-serif;
-  
-}
 
 .my-form {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-}
-
-.my-form .row {
-  margin-left: 0;
-  margin-right: 0;
 }
 
 .login-form {
@@ -83,51 +71,11 @@
   margin-right: 0;
 }
 
-.btn {
-  width: 67%;
-  padding: 5px 5px;
-  font-size: 18px;
-  cursor: pointer;
-  margin: 12px 0;
-}
-
 .resizedTextBox {
   width: 100px; height: 20px;
-}
-
-.thick {
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.light {
-  font-weight: lighter;
-  color: grey;
-  text-align: center;
-  font-size: 13px;
-}
-
-.right {
-  text-align: right;
-}
-
-.center {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.maincolour {
-  color: $color_blue;
 }
 
 .field-icon {
   color: $color_blue;
   position:relative;
-}
-
-.btn-x1 {
-  padding:10px 20px;
-  font-size: 16;
-  font-weight: bold;
-  border-radius: 10px;
 }

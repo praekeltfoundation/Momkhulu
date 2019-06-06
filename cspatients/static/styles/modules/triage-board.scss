@@ -1,0 +1,27 @@
+.triage-board {
+  position: relative;
+  padding: 4em 0;
+  &__table {
+    background: #fff;
+    padding: 0 1.5em;
+  }
+  &__search {
+    width: 100%;
+    .form-group {
+      display: inline-block;
+    }
+    input, select {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px 5em 5px 0;
+      width: auto;
+      &:last-child {
+        margin: 5px 0;
+      }
+    }
+
+    select {
+      width: 250px;
+    }
+  }
+}

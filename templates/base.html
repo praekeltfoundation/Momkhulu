@@ -17,16 +17,17 @@
 <body>
   <header class="header">
     <h2 class="heading heading__title">Momkhulu</h2>
+    {% if user.is_authenticated %}
+      <div class="call-to-action--logout">
+        <a class="call-to-action__nav call-to-action__nav--text" href="{% url 'logout' %}">Log out</a>
+      </div>
+    {% endif %}
   </header>
   <section class="content-inner">
-    {% if user.is_authenticated %}
-      <h6 class="heading__subtitle--highlighted">
-        <a class="call-to-action__button call-to-action__button--primary" href="{% url 'logout' %}">Log out</a>
-      </h6>
-    {% endif %}
+
     {% block content %}{% endblock %}
   </section>
-  <footer class="footer-wrapper">
+  <footer class="footer">
     {% include "cspatients/footer.html" %}
   </footer>
   {% block extra_js %}{% endblock %}

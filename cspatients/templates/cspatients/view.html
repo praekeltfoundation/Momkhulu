@@ -1,17 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div style="width:100%; text-align: center; padding-top: 15px; background-color: #f7f7f7">
-      <h3>Momkhulu Triage Board</h3>
-      <div style="color: #939393">Mowbray Maternity Hospital</div>
-    </div>
-    <div id="table-div" style="width:100%; padding: 15px; background-color: #f7f7f7">
+  <div class="triage-board">
+    <h2 class="heading heading__hero">Momkhulu Triage Board</h2>
+    <p class="heading__description">Mowbray Maternity Hospital</p>
+    <div id="table-div" class="triage-board__table">
       {% include "cspatients/table.html" %}
     </div>
   </div>
-</div>
 
   {% block extra_js %}
     <script type="text/javascript">
