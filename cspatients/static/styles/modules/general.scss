@@ -1,80 +1,30 @@
 .red-msg {
   color: red;
 }
-
-.centre {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.urgency {
-  color: white;
-}
-
-.urgency-5 {
-  background-color: #ff1c00;
-}
-
-.urgency-4 {
-  background-color: #ff9001;
-}
-
-.urgency-3 {
-  background-color: #f8d001;
-}
-
-.urgency-2 {
-  background-color: #49c856;
-}
-
-.urgency-1 {
-  background-color: #04a0ff;
-}
-
-.urgency-0 {
-  background-color: #b4b4b4;
-}
-
 .row-completed {
   background-color: lightgray;
-}
-
-
-@media (max-width: 768px) {
-  .patients-table {
-    font-size: 0.6rem;
-  }
-
-  .patients-table {
-    font-size: 0.6rem
-  }
 }
 
 /* Footer Template */
 .navbar-laravel {
   box-shadow: 0 2px 4px rgba(0,0,0,.04);
 }
-
 .my-form {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
-
 .login-form {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
   background-color: $color_very_light_gray;
 }
-
 .login-form .row {
   margin-left: 0;
   margin-right: 0;
 }
-
 .resizedTextBox {
   width: 100px; height: 20px;
 }
-
 .field-icon {
   color: $color_blue;
   position:relative;

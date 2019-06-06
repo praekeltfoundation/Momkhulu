@@ -31,14 +31,18 @@
     <tbody>
       {% for patiententry in patient_entries %}
         <tr class="info-row">
-          <td><a href="{% url 'cspatient_patient' patiententry.patient.patient_id %}">{{ patiententry.patient.name | default_if_none:"-" }}</td></a></td>
+          <td>
+            <a href="{% url 'cspatient_patient' patiententry.patient.patient_id %}" class="call-to-action__nav call-to-action__nav--names">
+              {{ patiententry.patient.name | default_if_none:"-" }}
+            </a>
+          </td>
           <td>{{ patiententry.operation | default_if_none:"-" }}</td>
           <td>{{ patiententry.location | default_if_none:"-" }}</td>
           <td>{{ patiententry.indication | default_if_none:"-" }}</td>
           {% if patiententry.completion_time %}
-              <td style="padding: 6px"><div class="urgency urgency-0" style="padding: 6px;text-align: center;">COMPLETE</div></td>
+            <td><span class="urgency urgency-0">COMPLETE</span></td>
           {% else %}
-              <td style="padding: 6px"><div class="urgency urgency-{{ patiententry.urgency }}" style="padding: 6px;text-align: center;">{{patiententry.get_urgency_display}}</div></td>
+            <td><span class="urgency urgency-{{ patiententry.urgency }}">{{patiententry.get_urgency_display}}</span></td>
           {% endif %}
           <td>{{ patiententry.decision_time | time:"H:i"|default_if_none:"--:--" }}</td>
           <td>{{ patiententry.clinician | default_if_none:"-" }}</td>

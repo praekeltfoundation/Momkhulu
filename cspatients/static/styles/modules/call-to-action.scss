@@ -1,8 +1,5 @@
 .call-to-action {
   &--logout {
-    //position: absolute;
-    //right: 0;
-    //top: 0;
     float: right;
     display: inline-block;
   }
@@ -21,7 +18,7 @@
       width: 100%;
       &:hover, &:active, &:focus {
         background-color: #0069d9;
-        border: 1px solid #0062cc;
+        border: 1px solid $color_strong_blue;
         transition: background-color 100ms ease-in-out;
       }
     }
@@ -38,11 +35,17 @@
 
       color: #0069d9;
       font-size: 18px;
-      text-decoration: underline;
       &:hover, &:focus, &:active {
         background: none;
         border: none;
         color: $color_vivid_blue;
+        text-decoration: underline;
+      }
+    }
+    &--names {
+      color: $color_gray;
+      &:hover, &:focus, &:active {
+        text-decoration: underline;
       }
     }
   }
