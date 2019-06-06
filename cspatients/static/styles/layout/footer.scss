@@ -1,6 +1,12 @@
-.footer-wrapper {
-  background-color: #f7f7f7; //Color
+.footer {
+  background-color: #fff;
   text-align: center;
   font-family: $inconsolataFamily;
   padding: 30px 0;
+  &--inner {
+    margin: 0 auto;
+    @media screen and (min-width: 62.000em) {
+      width: 50%;
+    }
+  }
 }

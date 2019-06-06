@@ -1,15 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="login login-form">
+  <div class="login">
     <div class="container">
-      <h3 class="heading heading__subtitle">Log in</h3>
-      <p class="call-to-action__description">Need a Momkhulu account? </p>
+      <h2 class="heading heading__hero">Log in</h2>
+      <p class="heading__description">Log in to access the Momkhulu Triage Board.</p>
       <form method="post" novalidate>
       {% csrf_token %}
+
         <fieldset class="form-group">
           <label for="id_username" class="form-label">E-mail</label>
           <input type="text" id="id_username" name="username" placeholder="Enter your e-mail address" required autofocus>
         </fieldset>
+
+        <fieldset class="form-group">
+          <label for="id_mobile" class="form-label">E-mobile</label>
+          <input type="tel" id="id_mobile" name="mobile" placeholder="Enter your mobile address" required autofocus>
+        </fieldset>
+
         <fieldset class="form-group">
           <div class="form-group--inner">
             <label for="id_password" class="form-label">Password</label>
@@ -27,6 +34,13 @@
         <button type="submit" class="call-to-action__button  call-to-action__button--primary">Log in</button>
         <p class="call-to-action__description">Forgot your password? <a href="/accounts/password_reset/" class="call-to-action__nav call-to-action__nav--text"> Reset it</a>.</p>
       </form>
+      <div class="terms-of-use">
+        <h3 class="heading heading__subtitle">Forgot your password? Or need a Momkhulu account?</h3>
+          <p>Use the Momkhulu WhatsApp line at *** *** 2082, choose option 6 in
+          the menu and follow the instructions to set your password.
+          If you do not have the Momkhulu WhatsApp number, please contact Dr. Rowan Duys.</p>
+      </div>
+
       <div class="terms-of-use">
         <h3 class="heading heading__subtitle">Terms of Use</h3>
         <p>By logging in, if you agree to the following:

@@ -1,4 +1,8 @@
 .call-to-action {
+  &--logout {
+    float: right;
+    display: inline-block;
+  }
   &__description {
     color: $color_gray;
     margin: 1em 0;
@@ -7,18 +11,41 @@
   &__button {
     &--primary {
       background-color: $color_vivid_blue;
+      border: 1px solid $color_vivid_blue;
       border-radius: 5px;
       color: #fff;
       padding: 15px 1em;
       width: 100%;
+      &:hover, &:active, &:focus {
+        background-color: #0069d9;
+        border: 1px solid $color_strong_blue;
+        transition: background-color 100ms ease-in-out;
+      }
     }
   }
   &__nav {
     &--text {
+      //BUTTONS / INPUT[SUBMIT] RESETS
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+      padding: 5px;
+      width: auto;
+
+      color: #0069d9;
       font-size: 18px;
-      text-decoration: underline;
       &:hover, &:focus, &:active {
-         color: #0062cc;
+        background: none;
+        border: none;
+        color: $color_vivid_blue;
+        text-decoration: underline;
+      }
+    }
+    &--names {
+      color: $color_gray;
+      &:hover, &:focus, &:active {
+        text-decoration: underline;
       }
     }
   }

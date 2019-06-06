@@ -1,7 +1,6 @@
 @import "utils/*";
 
 html,body {
-  background-color: #f7f7f7;
   height: auto;
 }
 
@@ -21,7 +20,7 @@ body {
   width: 100%;
 }
 
-h1, h2, h3, h4, h5, h6  {
+h1, h2, h3, h4, h5, h6,p  {
   margin: 0;
 }
 
@@ -39,7 +38,6 @@ a {
     outline: none;
   }
 }
-
 
 /*
   MEDIA QIERIES
