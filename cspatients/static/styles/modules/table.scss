@@ -45,22 +45,22 @@
     text-align: center;
     width: 90%;
     &-0 {
-      background-color: $color_gray;
+      background-color: $color_gray; //COMPLETE
     }
     &-1 {
-      background-color: $color_vivid_blue;
+      background-color: $color_red; 
     }
-    &-2 {
-      background-color: $color_lime_green;
+    &-2  {
+      background-color: $color_vivid_yellow; //HOT
     }
     &-3 {
-      background-color: $color_vivid_yellow;
+      background-color: $color_lime_green; //COLD
     }
     &-4 {
-      background-color: $color_vivid_orange;
+      background-color: $color_vivid_orange; //
     }
     &-5 {
-      background-color: $color_red;
+      background-color: $color_vivid_blue ; //ELECTIVE
     }
   }
 }
