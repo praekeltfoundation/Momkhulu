@@ -15,6 +15,8 @@ from .models import Baby, PatientEntry, Profile
 from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
 from .util import (
+    can_convert_string_to_int,
+    clean_and_split_string,
     generate_password_reset_url,
     get_all_active_patient_entries,
     get_rp_dict,
@@ -183,6 +185,32 @@ class WhitelistCheckView(APIView):
             return_status = status.HTTP_404_NOT_FOUND
 
         return Response(data, status=return_status)
+
+
+class MultiSelectView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        valid = True
+        selected_items = []
+
+        selections = clean_and_split_string(request.GET.get("selections", ""))
+        options = clean_and_split_string(request.GET.get("options", ""))
+
+        for item in selections:
+            if not can_convert_string_to_int(item):
+                valid = False
+            elif int(item) > len(options):
+                valid = False
+
+        if valid:
+            for item in selections:
+                selected_items.append(options[int(item) - 1])
+
+        return Response(
+            {"valid": valid, "value": ", ".join(selected_items)},
+            status=status.HTTP_200_OK,
+        )
 
 
 def health(request):

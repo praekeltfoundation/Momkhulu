@@ -169,3 +169,15 @@ def generate_password_reset_url(request, user):
 
     path = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
     return request.build_absolute_uri(path)
+
+
+def clean_and_split_string(str):
+    return [x.strip() for x in str.split(",") if x]
+
+
+def can_convert_string_to_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
