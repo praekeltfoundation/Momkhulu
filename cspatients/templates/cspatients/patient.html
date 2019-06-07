@@ -95,24 +95,24 @@
                 <h5>Delivery Details: Baby {{ baby.baby_number }}</h5>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">TIME OF DELIVERY <br/>
-                <h4 class="patient-list__entry">{{ baby.delivery_time|time:"H:i" }}</div>
+                <h5 class="patient-list__label">TIME OF DELIVERY</h5>
+                <h4 class="patient-list__entry">{{ baby.delivery_time|time:"H:i" }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">WEIGHT OF BABY <br/>
-                <h4 class="patient-list__entry">{{ baby.baby_weight_grams }}</div>
+                <h5 class="patient-list__label">WEIGHT OF BABY</h5>
+                <h4 class="patient-list__entry">{{ baby.baby_weight_grams }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">APGAR 1 <br/>
-                <h4 class="patient-list__entry">{{ baby.apgar_1 }}</div>
+                <h5 class="patient-list__label">APGAR 1</h5>
+                <h4 class="patient-list__entry">{{ baby.apgar_1 }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">APGAR 5 <br/>
-                <h4 class="patient-list__entry">{{ baby.apgar_5 }}</div>
+                <h5 class="patient-list__label">APGAR 5</h5>
+                <h4 class="patient-list__entry">{{ baby.apgar_5 }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">NICU <br/>
-                <h4 class="patient-list__entry">{{ baby.nicu }}</div>
+                <h5 class="patient-list__label">NICU</h5>
+                <h4 class="patient-list__entry">{{ baby.nicu }}</h4>
             </li>
         </ul>
         {% endfor %}
