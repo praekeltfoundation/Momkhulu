@@ -4,11 +4,16 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Q
 from django.template import loader
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from .models import Patient, PatientEntry
-from .serializers import CreateEntrySerializer
+from .serializers import (
+    CreateEntrySerializer,
+    PatientEntrySerializer,
+    PatientSerializer,
+)
 
 PATIENT_FIELDS = Patient.__dict__.keys()
 PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
@@ -38,6 +43,11 @@ def get_rp_dict(data, context=None):
             final_dict["patient_id"] = all_dict["patient_id"]
         return final_dict
     else:
+        if all_dict.get("consent", "consent_given") == "no_consent":
+            all_dict["patient_id"] = "NO_CONSENT_{}".format(
+                get_random_string(length=10)
+            )
+
         return all_dict
 
 
@@ -56,10 +66,13 @@ def get_all_active_patient_entries(search=None, status=None):
                 urgency=status, completion_time__isnull=True
             )
 
+    # latest most urgent on the top, completed at the bottom
     sorted_entries = sorted(
-        patiententrys, key=lambda x: (x.urgency, x.decision_time), reverse=True
+        patiententrys, key=lambda x: (x.decision_time), reverse=True
     )
-    return sorted(sorted_entries, key=lambda x: (x.completion_time is not None))
+    return sorted(
+        sorted_entries, key=lambda x: (x.completion_time is not None, x.urgency)
+    )
 
 
 def send_consumers_table():
@@ -172,7 +185,7 @@ def generate_password_reset_url(request, user):
 
 
 def clean_and_split_string(str):
-    return [x.strip() for x in str.split(",") if x]
+    return [x.strip() for x in str.strip().split(",") if x]
 
 
 def can_convert_string_to_int(s):
@@ -181,3 +194,13 @@ def can_convert_string_to_int(s):
         return True
     except ValueError:
         return False
+
+
+def serialise_patient_entry(patient_entry):
+    patient_entry_serializer = PatientEntrySerializer(patient_entry)
+    patient_serializer = PatientSerializer(patient_entry.patient)
+
+    data = patient_entry_serializer.data
+    data.update(patient_serializer.data)
+
+    return data

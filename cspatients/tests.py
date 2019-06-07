@@ -36,6 +36,24 @@ SAMPLE_RP_POST_DATA = {
     }
 }
 
+SAMPLE_RP_POST_NO_CONSENT_DATA = {
+    "results": {
+        "name": {
+            "category": "All Responses",
+            "value": "(No Consent)",
+            "input": "(No Consent)",
+        },
+        "gravpar": {"category": "All Responses", "value": "AAAA", "input": "AAAA"},
+        "option": {"category": "Patient Entry", "value": "1", "input": "1"},
+        "consent": {
+            "name": "Consent",
+            "category": "no_consent",
+            "value": "2",
+            "input": "2",
+        },
+    }
+}
+
 SAMPLE_RP_UPDATE_DATA = {
     "results": {
         "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
@@ -228,7 +246,7 @@ class ViewTest(TestCase):
         response = self.client.get(reverse("cspatient_view"))
         self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
 
-    @patch("cspatients.views.get_all_active_patient_entries")
+    @patch("cspatients.util.get_all_active_patient_entries")
     def test_get_view_filter(self, mock_get_patients):
         """
             Test that request is using the filter
@@ -302,16 +320,31 @@ class PatientViewTest(TestCase):
 
 class ViewAllContextTest(TestCase):
     def setUp(self):
-        self.patient_one_data = {"name": "Jane Doe", "patient_id": "XXXXX", "age": 20}
+        self.patient_one_data = {
+            "name": "Urgency COLD",
+            "patient_id": "XXXXX",
+            "age": 20,
+        }
 
         self.patient_two_data = {
-            "name": "Mary Mary",
+            "name": "Urgency Immediate",
             "patient_id": "YYYYY",
             "age": 23,
             "urgency": 1,
         }
 
-        self.patient_three_data = {"name": "John", "patient_id": "111111", "age": 20}
+        self.patient_three_data = {
+            "name": "John Completed",
+            "patient_id": "111111",
+            "age": 20,
+        }
+
+        self.patient_four_data = {
+            "name": "Urgency Immediate NEW",
+            "patient_id": "22222222",
+            "age": 23,
+            "urgency": 1,
+        }
 
     def test_context_when_no_patients(self):
         self.assertFalse(get_all_active_patient_entries())
@@ -320,29 +353,34 @@ class ViewAllContextTest(TestCase):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         entry3, _ = save_model(self.patient_three_data)
+        entry4, _ = save_model(self.patient_four_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()
 
+        entry4.decision_time = timezone.now() + timezone.timedelta(hours=1)
+        entry4.save()
+
         patient_entries = get_all_active_patient_entries()
 
-        # Check that it returns two objects
-        self.assertEqual(len(patient_entries), 3)
+        # Check that it returns 4 objects
+        self.assertEqual(len(patient_entries), 4)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
-        self.assertEqual(patient_entries[1].patient.name, "Mary Mary")
-        self.assertEqual(patient_entries[2].patient.name, "John")
+        self.assertEqual(patient_entries[0].patient.name, "Urgency Immediate NEW")
+        self.assertEqual(patient_entries[1].patient.name, "Urgency Immediate")
+        self.assertEqual(patient_entries[2].patient.name, "Urgency COLD")
+        self.assertEqual(patient_entries[3].patient.name, "John Completed")
 
     def test_get_all_active_patient_entries_filter(self):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         save_model(self.patient_three_data)
 
-        patient_entries = get_all_active_patient_entries("jane", "4")
+        patient_entries = get_all_active_patient_entries("COLD", "4")
 
         self.assertEqual(len(patient_entries), 1)
-        self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
+        self.assertEqual(patient_entries[0].patient.name, "Urgency COLD")
 
     def test_get_all_active_patient_entries_filter_complete(self):
         save_model(self.patient_one_data)
@@ -355,7 +393,7 @@ class ViewAllContextTest(TestCase):
         patient_entries = get_all_active_patient_entries(None, "complete")
 
         self.assertEqual(len(patient_entries), 1)
-        self.assertEqual(patient_entries[0].patient.name, "John")
+        self.assertEqual(patient_entries[0].patient.name, "John Completed")
 
 
 class SaveModelTest(TestCase):
@@ -582,6 +620,24 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
         self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
 
+    @patch("cspatients.util.get_random_string")
+    def test_new_patient_entry_no_consent(self, mock_random):
+        mock_random.return_value = "1234567890"
+
+        response = self.normalclient.post(
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_NO_CONSENT_DATA, format="json"
+        )
+
+        # Assert a correct response of 201
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["errors"], "")
+
+        # Check that the Patient, PatientEntry been correctly saved
+        self.assertEqual(
+            Patient.objects.get(patient_id="NO_CONSENT_1234567890").name, "(No Consent)"
+        )
+        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
+
     def test_new_patient_entry_without_auth(self):
         response = self.client.post(
             reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA, format="json"
@@ -693,6 +749,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         # Test the right response code
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["errors"], "")
+        self.assertEqual(response.json()["name"], "Nyasha")
 
         # Test that that the change has been made
         patient = Patient.objects.get(patient_id="HLFSH")
@@ -900,7 +957,7 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
     def test_multi_select_valid(self):
         response = self.normalclient.get(
             reverse("rp_multiselect"),
-            {"selections": "1, 3,", "options": "test 1, test 2, test 3"},
+            {"selections": "1, 3,3, ", "options": "test 1, test 2, test 3"},
         )
         self.assertEqual(response.status_code, 200)
 
