@@ -9,6 +9,7 @@
     width: 100%;
     .form-group {
       display: inline-block;
+      width: 50%;
     }
     input, select {
       display: inline-block;
@@ -19,8 +20,13 @@
         margin: 5px 0;
       }
     }
+    input {
+      width: 50%;
+    }
     select {
       width: 250px;
+      position: relative;
+      height: 49px;
     }
   }
 }

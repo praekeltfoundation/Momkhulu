@@ -23,6 +23,16 @@
     background: #fff;
     border-radius: 3px;
     width: auto;
+    margin: 2em 0;
+    &-list {
+      border-bottom: 2px solid $color_gray;
+      .patient-list__item {
+        padding: 7px 1.5em;
+      }
+      &:last-child {
+        border: none;
+      }
+    }
   }
   &__no-results {
     background: #fff;
