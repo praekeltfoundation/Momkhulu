@@ -106,8 +106,8 @@
       </div>
     </div>
     <div id="patient_delivery_details" class="patient-board__delivery">
-      <h4 class="heading heading__subtitle">Delivery Details: Baby {{ baby.baby_number }}</h4>
       {% for baby in patiententry.entry_babies.all %}
+        <h4 class="heading heading__subtitle">Delivery Details: Baby {{ baby.baby_number }}</h4>
         <div class="patient-board__delivery-list">
           <ul class="patient-list">
             <li class="patient-list__item">

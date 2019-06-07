@@ -1,47 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<div class="container-fluid centre">
-    <hr>
-    <h2>Caesarian Patient Form</h2>
-    <hr>
+<div id="patient_board" class="patient-board">
+  <h2 class="heading heading__hero">Caesarian Patient Form</h2>
+  <div class="patient-board__caesarian">
     {% for error in errors %}
-        <h4 style="color:red">{{ error }}</h4>
+      <p class="form-error">{{ error }}</p>
     {% endfor %}
-    <h3>Enter a new Patient</h3>
-    <div class="col-xs-11 col-sm-10 col-md-6 centre">
-        <form method="POST">{% csrf_token %}
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" name = "name" id="name" placeholder="Jane Doe" maxlength=200 required>
-            </div>
-            <div class="form-group">
-                <label for="patient_id">ID</label>
-                <input type="text" class="form-control" name="patient_id" id="patient_id" placeholder="99" required>
-            </div>
-            <div class="form-group">
-                <label for="age">Age</label>
-                <input type="text" class="form-control" name="age" id="age" placeholder="99" required>
-            </div>
-            <div class="form-group">
-                <label for="clinician">Clinician</label>
-                <input type="text" class="form-control" name="clinician" id="clinician" placeholder="Dr. Peter Drew" required maxlength=200>
-            </div>
-            <div class="form-group">
-                <label for="urgency">Urgency</label>
-                <input type="number" class="form-control" name="urgency" id="urgency" placeholder="4" aria-describedby="urgency-help" required>
-                <small id = "urgency-help">Urgency rating from 1-4, 1 most urgent and 4 least urgent.</small>
-            </div>
-            <div class="form-group">
-                <label for="indication">Notes</label>
-                <textarea type="text" class="form-control" name="indication" id="indication" placeholder="Needs One!" maxlength=200></textarea>
-            </div>
-            <div class='form-group'>
-                <button type='submit'>Submit</button>
-            </div>
-        </form>
+    <h3 class="heading heading__subtitle">Enter a new Patient</h3>
+    <div class="patient-board--wrapper">
+      <form method="POST" novalidate>
+      {% csrf_token %}
+        <fieldset class="form-group">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" name = "name" id="name" placeholder="Jane Doe" maxlength=200 required>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="patient_id" class="form-label">ID</label>
+          <input type="text" class="form-control" name="patient_id" id="patient_id" placeholder="99" required>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="age" class="form-label">Age</label>
+          <input type="text" class="form-control" name="age" id="age" placeholder="99" required>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="clinician" class="form-label">Clinician</label>
+          <input type="text" class="form-control" name="clinician" id="clinician" placeholder="Dr. Peter Drew" required maxlength=200>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="urgency" class="form-label">Urgency</label>
+          <input type="number" class="form-control" name="urgency" id="urgency" placeholder="4" aria-describedby="urgency-help" required>
+          <small id = "urgency-help">Urgency rating from 1-4, 1 most urgent and 4 least urgent.</small>
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="indication" class="form-label">Notes</label>
+          <textarea type="text" class="form-control" name="indication" id="indication" placeholder="Needs One!" maxlength=200></textarea>
+        </fieldset>
+        <button type='submit'>Submit</button>
+      </form>
     </div>
+  </div>
 </div>
-
 {% endblock %}

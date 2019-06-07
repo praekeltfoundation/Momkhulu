@@ -19,7 +19,7 @@
             <div class="reveal__password">
               <span toggle="#id_password"></span>
               <input id="show_pass_trigger" type="checkbox" onclick="showPassword()">
-              <label for="show_pass_trigger" class="form-label form-label--show">Show</label>
+              <label id="id_password_show" for="show_pass_trigger" class="form-label form-label--show">Show</label>
             </div>
           </div>
           <input type="password" name="password" id="id_password" placeholder="Enter your password" required value="secret">
@@ -49,10 +49,13 @@
     <script type="text/javascript">
       function showPassword() {
         var x = document.getElementById("id_password");
+        var label = document.getElementById("id_password_show");
         if (x.type === "password") {
           x.type = "text";
+          label.innerText = "Hide";
         } else {
           x.type = "password";
+          label.innerText = "Show";
         }
       }
       (function() {

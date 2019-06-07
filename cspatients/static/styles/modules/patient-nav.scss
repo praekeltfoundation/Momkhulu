@@ -1,7 +1,10 @@
 .patient-nav {
   position: relative;
   text-align: left;
-  padding: 0 2em 1.5em;
+  padding: 0 1em 1.5em;
+  @media screen and (min-width: 62.000em) {
+    padding: 0 2em 1.5em;
+  }
   &-list {
     margin: 0;
     padding: 0;
