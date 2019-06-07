@@ -1,0 +1,26 @@
+.urgency {
+  color: white;
+  border-radius: 3px;
+  padding: 10px;
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+  &-0 {
+    background-color: $color_gray;
+  }
+  &-1 {
+    background-color: $color_red;
+  }
+  &-2  {
+    background-color: $color_vivid_orange;
+  }
+  &-3 {
+    background-color: $color_vivid_yellow;
+  }
+  &-4 {
+    background-color: $color_lime_green;
+  }
+  &-5 {
+    background-color: $color_vivid_blue;
+  }
+}

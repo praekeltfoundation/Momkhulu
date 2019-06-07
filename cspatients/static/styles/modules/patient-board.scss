@@ -1,13 +1,12 @@
 .patient-board {
-  padding: 0 1.5em;
+  padding: 0 1.5em 1.5em;
   &--wrapper {
     display: flex;
     justify-content: space-between;
   }
   &__personal {
     background: #fff;
-    border: 1px solid $color_very_light_gray;
-    padding: 1em;
+    border-radius: 3px;
     @media screen and (min-width: 62.000em) {
       width: 50%;
       margin-right: 2em;
@@ -15,16 +14,23 @@
   }
   &__surgery {
     background: #fff;
-    border: 1px solid $color_very_light_gray;
-    padding: 1em;
+    border-radius: 3px;
     @media screen and (min-width: 62.000em) {
       width: 50%;
     }
   }
   &__delivery {
-    padding: 1em;
+    background: #fff;
+    border-radius: 3px;
+    width: auto;
   }
   &__no-results {
-    padding: 1em;
+    background: #fff;
+    border-radius: 3px;
+    width: auto;
+  }
+  .heading__subtitle {
+    padding: 1em 1.5em;
+    text-align: left;
   }
 }
