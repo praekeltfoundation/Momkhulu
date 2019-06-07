@@ -15,7 +15,7 @@
   &__subtitle {
     font-size: 18px;
     font-weight: bold;
-    padding: 1em;
+    padding: 1em 3em 1em;
     text-align: center;
     &--highlighted {
       color: $color_blue;
@@ -31,4 +31,14 @@
       padding: 1em 30%;
     }
   }
+  &__label {
+    color: $color_gray;
+    display: inline-block;
+  }
+}
+
+
+.number-highlight {
+  font-style: italic;
+  font-weight: bold;
 }

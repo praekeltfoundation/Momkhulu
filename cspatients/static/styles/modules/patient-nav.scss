@@ -1,0 +1,17 @@
+.patient-nav {
+  position: relative;
+  text-align: left;
+  padding: 0 2em 1.5em;
+  &-list {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    &__item {
+      color: $color_blue;
+      cursor: pointer;
+      display: inline-block;
+      margin: 0 1em 0 0;
+      text-decoration: underline;
+    }
+  }
+}

@@ -8,13 +8,9 @@
       {% csrf_token %}
 
         <fieldset class="form-group">
-          <label for="id_username" class="form-label">E-mail</label>
-          <input type="text" id="id_username" name="username" placeholder="Enter your e-mail address" required autofocus>
-        </fieldset>
-
-        <fieldset class="form-group">
-          <label for="id_mobile" class="form-label">E-mobile</label>
-          <input type="tel" id="id_mobile" name="mobile" placeholder="Enter your mobile address" required autofocus>
+          <label for="id_username" class="form-label">Mobile number</label>
+          <input type="tel" id="id_username" name="username" placeholder="Enter your mobile number" required autofocus>
+          <span class="form-helper-text">For example: 0812345678</span>
         </fieldset>
 
         <fieldset class="form-group">
@@ -32,11 +28,10 @@
           </small>
         </fieldset>
         <button type="submit" class="call-to-action__button  call-to-action__button--primary">Log in</button>
-        <p class="call-to-action__description">Forgot your password? <a href="/accounts/password_reset/" class="call-to-action__nav call-to-action__nav--text"> Reset it</a>.</p>
       </form>
       <div class="terms-of-use">
         <h3 class="heading heading__subtitle">Forgot your password? Or need a Momkhulu account?</h3>
-          <p>Use the Momkhulu WhatsApp line at *** *** 2082, choose option 6 in
+        <p>Use the Momkhulu WhatsApp line at <span class="number-highlight">*** *** 2082</span>, choose option 6 in
           the menu and follow the instructions to set your password.
           If you do not have the Momkhulu WhatsApp number, please contact Dr. Rowan Duys.</p>
       </div>
@@ -77,4 +72,4 @@
       }());
     </script>
   {% endblock %}
-  {% endblock %}
+{% endblock %}
