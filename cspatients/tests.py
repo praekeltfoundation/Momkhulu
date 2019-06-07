@@ -36,6 +36,24 @@ SAMPLE_RP_POST_DATA = {
     }
 }
 
+SAMPLE_RP_POST_NO_CONSENT_DATA = {
+    "results": {
+        "name": {
+            "category": "All Responses",
+            "value": "(No Consent)",
+            "input": "(No Consent)",
+        },
+        "gravpar": {"category": "All Responses", "value": "AAAA", "input": "AAAA"},
+        "option": {"category": "Patient Entry", "value": "1", "input": "1"},
+        "consent": {
+            "name": "Consent",
+            "category": "no_consent",
+            "value": "2",
+            "input": "2",
+        },
+    }
+}
+
 SAMPLE_RP_UPDATE_DATA = {
     "results": {
         "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
@@ -600,6 +618,24 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
+        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
+
+    @patch("cspatients.util.get_random_string")
+    def test_new_patient_entry_no_consent(self, mock_random):
+        mock_random.return_value = "1234567890"
+
+        response = self.normalclient.post(
+            reverse("rp_newpatiententry"), SAMPLE_RP_POST_NO_CONSENT_DATA, format="json"
+        )
+
+        # Assert a correct response of 201
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["errors"], "")
+
+        # Check that the Patient, PatientEntry been correctly saved
+        self.assertEqual(
+            Patient.objects.get(patient_id="NO_CONSENT_1234567890").name, "(No Consent)"
+        )
         self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
 
     def test_new_patient_entry_without_auth(self):

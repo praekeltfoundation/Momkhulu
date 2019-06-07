@@ -4,6 +4,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Q
 from django.template import loader
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -42,6 +43,11 @@ def get_rp_dict(data, context=None):
             final_dict["patient_id"] = all_dict["patient_id"]
         return final_dict
     else:
+        if all_dict.get("consent", "consent_given") == "no_consent":
+            all_dict["patient_id"] = "NO_CONSENT_{}".format(
+                get_random_string(length=10)
+            )
+
         return all_dict
 
 
