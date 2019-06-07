@@ -11,18 +11,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from cspatients import util
+
 from .models import Baby, PatientEntry, Profile
-from .serializers import PatientEntrySerializer, PatientSerializer
 from .tasks import post_patient_update
-from .util import (
-    can_convert_string_to_int,
-    clean_and_split_string,
-    generate_password_reset_url,
-    get_all_active_patient_entries,
-    get_rp_dict,
-    save_model,
-    save_model_changes,
-)
 
 
 @login_required()
@@ -37,7 +29,7 @@ def view(request):
         status = request.GET["status"]
 
     context = {
-        "patient_entries": get_all_active_patient_entries(search, status),
+        "patient_entries": util.get_all_active_patient_entries(search, status),
         "search": search or "",
         "status": status or "0",
         "user": request.user,
@@ -68,7 +60,7 @@ def form(request):
     errors = []
     status_code = status.HTTP_200_OK
     if request.method == "POST":
-        entry, errors = save_model(request.POST)
+        entry, errors = util.save_model(request.POST)
         if entry:
             status_code = status.HTTP_201_CREATED
             post_patient_update.delay()
@@ -85,7 +77,7 @@ def form(request):
 # API VIEWS
 class NewPatientEntryView(APIView):
     def post(self, request):
-        entry, errors = save_model(get_rp_dict(request.data))
+        entry, errors = util.save_model(util.get_rp_dict(request.data))
         if entry:
             post_patient_update.delay()
             status_code = status.HTTP_201_CREATED
@@ -101,16 +93,12 @@ class CheckPatientExistsView(APIView):
         return_status = status.HTTP_200_OK
 
         try:
-            patient_id = get_rp_dict(request.data)["patient_id"]
+            patient_id = util.get_rp_dict(request.data)["patient_id"]
             patient_entry = PatientEntry.objects.get(
                 patient__patient_id=patient_id, completion_time__isnull=True
             )
 
-            patient_entry_serializer = PatientEntrySerializer(patient_entry)
-            patient_serializer = PatientSerializer(patient_entry.patient)
-
-            patient_data = patient_entry_serializer.data
-            patient_data.update(patient_serializer.data)
+            patient_data = util.serialise_patient_entry(patient_entry)
         except PatientEntry.DoesNotExist:
             return_status = status.HTTP_404_NOT_FOUND
 
@@ -119,22 +107,28 @@ class CheckPatientExistsView(APIView):
 
 class UpdatePatientEntryView(APIView):
     def post(self, request):
-        changes_dict = get_rp_dict(request.data, context="entrychanges")
-        entry, errors = save_model_changes(changes_dict)
-        if entry:
-            status_code = status.HTTP_200_OK
+        patient_data = {}
+        status_code = status.HTTP_200_OK
+
+        changes_dict = util.get_rp_dict(request.data, context="entrychanges")
+        patient_entry, errors = util.save_model_changes(changes_dict)
+        if patient_entry:
+            patient_data = util.serialise_patient_entry(patient_entry)
 
             post_patient_update.delay()
         else:
             status_code = status.HTTP_400_BAD_REQUEST
-        return JsonResponse({"errors": ", ".join(errors)}, status=status_code)
+
+        patient_data["errors"] = ", ".join(errors)
+
+        return JsonResponse(patient_data, status=status_code)
 
 
 class EntryStatusUpdateView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        data = get_rp_dict(request.data)
+        data = util.get_rp_dict(request.data)
         try:
             patiententry = PatientEntry.objects.get(
                 patient__patient_id=data["patient_id"], completion_time__isnull=True
@@ -177,7 +171,7 @@ class WhitelistCheckView(APIView):
             msisdn = request.data["contact"]["urn"].split(":")[1]
             profile = Profile.objects.get(msisdn__contains=msisdn, user__is_active=True)
 
-            data["reset_password_link"] = generate_password_reset_url(
+            data["reset_password_link"] = util.generate_password_reset_url(
                 request, profile.user
             )
             data["group_invite_link"] = settings.MOMKHULU_GROUP_INVITE_LINK
@@ -194,18 +188,20 @@ class MultiSelectView(APIView):
         valid = True
         selected_items = []
 
-        selections = clean_and_split_string(request.GET.get("selections", ""))
-        options = clean_and_split_string(request.GET.get("options", ""))
+        selections = util.clean_and_split_string(request.GET.get("selections", ""))
+        options = util.clean_and_split_string(request.GET.get("options", ""))
 
         for item in selections:
-            if not can_convert_string_to_int(item):
+            if not util.can_convert_string_to_int(item):
                 valid = False
             elif int(item) > len(options):
                 valid = False
 
         if valid:
             for item in selections:
-                selected_items.append(options[int(item) - 1])
+                option = options[int(item) - 1]
+                if option not in selected_items:
+                    selected_items.append(option)
 
         return Response(
             {"valid": valid, "value": ", ".join(selected_items)},

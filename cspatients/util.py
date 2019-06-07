@@ -8,7 +8,11 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from .models import Patient, PatientEntry
-from .serializers import CreateEntrySerializer
+from .serializers import (
+    CreateEntrySerializer,
+    PatientEntrySerializer,
+    PatientSerializer,
+)
 
 PATIENT_FIELDS = Patient.__dict__.keys()
 PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
@@ -172,7 +176,7 @@ def generate_password_reset_url(request, user):
 
 
 def clean_and_split_string(str):
-    return [x.strip() for x in str.split(",") if x]
+    return [x.strip() for x in str.strip().split(",") if x]
 
 
 def can_convert_string_to_int(s):
@@ -181,3 +185,13 @@ def can_convert_string_to_int(s):
         return True
     except ValueError:
         return False
+
+
+def serialise_patient_entry(patient_entry):
+    patient_entry_serializer = PatientEntrySerializer(patient_entry)
+    patient_serializer = PatientSerializer(patient_entry.patient)
+
+    data = patient_entry_serializer.data
+    data.update(patient_serializer.data)
+
+    return data

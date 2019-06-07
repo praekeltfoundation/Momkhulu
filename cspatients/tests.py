@@ -228,7 +228,7 @@ class ViewTest(TestCase):
         response = self.client.get(reverse("cspatient_view"))
         self.assertTemplateUsed(response=response, template_name="cspatients/view.html")
 
-    @patch("cspatients.views.get_all_active_patient_entries")
+    @patch("cspatients.util.get_all_active_patient_entries")
     def test_get_view_filter(self, mock_get_patients):
         """
             Test that request is using the filter
@@ -693,6 +693,7 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         # Test the right response code
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["errors"], "")
+        self.assertEqual(response.json()["name"], "Nyasha")
 
         # Test that that the change has been made
         patient = Patient.objects.get(patient_id="HLFSH")
@@ -900,7 +901,7 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
     def test_multi_select_valid(self):
         response = self.normalclient.get(
             reverse("rp_multiselect"),
-            {"selections": "1, 3,", "options": "test 1, test 2, test 3"},
+            {"selections": "1, 3,3, ", "options": "test 1, test 2, test 3"},
         )
         self.assertEqual(response.status_code, 200)
 
