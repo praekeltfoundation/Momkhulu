@@ -43,7 +43,7 @@ select {
   background: #fff; //#E8F0FE
   border: 2px solid $color_light_gray_blue;
   border-radius: 3px;
-  color: $color_gray;
+  color: $color_dark_gray;
   font-weight: lighter;
   padding: 15px 10px;
   margin: 5px 0;
@@ -118,6 +118,12 @@ input[type="radio"] {
     background-position: 0 -29.5px;
     content: "";
   }
+}
+
+*::placeholder,
+*:-ms-input-placeholder,
+*::-ms-input-placeholder {
+  color: $color_dark_gray;
 }
 
 *[disabled],
