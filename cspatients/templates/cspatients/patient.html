@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="patient-board">
+<div id="patient_board" class="patient-board">
   <a href="{% url 'cspatient_view' %}" class="call-to-action__nav call-to-action__nav--back">Back to the triage board</a>
   <h2 class="heading heading__hero">Patient Details</h2>
   <div class="patient-nav">
@@ -106,34 +106,32 @@
       </div>
     </div>
     <div id="patient_delivery_details" class="patient-board__delivery">
+      <h4 class="heading heading__subtitle">Delivery Details: Baby {{ baby.baby_number }}</h4>
       {% for baby in patiententry.entry_babies.all %}
-      <div class="patient-board__delivery-list">
-        <ul class="patient-list">
+        <div class="patient-board__delivery-list">
+          <ul class="patient-list">
             <li class="patient-list__item">
-              <h5>Delivery Details: Baby {{ baby.baby_number }}</h5>
+              <h5 class="patient-list__label">Time of delivery</h5>
+              <h4 class="patient-list__entry">{{ baby.delivery_time|time:"H:i" }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">TIME OF DELIVERY</h5>
-                <h4 class="patient-list__entry">{{ baby.delivery_time|time:"H:i" }}</h4>
+              <h5 class="patient-list__label">Weight of baby</h5>
+              <h4 class="patient-list__entry">{{ baby.baby_weight_grams }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">WEIGHT OF BABY</h5>
-                <h4 class="patient-list__entry">{{ baby.baby_weight_grams }}</h4>
+              <h5 class="patient-list__label">Apgar 1</h5>
+              <h4 class="patient-list__entry">{{ baby.apgar_1 }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">APGAR 1</h5>
-                <h4 class="patient-list__entry">{{ baby.apgar_1 }}</h4>
+              <h5 class="patient-list__label">Apgar5</h5>
+              <h4 class="patient-list__entry">{{ baby.apgar_5 }}</h4>
             </li>
             <li class="patient-list__item">
-                <h5 class="patient-list__label">APGAR 5</h5>
-                <h4 class="patient-list__entry">{{ baby.apgar_5 }}</h4>
+              <h5 class="patient-list__label">Nicu</h5>
+              <h4 class="patient-list__entry">{{ baby.nicu }}</h4>
             </li>
-            <li class="patient-list__item">
-                <h5 class="patient-list__label">NICU</h5>
-                <h4 class="patient-list__entry">{{ baby.nicu }}</h4>
-            </li>
-        </ul>
-      </div>
+          </ul>
+        </div>
       {% endfor %}
     </div>
   {% else %}
@@ -141,5 +139,6 @@
       <h4 class="heading heading__subtitle">Sorry. No such patient was found.</h4>
     </div>
   {% endif %}
+  <a href="#patient_board" class="call-to-action__nav call-to-action__nav--back">Back to top</a>
 </div>
 {% endblock %}

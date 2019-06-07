@@ -16,7 +16,9 @@
 </head>
 <body>
   <header class="header">
-    <h2 class="heading heading__title">Momkhulu</h2>
+    <a href="/">
+      <h2 class="heading heading__title">Momkhulu</h2>
+    </a>
     {% if user.is_authenticated %}
       <div class="call-to-action--logout">
         <a class="call-to-action__nav call-to-action__nav--text" href="{% url 'logout' %}">Log out</a>
