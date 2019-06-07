@@ -17,7 +17,7 @@ def get_requirements():
 
 setup(
     name="momkhulu",
-    version="0.0.3",
+    version="0.0.4",
     description="Hospital Resource Allocation Tool",
     long_description=read("README.rst"),
     long_description_content_type="text/x-rst",

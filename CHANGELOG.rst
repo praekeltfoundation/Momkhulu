@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.4
+------------
+ * All of it
+
 0.0.3
 ------------
  * Add health endpoint
