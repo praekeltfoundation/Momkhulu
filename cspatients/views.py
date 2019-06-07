@@ -77,14 +77,20 @@ def form(request):
 # API VIEWS
 class NewPatientEntryView(APIView):
     def post(self, request):
-        entry, errors = util.save_model(util.get_rp_dict(request.data))
-        if entry:
+        patient_data = {}
+        status_code = status.HTTP_201_CREATED
+
+        patient_entry, errors = util.save_model(util.get_rp_dict(request.data))
+        if patient_entry:
+            patient_data = util.serialise_patient_entry(patient_entry)
+
             post_patient_update.delay()
-            status_code = status.HTTP_201_CREATED
         else:
             status_code = status.HTTP_400_BAD_REQUEST
 
-        return JsonResponse({"errors": ", ".join(errors)}, status=status_code)
+        patient_data["errors"] = ", ".join(errors)
+
+        return JsonResponse(patient_data, status=status_code)
 
 
 class CheckPatientExistsView(APIView):

@@ -615,6 +615,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()["errors"], "")
+        self.assertEqual(response.json()["patient_id"], "HLFSH")
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
@@ -631,6 +632,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()["errors"], "")
+        self.assertEqual(response.json()["patient_id"], "NO_CONSENT_1234567890")
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(
@@ -687,6 +689,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "parity": 0,
                 "age": 20,
                 "foetus": None,
+                "patient_id": "HLFSH",
             },
         )
 
@@ -725,6 +728,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "parity": 0,
                 "age": 20,
                 "foetus": None,
+                "patient_id": "HLFSH",
             },
         )
 
