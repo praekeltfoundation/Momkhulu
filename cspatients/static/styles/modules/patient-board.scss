@@ -1,15 +1,21 @@
 .patient-board {
-  padding: 0 1.5em 1.5em;
+  padding: 0 1em 0.5em;
+  @media screen and (min-width: 62.000em) {
+    padding: 0 1.5em 1.5em;
+  }
   &--wrapper {
-    display: flex;
-    justify-content: space-between;
+    @media screen and (min-width: 62.000em) {
+      display: flex;
+      justify-content: space-between;
+    }
   }
   &__personal {
     background: #fff;
     border-radius: 3px;
+    margin: 0 0 1.5em;
     @media screen and (min-width: 62.000em) {
       width: 50%;
-      margin-right: 2em;
+      margin: 0 2em 0 0;
     }
   }
   &__surgery {
@@ -23,9 +29,16 @@
     background: #fff;
     border-radius: 3px;
     width: auto;
-    margin: 2em 0;
+    margin: 1em 0;
+    @media screen and (min-width: 62.000em) {
+      margin: 2em 0;
+    }
     &-list {
-      border-bottom: 2px solid $color_gray;
+      border-bottom: 1.8px solid $color_gray;
+      margin: 0 0 .5em;
+      @media screen and (min-width: 62.000em) {
+        margin: 0;
+      }
       .patient-list__item {
         padding: 7px 1.5em;
       }

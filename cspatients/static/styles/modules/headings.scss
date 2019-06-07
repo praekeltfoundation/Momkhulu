@@ -17,6 +17,9 @@
     font-weight: bold;
     padding: 1em 3em 1em;
     text-align: center;
+    @media screen and (min-width: 62.000em) {
+      padding: 1em;
+    }
     &--highlighted {
       color: $color_blue;
     }

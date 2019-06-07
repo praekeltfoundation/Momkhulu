@@ -122,7 +122,10 @@ input[type="radio"] {
 
 *::placeholder,
 *:-ms-input-placeholder,
-*::-ms-input-placeholder {
+*::-ms-input-placeholder,
+*:-moz-placeholder,
+*::-moz-placeholder,
+*::-webkit-input-placeholder {
   color: $color_dark_gray;
 }
 
@@ -164,4 +167,7 @@ input[type="radio"] {
   font-size: 14px;
   font-weight: normal;
   font-style: italic;
+}
+.form-error {
+  color: $color_red;
 }

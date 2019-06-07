@@ -1,6 +1,8 @@
-<form  action="" method="get" class="triage-board__search">
+<form  action="" method="get" class="triage-board__search" novalidate>
   <fieldset class="form-group">
+    <label>Search:</label>
     <input name="search" value="{{ search }}" type="text" placeholder="Search Patient ID or Surname">
+    <label>Filter:</label>
     <select name="status">
       <option value="0">View All Urgencies</option>
       <option value="1">Immediate</option>

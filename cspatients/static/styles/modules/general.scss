@@ -1,11 +1,3 @@
-.red-msg {
-  color: red;
-}
-.row-completed {
-  background-color: lightgray;
-}
-
-/* Footer Template */
 .navbar-laravel {
   box-shadow: 0 2px 4px rgba(0,0,0,.04);
 }
@@ -18,13 +10,7 @@
   padding-bottom: 1.5rem;
   background-color: $color_very_light_gray;
 }
-.login-form .row {
-  margin-left: 0;
-  margin-right: 0;
-}
-.resizedTextBox {
-  width: 100px; height: 20px;
-}
+
 .field-icon {
   color: $color_blue;
   position:relative;

@@ -16,18 +16,6 @@
       };
 
       $( function(){
-        // RESPONSIVE DESIGN
-        function setTableClass(){
-          var screenWidth = document.body.clientWidth;
-          console.log(screenWidth)
-          if (screenWidth < 576){
-              $(".patients-table").addClass("table-sm");
-          }else{
-              $(".patients-table").removeClass("table-sm");
-          };
-        };
-        setTableClass();
-
         // WEB SOCKET FUNCTIONS
         console.log("Connecting to the viewSocket")
         var viewSocket =  new WebSocket(

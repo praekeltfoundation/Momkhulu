@@ -1,6 +1,9 @@
 .triage-board {
   position: relative;
-  padding: 4em 0;
+  padding: 2em 0;
+  @media screen and (min-width: 62.000em) {
+    padding: 4em 0;
+  }
   &__table {
     background: #fff;
     padding: 0 1.5em;
@@ -9,24 +12,29 @@
     width: 100%;
     .form-group {
       display: inline-block;
-      width: 50%;
+      @media screen and (min-width: 62.000em) {
+        width: 65%;
+      }
     }
     input, select {
       display: inline-block;
       padding: 10px 20px;
       margin: 5px 5em 5px 0;
-      width: auto;
       &:last-child {
         margin: 5px 0;
       }
     }
     input {
-      width: 50%;
+      @media screen and (min-width: 62.000em) {
+        width: 40%;
+      }
     }
     select {
-      width: 250px;
       position: relative;
-      height: 49px;
+      @media screen and (min-width: 62.000em) {
+        height: 49px;
+        width: 250px;
+      }
     }
   }
 }
