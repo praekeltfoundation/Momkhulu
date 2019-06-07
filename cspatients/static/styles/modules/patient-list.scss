@@ -1,0 +1,15 @@
+.patient-list {
+  margin: 0;
+  padding: 0;
+  &__item {
+    display: block;
+    padding: 1em;
+    border-bottom: 1px solid $color_very_light_gray;
+  }
+  &__label {
+    text-transform: uppercase;
+  }
+  &__entry {
+    text-transform: uppercase;
+  }
+}

@@ -31,6 +31,10 @@
       padding: 1em 30%;
     }
   }
+  &__label {
+    color: $color_gray;
+    display: inline-block;
+  }
 }
 
 

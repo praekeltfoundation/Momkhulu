@@ -17,8 +17,8 @@
       padding: 15px 1em;
       width: 100%;
       &:hover, &:active, &:focus {
-        background-color: #0069d9;
-        border: 1px solid $color_strong_blue;
+        background-color: $color_blue;
+        border: 1px solid $color_blue;
         transition: background-color 100ms ease-in-out;
       }
     }
@@ -49,17 +49,20 @@
       }
     }
     &--back {
-      color: #0069d9;
+      color: $color_blue;
       font-size: 18px;
       text-decoration: underline;
       &:before {
         background: url("/static/img/icons/chevron-down.png") no-repeat 0 0/20px;
         content: " ";
         display: inline-block;
-        margin: 1em 5em 1em 1em;
+        margin: 1em 1.5em;
         transform: rotate(90deg);
         padding: 10px;
         vertical-align: middle;
+        @media screen and (min-width: 62.000em) {
+          margin: 1em 4em 1em 1em;
+        }
       }
     }
   }
