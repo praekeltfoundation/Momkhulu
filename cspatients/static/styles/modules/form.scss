@@ -152,3 +152,10 @@ input[type="radio"] {
     margin: 0;
   }
 }
+.form-helper-text {
+  color: $color_gray;
+  text-align: left;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: italic;
+}
