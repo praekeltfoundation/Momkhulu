@@ -302,16 +302,31 @@ class PatientViewTest(TestCase):
 
 class ViewAllContextTest(TestCase):
     def setUp(self):
-        self.patient_one_data = {"name": "Jane Doe", "patient_id": "XXXXX", "age": 20}
+        self.patient_one_data = {
+            "name": "Urgency COLD",
+            "patient_id": "XXXXX",
+            "age": 20,
+        }
 
         self.patient_two_data = {
-            "name": "Mary Mary",
+            "name": "Urgency Immediate",
             "patient_id": "YYYYY",
             "age": 23,
             "urgency": 1,
         }
 
-        self.patient_three_data = {"name": "John", "patient_id": "111111", "age": 20}
+        self.patient_three_data = {
+            "name": "John Completed",
+            "patient_id": "111111",
+            "age": 20,
+        }
+
+        self.patient_four_data = {
+            "name": "Urgency Immediate NEW",
+            "patient_id": "22222222",
+            "age": 23,
+            "urgency": 1,
+        }
 
     def test_context_when_no_patients(self):
         self.assertFalse(get_all_active_patient_entries())
@@ -320,29 +335,34 @@ class ViewAllContextTest(TestCase):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         entry3, _ = save_model(self.patient_three_data)
+        entry4, _ = save_model(self.patient_four_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()
 
+        entry4.decision_time = timezone.now() + timezone.timedelta(hours=1)
+        entry4.save()
+
         patient_entries = get_all_active_patient_entries()
 
-        # Check that it returns two objects
-        self.assertEqual(len(patient_entries), 3)
+        # Check that it returns 4 objects
+        self.assertEqual(len(patient_entries), 4)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
-        self.assertEqual(patient_entries[1].patient.name, "Mary Mary")
-        self.assertEqual(patient_entries[2].patient.name, "John")
+        self.assertEqual(patient_entries[0].patient.name, "Urgency Immediate NEW")
+        self.assertEqual(patient_entries[1].patient.name, "Urgency Immediate")
+        self.assertEqual(patient_entries[2].patient.name, "Urgency COLD")
+        self.assertEqual(patient_entries[3].patient.name, "John Completed")
 
     def test_get_all_active_patient_entries_filter(self):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         save_model(self.patient_three_data)
 
-        patient_entries = get_all_active_patient_entries("jane", "4")
+        patient_entries = get_all_active_patient_entries("COLD", "4")
 
         self.assertEqual(len(patient_entries), 1)
-        self.assertEqual(patient_entries[0].patient.name, "Jane Doe")
+        self.assertEqual(patient_entries[0].patient.name, "Urgency COLD")
 
     def test_get_all_active_patient_entries_filter_complete(self):
         save_model(self.patient_one_data)
@@ -355,7 +375,7 @@ class ViewAllContextTest(TestCase):
         patient_entries = get_all_active_patient_entries(None, "complete")
 
         self.assertEqual(len(patient_entries), 1)
-        self.assertEqual(patient_entries[0].patient.name, "John")
+        self.assertEqual(patient_entries[0].patient.name, "John Completed")
 
 
 class SaveModelTest(TestCase):
