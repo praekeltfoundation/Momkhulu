@@ -184,8 +184,8 @@ def generate_password_reset_url(request, user):
     return request.build_absolute_uri(path)
 
 
-def clean_and_split_string(str):
-    return [x.strip() for x in str.strip().split(",") if x]
+def clean_and_split_string(text):
+    return [x.strip() for x in text.strip().split(",") if x]
 
 
 def can_convert_string_to_int(s):

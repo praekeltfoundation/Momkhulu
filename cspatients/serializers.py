@@ -6,7 +6,7 @@ from cspatients.models import Patient, PatientEntry
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        exclude = ("created_at", "updated_at", "id", "patient_id")
+        exclude = ("created_at", "updated_at", "id")
 
 
 class PatientEntrySerializer(serializers.ModelSerializer):
