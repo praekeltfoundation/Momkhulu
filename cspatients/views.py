@@ -215,6 +215,31 @@ class MultiSelectView(APIView):
         )
 
 
+class ActivePatientListView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        entries = PatientEntry.objects.select_related("patient").filter(
+            completion_time__isnull=True
+        )
+
+        data = []
+        for entry in entries:
+            data.append(
+                "{} - {} {} {} {}".format(
+                    entry.patient.patient_id,
+                    entry.patient.name,
+                    entry.operation,
+                    entry.indication,
+                    entry.get_urgency_display(),
+                )
+            )
+
+        print(data)
+
+        return Response({"patient_list": "\n".join(data)}, status=status.HTTP_200_OK)
+
+
 def health(request):
     app_id = environ.get("MARATHON_APP_ID", None)
     ver = environ.get("MARATHON_APP_VERSION", None)
