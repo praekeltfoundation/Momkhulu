@@ -632,12 +632,11 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()["errors"], "")
-        self.assertEqual(response.json()["patient_id"], "NO_CONSENT_1234567890")
+        patient = Patient.objects.last()
+        self.assertEqual(response.json()["patient_id"], f"9{patient.id:07}")
 
         # Check that the Patient, PatientEntry been correctly saved
-        self.assertEqual(
-            Patient.objects.get(patient_id="NO_CONSENT_1234567890").name, "(No Consent)"
-        )
+        self.assertEqual(patient.name, "(No Consent)")
         self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
 
     def test_new_patient_entry_without_auth(self):
@@ -993,6 +992,29 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
 
         self.assertEqual(result["valid"], False)
         self.assertEqual(result["value"], "")
+
+
+class PatientListTestCase(AuthenticatedAPITestCase):
+    def create_patient_entry(self, patient_id, name, complete=None):
+        patient = Patient.objects.create(name=name, patient_id=patient_id, age=20)
+        PatientEntry.objects.create(
+            patient=patient, completion_time=complete, indication="indic1"
+        )
+
+    def test_multi_select_valid(self):
+        self.create_patient_entry("00000001", "John Doe")
+        self.create_patient_entry("00000002", "Mary", timezone.now())
+        self.create_patient_entry("00000003", "Test")
+
+        response = self.normalclient.get(reverse("rp_patient_list"))
+
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+
+        self.assertEqual(
+            result["patient_list"],
+            "00000001 - John Doe CS indic1 Cold\n00000003 - Test CS indic1 Cold",
+        )
 
 
 class HealthViewTest(APITestCase):
