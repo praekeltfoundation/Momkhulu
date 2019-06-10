@@ -632,12 +632,11 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         # Assert a correct response of 201
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()["errors"], "")
-        self.assertEqual(response.json()["patient_id"], "NO_CONSENT_1234567890")
+        patient = Patient.objects.last()
+        self.assertEqual(response.json()["patient_id"], f"9{patient.id:07}")
 
         # Check that the Patient, PatientEntry been correctly saved
-        self.assertEqual(
-            Patient.objects.get(patient_id="NO_CONSENT_1234567890").name, "(No Consent)"
-        )
+        self.assertEqual(patient.name, "(No Consent)")
         self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
 
     def test_new_patient_entry_without_auth(self):

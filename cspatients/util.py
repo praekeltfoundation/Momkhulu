@@ -135,6 +135,10 @@ def save_model(data):
         patient_id=patient_data["patient_id"], defaults=patient_data
     )
 
+    if "NO_CONSENT_" in patient_data["patient_id"]:
+        patient.patient_id = f"9{patient.id:07}"
+        patient.save()
+
     # check if we already have a active entry
     if PatientEntry.objects.filter(
         patient=patient, completion_time__isnull=True
