@@ -234,9 +234,6 @@ class ActivePatientListView(APIView):
                     entry.get_urgency_display(),
                 )
             )
-
-        print(data)
-
         return Response({"patient_list": "\n".join(data)}, status=status.HTTP_200_OK)
 
 
