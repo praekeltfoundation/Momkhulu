@@ -37,6 +37,11 @@ urlpatterns = [
         views.ActivePatientListView.as_view(),
         name="rp_patient_list",
     ),
+    path(
+        "api/rppatientselect",
+        views.PatientSelectView.as_view(),
+        name="rp_patient_select",
+    ),
     path("api/rpmultiselect", views.MultiSelectView.as_view(), name="rp_multiselect"),
     path("health", views.health, name="health"),
     path("health_details", views.detailed_health, name="detailed-health"),
