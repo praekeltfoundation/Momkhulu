@@ -223,18 +223,30 @@ class ActivePatientListView(APIView):
             completion_time__isnull=True
         )
 
+        ids = []
         data = []
-        for entry in entries:
+        for count, entry in enumerate(entries, start=1):
             data.append(
-                "{} - {} {} {} {}".format(
-                    entry.patient.patient_id,
-                    entry.patient.name,
-                    entry.operation,
-                    entry.indication,
-                    entry.get_urgency_display(),
-                )
+                f"{count}) {entry.patient.name} {entry.operation} {entry.indication} {entry.get_urgency_display()}"
             )
-        return Response({"patient_list": "\n".join(data)}, status=status.HTTP_200_OK)
+            ids.append(f"{count}={entry.patient.patient_id}")
+
+        return Response(
+            {"patient_list": "\n".join(data), "patient_ids": "|".join(ids)},
+            status=status.HTTP_200_OK,
+        )
+
+
+class PatientSelectView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        id_string = request.GET.get("patient_ids", "")
+        option = request.GET.get("option", "")
+
+        patient_ids = dict(item.split("=") for item in id_string.split("|"))
+
+        return Response({"patient_id": patient_ids[option]}, status=status.HTTP_200_OK)
 
 
 def health(request):

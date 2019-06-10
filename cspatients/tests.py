@@ -1001,7 +1001,7 @@ class PatientListTestCase(AuthenticatedAPITestCase):
             patient=patient, completion_time=complete, indication="indic1"
         )
 
-    def test_multi_select_valid(self):
+    def test_patient_list_view(self):
         self.create_patient_entry("00000001", "John Doe")
         self.create_patient_entry("00000002", "Mary", timezone.now())
         self.create_patient_entry("00000003", "Test")
@@ -1012,9 +1012,23 @@ class PatientListTestCase(AuthenticatedAPITestCase):
         result = response.json()
 
         self.assertEqual(
-            result["patient_list"],
-            "00000001 - John Doe CS indic1 Cold\n00000003 - Test CS indic1 Cold",
+            result["patient_list"], "1) John Doe CS indic1 Cold\n2) Test CS indic1 Cold"
         )
+        self.assertEqual(result["patient_ids"], "1=00000001|2=00000003")
+
+
+class PatientSelectTestCase(AuthenticatedAPITestCase):
+    def test_patient_select_view(self):
+
+        response = self.normalclient.get(
+            reverse("rp_patient_select"),
+            {"patient_ids": "1=00000001|2=00000003|3=00000004", "option": "2"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+
+        self.assertEqual(result["patient_id"], "00000003")
 
 
 class HealthViewTest(APITestCase):
