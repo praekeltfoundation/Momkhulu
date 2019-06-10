@@ -227,15 +227,9 @@ class ActivePatientListView(APIView):
         data = []
         for count, entry in enumerate(entries, start=1):
             data.append(
-                "{}) {} {} {} {}".format(
-                    count,
-                    entry.patient.name,
-                    entry.operation,
-                    entry.indication,
-                    entry.get_urgency_display(),
-                )
+                f"{count}) {entry.patient.name} {entry.operation} {entry.indication} {entry.get_urgency_display()}"
             )
-            ids.append("{}={}".format(count, entry.patient.patient_id))
+            ids.append(f"{count}={entry.patient.patient_id}")
 
         return Response(
             {"patient_list": "\n".join(data), "patient_ids": "|".join(ids)},
