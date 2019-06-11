@@ -66,9 +66,9 @@ class Baby(models.Model):
     )
     baby_number = models.IntegerField()
     delivery_time = models.DateTimeField()
-    apgar_1 = models.IntegerField()
-    apgar_5 = models.IntegerField()
-    baby_weight_grams = models.IntegerField()
+    apgar_1 = models.IntegerField(null=True)
+    apgar_5 = models.IntegerField(null=True)
+    baby_weight_grams = models.IntegerField(null=True)
     nicu = models.BooleanField()
 
     class Meta:

@@ -114,22 +114,6 @@
               <h5 class="patient-list__label">Time of delivery</h5>
               <h4 class="patient-list__entry">{{ baby.delivery_time|time:"H:i" }}</h4>
             </li>
-            <li class="patient-list__item">
-              <h5 class="patient-list__label">Weight of baby</h5>
-              <h4 class="patient-list__entry">{{ baby.baby_weight_grams }}</h4>
-            </li>
-            <li class="patient-list__item">
-              <h5 class="patient-list__label">Apgar 1</h5>
-              <h4 class="patient-list__entry">{{ baby.apgar_1 }}</h4>
-            </li>
-            <li class="patient-list__item">
-              <h5 class="patient-list__label">Apgar5</h5>
-              <h4 class="patient-list__entry">{{ baby.apgar_5 }}</h4>
-            </li>
-            <li class="patient-list__item">
-              <h5 class="patient-list__label">Nicu</h5>
-              <h4 class="patient-list__entry">{{ baby.nicu }}</h4>
-            </li>
           </ul>
         </div>
       {% endfor %}

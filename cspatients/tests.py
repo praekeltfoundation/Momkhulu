@@ -132,6 +132,24 @@ SAMPLE_RP_UPDATE_DELIVERY_DATA = {
     }
 }
 
+SAMPLE_RP_UPDATE_DELIVERY_DATA_MINIMAL = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "foetus": {"name": "foetus", "category": "All Responses", "value": "2"},
+        "baby_number": {
+            "name": "baby_number",
+            "category": "All Responses",
+            "value": "1",
+        },
+        "delivery_time": {
+            "name": "delivery_time",
+            "category": "All Responses",
+            "value": "2019-05-12 10:22+00:00",
+        },
+        "option": {"category": "Delivery", "value": "3", "input": "3"},
+    }
+}
+
 SAMPLE_RP_UPDATE_COMPLETED_DATA = {
     "results": {
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
@@ -859,6 +877,32 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         self.assertEqual(baby_1.apgar_5, 9)
         self.assertEqual(baby_1.baby_weight_grams, 2400)
         self.assertTrue(baby_1.nicu)
+
+    def test_patient_who_exists_delivered_minimal(self):
+
+        self.assertEqual(self.patient_entry.entry_babies.count(), 0)
+
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_DELIVERY_DATA_MINIMAL,
+            format="json",
+        )
+
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 200)
+
+        # Test that the baby records have been created correctly
+        self.assertEqual(Baby.objects.count(), 1)
+
+        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=1)
+        self.assertEqual(
+            baby_1.delivery_time,
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+        )
+        self.assertEqual(baby_1.apgar_1, None)
+        self.assertEqual(baby_1.apgar_5, None)
+        self.assertEqual(baby_1.baby_weight_grams, None)
+        self.assertFalse(baby_1.nicu)
 
     def test_patient_who_exists_delivered_update(self):
         Baby.objects.create(
