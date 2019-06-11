@@ -193,7 +193,7 @@ def split_patient_and_entry_data(data):
 
 
 def generate_password_reset_url(request, user):
-    uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
 
     path = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
