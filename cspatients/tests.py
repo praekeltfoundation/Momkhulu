@@ -346,20 +346,33 @@ class ViewAllContextTest(TestCase):
             "urgency": 1,
         }
 
+        self.patient_five_data = {
+            "name": "Completed OLD",
+            "patient_id": "33333333",
+            "age": 23,
+            "urgency": 1,
+        }
+
     def test_context_when_no_patients(self):
         self.assertFalse(get_all_active_patient_entries())
 
+    @freeze_time("08:00")
     def test_get_all_active_patient_entries(self):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         entry3, _ = save_model(self.patient_three_data)
         entry4, _ = save_model(self.patient_four_data)
+        entry5, _ = save_model(self.patient_five_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()
 
         entry4.decision_time = timezone.now() + timezone.timedelta(hours=1)
         entry4.save()
+
+        entry5.completion_time = timezone.now()
+        entry5.decision_time = timezone.now() - timezone.timedelta(days=1)
+        entry5.save()
 
         patient_entries = get_all_active_patient_entries()
 
@@ -371,6 +384,36 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(patient_entries[1].patient.name, "Urgency Immediate")
         self.assertEqual(patient_entries[2].patient.name, "Urgency COLD")
         self.assertEqual(patient_entries[3].patient.name, "John Completed")
+
+    @freeze_time("04:30")
+    def test_get_all_active_patient_entries_before_5_utc(self):
+        save_model(self.patient_one_data)
+        save_model(self.patient_two_data)
+        entry3, _ = save_model(self.patient_three_data)
+        entry4, _ = save_model(self.patient_four_data)
+        entry5, _ = save_model(self.patient_five_data)
+
+        entry3.completion_time = timezone.now()
+        entry3.save()
+
+        entry4.decision_time = timezone.now() + timezone.timedelta(hours=1)
+        entry4.save()
+
+        entry5.completion_time = timezone.now()
+        entry5.decision_time = timezone.now() - timezone.timedelta(days=1)
+        entry5.save()
+
+        patient_entries = get_all_active_patient_entries()
+
+        # Check that it returns 4 objects
+        self.assertEqual(len(patient_entries), 5)
+
+        # Check that the results are sorted by the urgency
+        self.assertEqual(patient_entries[0].patient.name, "Urgency Immediate NEW")
+        self.assertEqual(patient_entries[1].patient.name, "Urgency Immediate")
+        self.assertEqual(patient_entries[2].patient.name, "Urgency COLD")
+        self.assertEqual(patient_entries[3].patient.name, "Completed OLD")
+        self.assertEqual(patient_entries[4].patient.name, "John Completed")
 
     def test_get_all_active_patient_entries_filter(self):
         save_model(self.patient_one_data)

@@ -4,6 +4,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Q
 from django.template import loader
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -53,6 +54,17 @@ def get_rp_dict(data, context=None):
 
 def get_all_active_patient_entries(search=None, status=None):
     patiententrys = PatientEntry.objects.select_related("patient").all()
+
+    # At 7am SAST(5am UTC) we hide all completed patients from the previous day
+    last_date = timezone.now().date()
+    if timezone.now().hour < 5:
+        last_date = timezone.now().date() - timezone.timedelta(days=1)
+
+    patiententrys = patiententrys.filter(
+        Q(completion_time__isnull=True)
+        | Q(completion_time__isnull=False, decision_time__gte=last_date)
+    )
+
     if search:
         patiententrys = patiententrys.filter(
             Q(patient__patient_id__contains=search) | Q(patient__name__icontains=search)
