@@ -32,6 +32,11 @@ SAMPLE_RP_POST_DATA = {
         "name": {"category": "All Responses", "value": "Jane Doe", "input": "Jane Doe"},
         "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
         "gravpar": {"category": "All Responses", "value": "AAAA", "input": "AAAA"},
+        "decision_time": {
+            "category": "All Responses",
+            "value": "2019-05-12 10:22+00:00",
+            "input": "2019-05-12 10:22+00:00",
+        },
         "option": {"category": "Patient Entry", "value": "1", "input": "1"},
     }
 }
@@ -681,7 +686,12 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
-        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G-P-")
+        entry = PatientEntry.objects.all().first()
+        self.assertEqual(entry.gravpar, "G-P-")
+        self.assertEqual(
+            entry.decision_time,
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+        )
 
     @patch("cspatients.util.get_random_string")
     def test_new_patient_entry_no_consent(self, mock_random):

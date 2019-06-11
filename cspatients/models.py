@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class Patient(models.Model):
@@ -36,7 +37,7 @@ class PatientEntry(models.Model):
     gravidity = models.IntegerField(null=True)
     comorbid = models.CharField(max_length=255, null=True)
     indication = models.CharField(max_length=255, null=True)
-    decision_time = models.DateTimeField(auto_now_add=True)
+    decision_time = models.DateTimeField(default=timezone.now)
     completion_time = models.DateTimeField(null=True)
     urgency = models.IntegerField(default=4, choices=URGENCY_CHOICES)
     location = models.CharField(max_length=255, null=True)
