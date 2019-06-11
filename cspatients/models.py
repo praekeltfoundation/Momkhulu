@@ -69,7 +69,7 @@ class Baby(models.Model):
     apgar_1 = models.IntegerField(null=True)
     apgar_5 = models.IntegerField(null=True)
     baby_weight_grams = models.IntegerField(null=True)
-    nicu = models.BooleanField()
+    nicu = models.BooleanField(null=True)
 
     class Meta:
         unique_together = ("patiententry", "baby_number")

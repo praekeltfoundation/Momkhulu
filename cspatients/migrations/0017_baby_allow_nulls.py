@@ -19,4 +19,7 @@ class Migration(migrations.Migration):
             name="baby_weight_grams",
             field=models.IntegerField(null=True),
         ),
+        migrations.AlterField(
+            model_name="baby", name="nicu", field=models.BooleanField(null=True)
+        ),
     ]
