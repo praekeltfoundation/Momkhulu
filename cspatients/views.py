@@ -143,16 +143,20 @@ class EntryStatusUpdateView(APIView):
             if data["option"] == "Delivery":
                 patiententry.foetus = data["foetus"]
 
+                default_data = {
+                    "apgar_1": data.get("apgar_1"),
+                    "apgar_5": data.get("apgar_5"),
+                    "baby_weight_grams": data.get("baby_weight_grams"),
+                    "delivery_time": data["delivery_time"],
+                }
+
+                if "nicu" in data:
+                    default_data["nicu"] = data["nicu"] == "Yes"
+
                 _, _ = Baby.objects.update_or_create(
                     patiententry=patiententry,
                     baby_number=data["baby_number"],
-                    defaults={
-                        "apgar_1": data["apgar_1"],
-                        "apgar_5": data["apgar_5"],
-                        "baby_weight_grams": data["baby_weight_grams"],
-                        "delivery_time": data["delivery_time"],
-                        "nicu": data["nicu"] == "Yes",
-                    },
+                    defaults=default_data,
                 )
 
             elif data["option"] == "Completed":
