@@ -43,7 +43,8 @@ SAMPLE_RP_POST_NO_CONSENT_DATA = {
             "value": "(No Consent)",
             "input": "(No Consent)",
         },
-        "gravpar": {"category": "All Responses", "value": "AAAA", "input": "AAAA"},
+        "gravidity": {"category": "All Responses", "value": "1", "input": "1"},
+        "parity": {"category": "All Responses", "value": "2", "input": "2"},
         "option": {"category": "Patient Entry", "value": "1", "input": "1"},
         "consent": {
             "name": "Consent",
@@ -662,7 +663,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(Patient.objects.get(patient_id="HLFSH").name, "Jane Doe")
-        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
+        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G-P-")
 
     @patch("cspatients.util.get_random_string")
     def test_new_patient_entry_no_consent(self, mock_random):
@@ -680,7 +681,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
 
         # Check that the Patient, PatientEntry been correctly saved
         self.assertEqual(patient.name, "(No Consent)")
-        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P0")
+        self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P2")
 
     def test_new_patient_entry_without_auth(self):
         response = self.client.post(
@@ -717,18 +718,18 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
             response.json(),
             {
                 "operation": "CS",
-                "gravpar": "G1P0",
+                "gravpar": "G-P-",
                 "comorbid": None,
                 "indication": None,
                 "decision_time": "2019-01-01T02:00:00+02:00",
-                "gravidity": 1,
+                "gravidity": None,
                 "completion_time": None,
                 "urgency": 4,
                 "location": None,
                 "outstanding_data": None,
                 "clinician": None,
                 "name": "Jane Doe",
-                "parity": 0,
+                "parity": None,
                 "age": 20,
                 "foetus": None,
                 "patient_id": "HLFSH",
@@ -756,18 +757,18 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
             response.json(),
             {
                 "operation": "CS",
-                "gravpar": "G1P0",
+                "gravpar": "G-P-",
                 "comorbid": None,
                 "indication": None,
                 "decision_time": "2019-01-01T02:00:00+02:00",
-                "gravidity": 1,
+                "gravidity": None,
                 "completion_time": None,
                 "urgency": 4,
                 "location": None,
                 "outstanding_data": None,
                 "clinician": None,
                 "name": "Jane Doe",
-                "parity": 0,
+                "parity": None,
                 "age": 20,
                 "foetus": None,
                 "patient_id": "HLFSH",
