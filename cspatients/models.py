@@ -32,8 +32,8 @@ class PatientEntry(models.Model):
         Patient, related_name="patient_entries", on_delete=models.CASCADE
     )
     operation = models.CharField(max_length=255, default="CS")
-    parity = models.IntegerField(default=0)
-    gravidity = models.IntegerField(default=1)
+    parity = models.IntegerField(null=True)
+    gravidity = models.IntegerField(null=True)
     comorbid = models.CharField(max_length=255, null=True)
     indication = models.CharField(max_length=255, null=True)
     decision_time = models.DateTimeField(auto_now_add=True)
@@ -48,7 +48,13 @@ class PatientEntry(models.Model):
 
     @property
     def gravpar(self):
-        return "G{}P{}".format(self.gravidity, self.parity)
+        gravidity = "-"
+        parity = "-"
+        if self.gravidity is not None:
+            gravidity = self.gravidity
+        if self.parity is not None:
+            parity = self.parity
+        return "G{}P{}".format(gravidity, parity)
 
     def __str__(self):
         return "{} having {}".format(self.patient, self.operation)
