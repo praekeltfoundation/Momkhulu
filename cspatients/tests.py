@@ -1118,7 +1118,7 @@ class PatientListTestCase(AuthenticatedAPITestCase):
         result = response.json()
 
         self.assertEqual(
-            result["patient_list"], "1) John Doe CS indic1 ❤\n2) Test CS indic1 💚"
+            result["patient_list"], "1) John Doe CS indic1 Red\n2) Test CS indic1 Green"
         )
         self.assertEqual(result["patient_ids"], "1=00000001|2=00000003")
 
