@@ -6,7 +6,7 @@ from django.utils import timezone
 class Patient(models.Model):
     patient_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
-    age = models.IntegerField(default=20)
+    age = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -29,7 +29,7 @@ class PatientEntry(models.Model):
         (IMMEDIATE, "Immediate"),
     )
 
-    URGENCY_COLORS = {1: "❤", 2: "🧡", 3: "💛", 4: "💚", 5: "💙"}
+    URGENCY_COLORS = {1: "Red", 2: "Orange", 3: "Yellow", 4: "Green", 5: "Blue"}
 
     patient = models.ForeignKey(
         Patient, related_name="patient_entries", on_delete=models.CASCADE
