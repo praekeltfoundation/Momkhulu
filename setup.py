@@ -46,7 +46,7 @@ setup(
         "channels==2.1.7",
         "channels-redis==2.3.3",
         "cryptography==2.7",
-        "Django>=2.1.7,<2.2",
+        "Django>=2.2.2,<2.3",
         "django-celery==3.2.2",
         "django-environ==0.4.5",
         "djangorestframework>=3.9.1,<4",

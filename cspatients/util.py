@@ -193,15 +193,15 @@ def split_patient_and_entry_data(data):
 
 
 def generate_password_reset_url(request, user):
-    uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
 
     path = reverse("password_reset_confirm", kwargs={"uidb64": uid, "token": token})
     return request.build_absolute_uri(path)
 
 
-def clean_and_split_string(text):
-    return [x.strip() for x in text.strip().split(",") if x]
+def clean_and_split_string(text, separator=","):
+    return [x.strip() for x in text.strip().split(separator) if x]
 
 
 def can_convert_string_to_int(s):

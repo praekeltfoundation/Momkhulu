@@ -1058,7 +1058,7 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
     def test_multi_select_valid(self):
         response = self.normalclient.get(
             reverse("rp_multiselect"),
-            {"selections": "1, 3,3, ", "options": "test 1, test 2, test 3"},
+            {"selections": "1, 3,3, ", "options": "test 1|test 2 | test 3"},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -1070,7 +1070,7 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
     def test_multi_select_invalid_selection(self):
         response = self.normalclient.get(
             reverse("rp_multiselect"),
-            {"selections": "1,5", "options": "test 1, test 2, test 3"},
+            {"selections": "1,5", "options": "test 1|test 2|test 3"},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -1082,7 +1082,7 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
     def test_multi_select_invalid_character(self):
         response = self.normalclient.get(
             reverse("rp_multiselect"),
-            {"selections": "1,a", "options": "test 1, test 2, test 3"},
+            {"selections": "1,a", "options": "test 1|test 2|test 3"},
         )
         self.assertEqual(response.status_code, 200)
 
