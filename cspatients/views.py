@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template import loader
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -142,6 +143,7 @@ class EntryStatusUpdateView(APIView):
 
             if data["option"] == "Delivery":
                 patiententry.foetus = data["foetus"]
+                patiententry.completion_time = timezone.now()
 
                 default_data = {
                     "apgar_1": data.get("apgar_1"),

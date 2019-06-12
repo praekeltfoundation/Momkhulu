@@ -893,6 +893,9 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         self.assertEqual(baby_1.baby_weight_grams, 2400)
         self.assertTrue(baby_1.nicu)
 
+        self.patient_entry.refresh_from_db()
+        self.assertIsNotNone(self.patient_entry.completion_time)
+
     def test_patient_who_exists_delivered_minimal(self):
 
         self.assertEqual(self.patient_entry.entry_babies.count(), 0)
