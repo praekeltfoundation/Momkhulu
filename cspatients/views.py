@@ -199,7 +199,9 @@ class MultiSelectView(APIView):
         selected_items = []
 
         selections = util.clean_and_split_string(request.GET.get("selections", ""))
-        options = util.clean_and_split_string(request.GET.get("options", ""))
+        options = util.clean_and_split_string(
+            request.GET.get("options", ""), separator="|"
+        )
 
         for item in selections:
             if not util.can_convert_string_to_int(item):
