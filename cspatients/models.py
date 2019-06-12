@@ -29,6 +29,8 @@ class PatientEntry(models.Model):
         (IMMEDIATE, "Immediate"),
     )
 
+    URGENCY_COLORS = {1: "❤", 2: "🧡", 3: "💛", 4: "💚", 5: "💙"}
+
     patient = models.ForeignKey(
         Patient, related_name="patient_entries", on_delete=models.CASCADE
     )
@@ -56,6 +58,9 @@ class PatientEntry(models.Model):
         if self.parity is not None:
             parity = self.parity
         return "G{}P{}".format(gravidity, parity)
+
+    def get_urgency_color(self):
+        return self.URGENCY_COLORS[self.urgency]
 
     def __str__(self):
         return "{} having {}".format(self.patient, self.operation)
