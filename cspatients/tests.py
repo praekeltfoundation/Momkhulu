@@ -1098,14 +1098,17 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
 
 
 class PatientListTestCase(AuthenticatedAPITestCase):
-    def create_patient_entry(self, patient_id, name, complete=None):
+    def create_patient_entry(self, patient_id, name, complete=None, urgency=4):
         patient = Patient.objects.create(name=name, patient_id=patient_id, age=20)
         PatientEntry.objects.create(
-            patient=patient, completion_time=complete, indication="indic1"
+            patient=patient,
+            completion_time=complete,
+            indication="indic1",
+            urgency=urgency,
         )
 
     def test_patient_list_view(self):
-        self.create_patient_entry("00000001", "John Doe")
+        self.create_patient_entry("00000001", "John Doe", urgency=1)
         self.create_patient_entry("00000002", "Mary", timezone.now())
         self.create_patient_entry("00000003", "Test")
 
@@ -1115,7 +1118,7 @@ class PatientListTestCase(AuthenticatedAPITestCase):
         result = response.json()
 
         self.assertEqual(
-            result["patient_list"], "1) John Doe CS indic1 Cold\n2) Test CS indic1 Cold"
+            result["patient_list"], "1) John Doe CS indic1 Red\n2) Test CS indic1 Green"
         )
         self.assertEqual(result["patient_ids"], "1=00000001|2=00000003")
 
