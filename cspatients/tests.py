@@ -51,6 +51,11 @@ SAMPLE_RP_POST_NO_CONSENT_DATA = {
         "gravidity": {"category": "All Responses", "value": "1", "input": "1"},
         "parity": {"category": "All Responses", "value": "2", "input": "2"},
         "option": {"category": "Patient Entry", "value": "1", "input": "1"},
+        "clinician": {
+            "category": "All Responses",
+            "value": "Dr Test",
+            "input": "Dr Test",
+        },
         "consent": {
             "name": "Consent",
             "category": "no_consent",
@@ -708,7 +713,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.json()["patient_id"], f"9{patient.id:07}")
 
         # Check that the Patient, PatientEntry been correctly saved
-        self.assertEqual(patient.name, "(No Consent)")
+        self.assertEqual(patient.name, "Pt of Dr Test")
         self.assertEqual(PatientEntry.objects.all().first().gravpar, "G1P2")
 
     def test_new_patient_entry_without_auth(self):

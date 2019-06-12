@@ -148,7 +148,9 @@ def save_model(data):
     )
 
     if "NO_CONSENT_" in patient_data["patient_id"]:
+        clinician = entry_data.get("clinician", "")
         patient.patient_id = f"9{patient.id:07}"
+        patient.name = f"Pt of {clinician}"
         patient.save()
 
     # check if we already have a active entry
