@@ -1,7 +1,7 @@
 <form  action="" method="get" class="triage-board__search" novalidate>
   <fieldset class="form-group">
     <label>Search:</label>
-    <input name="search" value="{{ search }}" type="text" placeholder="Search Patient ID or Surname">
+    <input name="search" value="{{ search }}" type="text" placeholder="Search Surname">
     <label>Filter:</label>
     <select name="status">
       <option value="0">View All Urgencies</option>
@@ -38,8 +38,8 @@
             {% else %}
               <span class="urgency urgency__small urgency-{{ patiententry.urgency }}">&nbsp;</span>
             {% endif %}
-            <a href="{% url 'cspatient_patient' patiententry.patient.patient_id %}" class="call-to-action__nav call-to-action__nav--names">
-              {{ patiententry.patient.name | default_if_none:"-" }}
+            <a href="{% url 'cspatient_patient' patiententry.id %}" class="call-to-action__nav call-to-action__nav--names">
+              {{ patiententry.surname | default_if_none:"-" }}
             </a>
           </td>
           <td>{{ patiententry.operation | default_if_none:"-" }}</td>

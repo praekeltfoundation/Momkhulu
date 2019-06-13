@@ -3,17 +3,6 @@ from django.db import models
 from django.utils import timezone
 
 
-class Patient(models.Model):
-    patient_id = models.CharField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
-    age = models.IntegerField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "{} - {}".format(self.patient_id, self.name)
-
-
 class PatientEntry(models.Model):
     ELECTIVE = 5
     COLD = 4
@@ -31,9 +20,8 @@ class PatientEntry(models.Model):
 
     URGENCY_COLORS = {1: "Red", 2: "Orange", 3: "Yellow", 4: "Green", 5: "Blue"}
 
-    patient = models.ForeignKey(
-        Patient, related_name="patient_entries", on_delete=models.CASCADE
-    )
+    surname = models.CharField(max_length=255)
+    age = models.IntegerField(null=True)
     operation = models.CharField(max_length=255, default="CS")
     parity = models.IntegerField(null=True)
     gravidity = models.IntegerField(null=True)
@@ -63,7 +51,7 @@ class PatientEntry(models.Model):
         return self.URGENCY_COLORS[self.urgency]
 
     def __str__(self):
-        return "{} having {}".format(self.patient, self.operation)
+        return "{} having {}".format(self.surname, self.operation)
 
 
 class Baby(models.Model):
