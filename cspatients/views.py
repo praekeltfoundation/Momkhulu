@@ -143,7 +143,9 @@ class EntryStatusUpdateView(APIView):
 
             if data["option"] == "Delivery":
                 patiententry.foetus = data["foetus"]
-                patiententry.completion_time = timezone.now()
+
+                if data["baby_number"] == data["foetus"]:
+                    patiententry.completion_time = timezone.now()
 
                 default_data = {
                     "apgar_1": data.get("apgar_1"),

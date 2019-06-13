@@ -123,7 +123,7 @@ SAMPLE_RP_UPDATE_DELIVERY_DATA = {
         "baby_number": {
             "name": "baby_number",
             "category": "All Responses",
-            "value": "1",
+            "value": "2",
         },
         "delivery_time": {
             "name": "delivery_time",
@@ -883,7 +883,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         # Test that the baby records have been created correctly
         self.assertEqual(Baby.objects.count(), 1)
 
-        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=1)
+        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=2)
         self.assertEqual(
             baby_1.delivery_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
@@ -926,7 +926,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         Baby.objects.create(
             **{
                 "patiententry": self.patient_entry,
-                "baby_number": 1,
+                "baby_number": 2,
                 "apgar_1": 1,
                 "apgar_5": 2,
                 "baby_weight_grams": 0,
@@ -949,7 +949,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         # Test that the baby records have been updated correctly
         self.assertEqual(Baby.objects.count(), 1)
 
-        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=1)
+        baby_1 = Baby.objects.get(patiententry=self.patient_entry, baby_number=2)
         self.assertEqual(
             baby_1.delivery_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
