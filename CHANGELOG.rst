@@ -7,6 +7,7 @@ Removed patient ID and refactored models
 No Consent improvements
 Various display changes
 Patient entry marked as complete on delivery of last baby
+Refactored tests
 
 0.0.4
 ------------
