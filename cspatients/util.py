@@ -5,19 +5,11 @@ from django.db.models import Q
 from django.template import loader
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from .models import Patient, PatientEntry
-from .serializers import (
-    CreateEntrySerializer,
-    PatientEntrySerializer,
-    PatientSerializer,
-)
-
-PATIENT_FIELDS = Patient.__dict__.keys()
-PATIENTENTRY_FIELDS = PatientEntry.__dict__.keys()
+from .models import PatientEntry
+from .serializers import PatientEntrySerializer, UpdateEntrySerializer
 
 
 def get_rp_dict(data, context=None):
@@ -44,31 +36,22 @@ def get_rp_dict(data, context=None):
             final_dict["patient_id"] = all_dict["patient_id"]
         return final_dict
     else:
-        if all_dict.get("consent", "consent_given") == "no_consent":
-            all_dict["patient_id"] = "NO_CONSENT_{}".format(
-                get_random_string(length=10)
-            )
-
         return all_dict
 
 
 def get_all_active_patient_entries(search=None, status=None):
-    patiententrys = PatientEntry.objects.select_related("patient").all()
-
     # At 7am SAST(5am UTC) we hide all completed patients from the previous day
     last_date = timezone.now().date()
     if timezone.now().hour < 5:
         last_date = timezone.now().date() - timezone.timedelta(days=1)
 
-    patiententrys = patiententrys.filter(
+    patiententrys = PatientEntry.objects.filter(
         Q(completion_time__isnull=True)
         | Q(completion_time__isnull=False, decision_time__gte=last_date)
     )
 
     if search:
-        patiententrys = patiententrys.filter(
-            Q(patient__patient_id__contains=search) | Q(patient__name__icontains=search)
-        )
+        patiententrys = patiententrys.filter(surname__icontains=search)
 
     if status:
         if status == "complete":
@@ -107,26 +90,20 @@ def send_consumers_table():
 
 def save_model_changes(data):
     """
-        The function takes in the request.POST object and saves changes in
-        models. Returns boolean
+        The function takes in the request.POST object and saves changes in the
+        PatientEntry model. Returns object and errors
     """
-    serializer = CreateEntrySerializer(data=data)
+    serializer = UpdateEntrySerializer(data=data)
     if not serializer.is_valid():
         return None, get_errors_from_serializer(serializer.errors)
 
-    patient_data, entry_data = split_patient_and_entry_data(data)
+    entry_data = get_patient_entry_data(data)
 
     try:
-        patiententry = PatientEntry.objects.get(
-            patient__patient_id=data["patient_id"], completion_time__isnull=True
-        )
+        patiententry = PatientEntry.objects.get(id=data["patient_id"])
     except PatientEntry.DoesNotExist:
         return None, ["Patient entry does not exist"]
-    patient = patiententry.patient
-    entry_data["patient"] = patient
 
-    patient.__dict__.update(patient_data)
-    patient.save()
     patiententry.__dict__.update(entry_data)
     patiententry.save()
 
@@ -135,31 +112,14 @@ def save_model_changes(data):
 
 def save_model(data):
     """
-        Saves a models. Returns patient object.
+        Saves model. Returns PatientEntry object.
     """
-    serializer = CreateEntrySerializer(data=data)
+    serializer = PatientEntrySerializer(data=data)
     if not serializer.is_valid():
         return None, get_errors_from_serializer(serializer.errors)
 
-    patient_data, entry_data = split_patient_and_entry_data(data)
+    entry_data = get_patient_entry_data(data)
 
-    patient, created = Patient.objects.update_or_create(
-        patient_id=patient_data["patient_id"], defaults=patient_data
-    )
-
-    if "NO_CONSENT_" in patient_data["patient_id"]:
-        clinician = entry_data.get("clinician", "")
-        patient.patient_id = f"9{patient.id:07}"
-        patient.name = f"Pt of {clinician}"
-        patient.save()
-
-    # check if we already have a active entry
-    if PatientEntry.objects.filter(
-        patient=patient, completion_time__isnull=True
-    ).exists():
-        return None, ["Active entry already exists for this patient"]
-
-    entry_data["patient"] = patient
     return PatientEntry.objects.create(**entry_data), []
 
 
@@ -174,24 +134,24 @@ def get_errors_from_serializer(serializer_errors):
     return errors
 
 
-def split_patient_and_entry_data(data):
+def get_patient_entry_data(data):
     """
-    Splits the data from a RapidPro POST request into patient and patient entry
-    related fields.
+    Removes all the unwanted keys from the data and updates the surname for
+    patients without consent
     """
-    patient_data = {}
     entry_data = {}
 
-    patient_fields = [f.name for f in Patient._meta.get_fields()]
     patient_entry_fields = [f.name for f in PatientEntry._meta.get_fields()]
 
     for key, value in data.items():
-        if key in patient_fields:
-            patient_data[key] = value
-        elif key in patient_entry_fields:
+        if key in patient_entry_fields:
             entry_data[key] = value
 
-    return patient_data, entry_data
+    if "No Consent" in entry_data.get("surname", ""):
+        clinician = entry_data.get("clinician", "")
+        entry_data["surname"] = f"Pt of {clinician}"
+
+    return entry_data
 
 
 def generate_password_reset_url(request, user):
@@ -216,9 +176,4 @@ def can_convert_string_to_int(s):
 
 def serialise_patient_entry(patient_entry):
     patient_entry_serializer = PatientEntrySerializer(patient_entry)
-    patient_serializer = PatientSerializer(patient_entry.patient)
-
-    data = patient_entry_serializer.data
-    data.update(patient_serializer.data)
-
-    return data
+    return patient_entry_serializer.data

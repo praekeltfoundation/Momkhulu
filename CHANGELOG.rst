@@ -3,6 +3,10 @@ VERSIONS
 
 Next Release
 ------------
+Removed patient ID and refactored models
+No Consent improvements
+Various display changes
+Patient entry marked as complete on delivery of last baby
 
 0.0.4
 ------------

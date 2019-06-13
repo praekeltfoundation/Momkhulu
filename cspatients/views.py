@@ -41,18 +41,17 @@ def view(request):
 @login_required()
 def patient(request, patient_id):
     template = loader.get_template("cspatients/patient.html")
-    patiententry = (
-        PatientEntry.objects.prefetch_related("entry_babies", "patient")
-        .filter(patient__patient_id=patient_id)
-        .order_by("-created_at")
-        .first()
-    )
+    context = {"user": request.user}
+    status_code = status.HTTP_200_OK
 
-    context = {"patiententry": patiententry, "user": request.user}
-    if patiententry:
-        status_code = status.HTTP_200_OK
-    else:
+    try:
+        patiententry = PatientEntry.objects.prefetch_related("entry_babies").get(
+            id=patient_id
+        )
+        context["patiententry"] = patiententry
+    except PatientEntry.DoesNotExist:
         status_code = status.HTTP_404_NOT_FOUND
+
     return HttpResponse(template.render(context), status=status_code)
 
 
@@ -101,9 +100,7 @@ class CheckPatientExistsView(APIView):
 
         try:
             patient_id = util.get_rp_dict(request.data)["patient_id"]
-            patient_entry = PatientEntry.objects.get(
-                patient__patient_id=patient_id, completion_time__isnull=True
-            )
+            patient_entry = PatientEntry.objects.get(id=patient_id)
 
             patient_data = util.serialise_patient_entry(patient_entry)
         except PatientEntry.DoesNotExist:
@@ -137,9 +134,7 @@ class EntryStatusUpdateView(APIView):
     def post(self, request):
         data = util.get_rp_dict(request.data)
         try:
-            patiententry = PatientEntry.objects.get(
-                patient__patient_id=data["patient_id"], completion_time__isnull=True
-            )
+            patiententry = PatientEntry.objects.get(id=data["patient_id"])
 
             if data["option"] == "Delivery":
                 patiententry.foetus = data["foetus"]
@@ -229,17 +224,15 @@ class ActivePatientListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        entries = PatientEntry.objects.select_related("patient").filter(
-            completion_time__isnull=True
-        )
+        entries = PatientEntry.objects.filter(completion_time__isnull=True)
 
         ids = []
         data = []
         for count, entry in enumerate(entries, start=1):
             data.append(
-                f"{count}) {entry.patient.name} {entry.operation} {entry.indication} {entry.get_urgency_color()}"
+                f"{count}) {entry.surname} {entry.operation} {entry.indication} {entry.get_urgency_color()}"
             )
-            ids.append(f"{count}={entry.patient.patient_id}")
+            ids.append(f"{count}={entry.id}")
 
         return Response(
             {"patient_list": "\n".join(data), "patient_ids": "|".join(ids)},

@@ -1,12 +1,6 @@
 from rest_framework import serializers
 
-from cspatients.models import Patient, PatientEntry
-
-
-class PatientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Patient
-        exclude = ("created_at", "updated_at", "id")
+from cspatients.models import PatientEntry
 
 
 class PatientEntrySerializer(serializers.ModelSerializer):
@@ -14,13 +8,18 @@ class PatientEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PatientEntry
-        exclude = ("created_at", "updated_at", "id", "patient")
+        exclude = ("created_at", "updated_at", "id")
+
+    def __init__(self, *args, **kwargs):
+        super(PatientEntrySerializer, self).__init__(*args, **kwargs)
+
+        self.fields["surname"].error_messages["required"] = "Surname is required"
 
 
-class CreateEntrySerializer(serializers.Serializer):
+class UpdateEntrySerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=255, required=True)
 
     def __init__(self, *args, **kwargs):
-        super(CreateEntrySerializer, self).__init__(*args, **kwargs)
+        super(UpdateEntrySerializer, self).__init__(*args, **kwargs)
 
         self.fields["patient_id"].error_messages["required"] = "Patient ID is required"
