@@ -139,5 +139,19 @@ SAMPLE_RP_UPDATE_COMPLETED_DATA = {
     }
 }
 
+SAMPLE_RP_UPDATE_CANCELLED_DATA = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "1", "input": "1"},
+        "option": {"category": "ChangeOrCancel", "value": "4", "input": "4"},
+    }
+}
+
+SAMPLE_RP_UPDATE_BAD_OPTION_DATA = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "1", "input": "1"},
+        "option": {"category": "GobbledyGook", "value": "4", "input": "4"},
+    }
+}
+
 SAMPLE_RP_CHECKLIST_DATA = {"contact": {"urn": "whatsapp:12065550109"}}
 SAMPLE_RP_CHECKLIST_DATA_INACTIVE = {"contact": {"urn": "whatsapp:12065550108"}}
