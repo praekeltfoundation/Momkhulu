@@ -636,6 +636,15 @@ class PatientSelectTestCase(AuthenticatedAPITestCase):
 
         self.assertEqual(result["patient_id"], "00000003")
 
+    def test_patient_select_view_invalid(self):
+
+        response = self.normalclient.get(
+            reverse("rp_patient_select"),
+            {"patient_ids": "1=00000001|2=00000003|3=00000004", "option": "4"},
+        )
+
+        self.assertEqual(response.status_code, 404)
+
 
 class HealthViewTest(APITestCase):
     def setUp(self):
