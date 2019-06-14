@@ -32,6 +32,7 @@ class ViewAllContextTest(TestCase):
         }
 
         self.patient_five_data = {"surname": "Completed OLD", "age": 23, "urgency": 1}
+        self.patient_six_data = {"surname": "Cancel", "operation_cancelled": True}
 
     def test_context_when_no_patients(self):
         self.assertFalse(get_all_active_patient_entries())
@@ -43,6 +44,7 @@ class ViewAllContextTest(TestCase):
         entry3, _ = save_model(self.patient_three_data)
         entry4, _ = save_model(self.patient_four_data)
         entry5, _ = save_model(self.patient_five_data)
+        save_model(self.patient_six_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()
@@ -72,6 +74,7 @@ class ViewAllContextTest(TestCase):
         entry3, _ = save_model(self.patient_three_data)
         entry4, _ = save_model(self.patient_four_data)
         entry5, _ = save_model(self.patient_five_data)
+        save_model(self.patient_six_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()
@@ -99,6 +102,7 @@ class ViewAllContextTest(TestCase):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         save_model(self.patient_three_data)
+        save_model(self.patient_six_data)
 
         patient_entries = get_all_active_patient_entries("COLD", "4")
 
@@ -109,6 +113,7 @@ class ViewAllContextTest(TestCase):
         save_model(self.patient_one_data)
         save_model(self.patient_two_data)
         entry3, _ = save_model(self.patient_three_data)
+        save_model(self.patient_six_data)
 
         entry3.completion_time = timezone.now()
         entry3.save()

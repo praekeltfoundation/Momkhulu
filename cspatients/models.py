@@ -34,6 +34,7 @@ class PatientEntry(models.Model):
     outstanding_data = models.CharField(max_length=255, null=True)
     clinician = models.CharField(max_length=255, null=True)
     foetus = models.IntegerField(null=True)
+    operation_cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

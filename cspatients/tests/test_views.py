@@ -22,6 +22,8 @@ from .constants import (
     SAMPLE_RP_POST_DATA_NON_EXISTING,
     SAMPLE_RP_POST_INVALID_DATA,
     SAMPLE_RP_POST_NO_CONSENT_DATA,
+    SAMPLE_RP_UPDATE_BAD_OPTION_DATA,
+    SAMPLE_RP_UPDATE_CANCELLED_DATA,
     SAMPLE_RP_UPDATE_COMPLETED_DATA,
     SAMPLE_RP_UPDATE_DATA,
     SAMPLE_RP_UPDATE_DELIVERY_DATA,
@@ -278,6 +280,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "parity": None,
                 "age": 20,
                 "foetus": None,
+                "operation_cancelled": False,
             },
         )
 
@@ -488,6 +491,42 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
             self.patient_entry.completion_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
+
+    def test_patient_who_exists_cancelled(self):
+        SAMPLE_RP_UPDATE_CANCELLED_DATA["results"]["patient_id"]["value"] = str(
+            self.patient_entry.id
+        )
+        SAMPLE_RP_UPDATE_CANCELLED_DATA["results"]["patient_id"]["input"] = str(
+            self.patient_entry.id
+        )
+
+        self.assertFalse(self.patient_entry.operation_cancelled)
+
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_CANCELLED_DATA,
+            format="json",
+        )
+
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 200)
+        self.patient_entry.refresh_from_db()
+        self.assertTrue(self.patient_entry.operation_cancelled)
+
+    def test_patient_status_update_bad_option(self):
+        SAMPLE_RP_UPDATE_BAD_OPTION_DATA["results"]["patient_id"]["value"] = str(
+            self.patient_entry.id
+        )
+        SAMPLE_RP_UPDATE_BAD_OPTION_DATA["results"]["patient_id"]["input"] = str(
+            self.patient_entry.id
+        )
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_BAD_OPTION_DATA,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 400)
 
     def test_delivery_of_patient_who_does_not_exist(self):
 

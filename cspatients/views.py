@@ -160,6 +160,10 @@ class EntryStatusUpdateView(APIView):
 
             elif data["option"] == "Completed":
                 patiententry.completion_time = data["completion_time"]
+            elif data["option"] == "ChangeOrCancel":
+                patiententry.operation_cancelled = True
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
             patiententry.save()
             post_patient_update.delay()

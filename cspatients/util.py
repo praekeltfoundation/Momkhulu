@@ -45,7 +45,7 @@ def get_all_active_patient_entries(search=None, status=None):
     if timezone.now().hour < 5:
         last_date = timezone.now().date() - timezone.timedelta(days=1)
 
-    patiententrys = PatientEntry.objects.filter(
+    patiententrys = PatientEntry.objects.filter(operation_cancelled=False).filter(
         Q(completion_time__isnull=True)
         | Q(completion_time__isnull=False, decision_time__gte=last_date)
     )
