@@ -637,19 +637,23 @@ class MultiSelectTestCase(AuthenticatedAPITestCase):
 
 
 class PatientListTestCase(AuthenticatedAPITestCase):
-    def create_patient_entry(self, surname, complete=None, urgency=4):
+    def create_patient_entry(
+        self, surname, complete=None, urgency=4, operation_cancelled=False
+    ):
         return PatientEntry.objects.create(
             surname=surname,
             age=20,
             completion_time=complete,
             indication="indic1",
             urgency=urgency,
+            operation_cancelled=operation_cancelled,
         )
 
     def test_patient_list_view(self):
         entry1 = self.create_patient_entry("John Doe", urgency=1)
         self.create_patient_entry("Mary", timezone.now())
         entry3 = self.create_patient_entry("Test")
+        self.create_patient_entry("Test", operation_cancelled=True)
 
         response = self.normalclient.get(reverse("rp_patient_list"))
 
