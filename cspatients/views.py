@@ -228,7 +228,9 @@ class ActivePatientListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        entries = PatientEntry.objects.filter(completion_time__isnull=True)
+        entries = PatientEntry.objects.filter(
+            completion_time__isnull=True, operation_cancelled=False
+        )
 
         ids = []
         data = []
