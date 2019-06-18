@@ -24,7 +24,7 @@
           {% if patiententry.age is not None %}
           <li class="patient-list__item">
             <h5 class="patient-list__label">Age</h5>
-            <h4 class="patient-list__entry">{{ patiententry.age|default_if_none:"-" }}</h4>
+            <h4 class="patient-list__entry">{{ patiententry.age }}</h4>
           </li>
           {% endif %}
           <li class="patient-list__item">
