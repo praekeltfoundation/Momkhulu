@@ -160,6 +160,8 @@ class EntryStatusUpdateView(APIView):
 
             elif data["option"] == "Completed":
                 patiententry.completion_time = data["completion_time"]
+            elif data["option"] == "NonDelivery":
+                patiententry.anesthetic_time = data["anesthetic_time"]
             elif data["option"] == "ChangeOrCancel":
                 patiententry.operation_cancelled = True
             else:
