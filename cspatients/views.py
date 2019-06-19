@@ -240,11 +240,12 @@ class ActivePatientListView(APIView):
 
         data = {"patient_ids": "|".join(ids)}
 
+        list_size = settings.PATIENT_LIST_SIZE
         list_number = 0
         while len(patient_data) > 0:
             list_number += 1
-            data[f"patient_list_{list_number}"] = "\n".join(patient_data[0:10])
-            patient_data = patient_data[10:]
+            data[f"patient_list_{list_number}"] = "\n".join(patient_data[0:list_size])
+            patient_data = patient_data[list_size:]
 
         data["list_count"] = list_number
 
