@@ -672,8 +672,6 @@ class PatientListTestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.status_code, 200)
         result = response.json()
 
-        print(result)
-
         self.assertTrue("1) John Doe 0 CS indic1 Green" in result["patient_list_1"])
         self.assertTrue("12) John Doe 11 CS indic1 Green" in result["patient_list_2"])
         self.assertTrue("23) John Doe 22 CS indic1 Green" in result["patient_list_3"])
