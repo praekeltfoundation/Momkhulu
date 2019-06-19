@@ -282,6 +282,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "age": 20,
                 "foetus": None,
                 "operation_cancelled": False,
+                "anesthetic_time": None,
             },
         )
 
