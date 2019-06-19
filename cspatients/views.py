@@ -233,17 +233,25 @@ class ActivePatientListView(APIView):
         )
 
         ids = []
-        data = []
+        patient_data = []
         for count, entry in enumerate(entries, start=1):
-            data.append(
+            patient_data.append(
                 f"{count}) {entry.surname} {entry.operation} {entry.indication} {entry.get_urgency_color()}"
             )
             ids.append(f"{count}={entry.id}")
 
-        return Response(
-            {"patient_list": "\n".join(data), "patient_ids": "|".join(ids)},
-            status=status.HTTP_200_OK,
-        )
+        data = {"patient_ids": "|".join(ids)}
+
+        list_size = settings.PATIENT_LIST_SIZE
+        list_number = 0
+        while len(patient_data) > 0:
+            list_number += 1
+            data[f"patient_list_{list_number}"] = "\n".join(patient_data[0:list_size])
+            patient_data = patient_data[list_size:]
+
+        data["list_count"] = list_number
+
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class PatientSelectView(APIView):

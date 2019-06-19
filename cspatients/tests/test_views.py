@@ -661,9 +661,28 @@ class PatientListTestCase(AuthenticatedAPITestCase):
         result = response.json()
 
         self.assertEqual(
-            result["patient_list"], "1) John Doe CS indic1 Red\n2) Test CS indic1 Green"
+            result["patient_list_1"],
+            "1) John Doe CS indic1 Red\n2) Test CS indic1 Green",
         )
         self.assertEqual(result["patient_ids"], f"1={entry1.id}|2={entry3.id}")
+        self.assertEqual(result["list_count"], 1)
+
+    def test_patient_list_view_multiple_lists(self):
+        for i in range(0, 33):
+            self.create_patient_entry(f"John Doe {i}")
+
+        response = self.normalclient.get(reverse("rp_patient_list"))
+
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+
+        self.assertTrue("1) John Doe 0 CS indic1 Green" in result["patient_list_1"])
+        self.assertTrue("12) John Doe 11 CS indic1 Green" in result["patient_list_2"])
+        self.assertTrue("23) John Doe 22 CS indic1 Green" in result["patient_list_3"])
+        self.assertTrue("32) John Doe 31 CS indic1 Green" in result["patient_list_4"])
+        self.assertFalse("patient_list_5" in result)
+
+        self.assertEqual(result["list_count"], 4)
 
 
 class PatientSelectTestCase(AuthenticatedAPITestCase):
