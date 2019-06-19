@@ -492,7 +492,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
             self.patient_entry.completion_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
-    
+
     def test_patient_who_exists_nondelivered(self):
         SAMPLE_RP_UPDATE_NONDELIVERY_DATA["results"]["patient_id"]["value"] = str(
             self.patient_entry.id
@@ -566,7 +566,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         # Test returns the right response code
         self.assertEqual(response.status_code, 404)
 
-        # Test that no baby records were created}
+        # Test that no baby records were created
         self.assertEqual(self.patient_entry.entry_babies.count(), 0)
 
     def test_patient_exists_no_auth(self):
