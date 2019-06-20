@@ -162,6 +162,7 @@ class EntryStatusUpdateView(APIView):
                 patiententry.completion_time = data["completion_time"]
             elif data["option"] == "NonDelivery":
                 patiententry.anesthetic_time = data["anesthetic_time"]
+                patiententry.completion_time = timezone.now()
             elif data["option"] == "ChangeOrCancel":
                 patiententry.operation_cancelled = True
             else:

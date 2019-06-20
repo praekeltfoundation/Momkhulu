@@ -503,6 +503,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         )
 
         self.assertIsNone(self.patient_entry.completion_time)
+        self.assertIsNone(self.patient_entry.anesthetic_time)
 
         response = self.normalclient.post(
             reverse("rp_entrystatus_update"),
@@ -520,6 +521,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
             self.patient_entry.anesthetic_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
+        self.assertIsNotNone(self.patient_entry.completion_time)
 
     def test_patient_who_exists_cancelled(self):
         SAMPLE_RP_UPDATE_CANCELLED_DATA["results"]["patient_id"]["value"] = str(
