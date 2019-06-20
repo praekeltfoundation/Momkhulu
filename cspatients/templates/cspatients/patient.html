@@ -66,6 +66,12 @@
           <li class="patient-list__item">
             <h5 class="patient-list__label">Clinician</h5>
             <h4 class="patient-list__entry">{{ patiententry.clinician|default_if_none:"-" }}</h4>
+          </li>          
+          <li class="patient-list__item patient-list__item--column">
+            <div class="patient-list__item--column-left">
+              <h5 class="patient-list__label">Decision time</h5>
+              <h4 class="patient-list__entry">{{ patiententry.decision_time|date:"Y-m-d H:i" }}</h4>
+            </div>
           </li>
           {% if patiententry.anesthetic_time is not None %}
            <li class="patient-list__item patient-list__item--column">
@@ -75,12 +81,6 @@
              </div>
            </li>
           {% endif %}
-          <li class="patient-list__item patient-list__item--column">
-            <div class="patient-list__item--column-left">
-              <h5 class="patient-list__label">Decision time</h5>
-              <h4 class="patient-list__entry">{{ patiententry.decision_time|date:"Y-m-d H:i" }}</h4>
-            </div>
-          </li>
           <li class="patient-list__item patient-list__item--column">
             <div class="patient-list__item--column-left">
               <h5 class="patient-list__label">Date of delivery</h5>
