@@ -29,6 +29,7 @@ from .constants import (
     SAMPLE_RP_UPDATE_DELIVERY_DATA,
     SAMPLE_RP_UPDATE_DELIVERY_DATA_MINIMAL,
     SAMPLE_RP_UPDATE_INVALID_DATA,
+    SAMPLE_RP_UPDATE_NONDELIVERY_DATA,
 )
 
 
@@ -281,6 +282,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "age": 20,
                 "foetus": None,
                 "operation_cancelled": False,
+                "anesthetic_time": None,
             },
         )
 
@@ -491,6 +493,35 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
             self.patient_entry.completion_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
+
+    def test_patient_who_exists_nondelivered(self):
+        SAMPLE_RP_UPDATE_NONDELIVERY_DATA["results"]["patient_id"]["value"] = str(
+            self.patient_entry.id
+        )
+        SAMPLE_RP_UPDATE_NONDELIVERY_DATA["results"]["patient_id"]["input"] = str(
+            self.patient_entry.id
+        )
+
+        self.assertIsNone(self.patient_entry.completion_time)
+        self.assertIsNone(self.patient_entry.anesthetic_time)
+
+        response = self.normalclient.post(
+            reverse("rp_entrystatus_update"),
+            SAMPLE_RP_UPDATE_NONDELIVERY_DATA,
+            format="json",
+        )
+
+        # Test returns the right response code
+        self.assertEqual(response.status_code, 200)
+
+        # Test that the delivery time has been updated
+        self.patient_entry.refresh_from_db()
+
+        self.assertEqual(
+            self.patient_entry.anesthetic_time,
+            timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
+        )
+        self.assertIsNotNone(self.patient_entry.completion_time)
 
     def test_patient_who_exists_cancelled(self):
         SAMPLE_RP_UPDATE_CANCELLED_DATA["results"]["patient_id"]["value"] = str(

@@ -146,6 +146,18 @@ SAMPLE_RP_UPDATE_CANCELLED_DATA = {
     }
 }
 
+SAMPLE_RP_UPDATE_NONDELIVERY_DATA = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "HLFSH", "input": "HLFSH"},
+        "anesthetic_time": {
+            "name": "anesthetic_time",
+            "category": "All Responses",
+            "value": "2019-05-12 10:22+00:00",
+        },
+        "option": {"category": "NonDelivery", "value": "4", "input": "4"},
+    }
+}
+
 SAMPLE_RP_UPDATE_BAD_OPTION_DATA = {
     "results": {
         "patient_id": {"category": "All Responses", "value": "1", "input": "1"},

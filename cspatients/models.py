@@ -37,6 +37,7 @@ class PatientEntry(models.Model):
     operation_cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    anesthetic_time = models.DateTimeField(null=True)
 
     @property
     def gravpar(self):
