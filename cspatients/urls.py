@@ -43,6 +43,11 @@ urlpatterns = [
         name="rp_patient_select",
     ),
     path("api/rpmultiselect", views.MultiSelectView.as_view(), name="rp_multiselect"),
+    path(
+        "api/incoming_whatsapp",
+        views.WhatsAppEventListener.as_view(),
+        name="whatsapp-events",
+    ),
     path("health", views.health, name="health"),
     path("health_details", views.detailed_health, name="detailed-health"),
 ]

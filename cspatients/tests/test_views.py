@@ -1,3 +1,4 @@
+import json
 from os import environ
 
 import responses
@@ -737,6 +738,63 @@ class PatientSelectTestCase(AuthenticatedAPITestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+
+class WhatsAppEventListenerTest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def mock_rapidpro_event(self):
+        responses.add(
+            responses.POST,
+            settings.RAPIDPRO_CHANNEL_URL,
+            json={},
+            status=200,
+            match_querystring=True,
+        )
+
+    @responses.activate
+    def test_webhook_called(self):
+        self.mock_rapidpro_event()
+
+        payload = {
+            "messages": [
+                {"id": "message_id1"},
+                {"id": "message_id2", "group_id": "group_id1"},
+            ],
+            "events": [
+                {"id": "event_id1"},
+                {"id": "event_id2", "group_id": "group_id1"},
+            ],
+            "contacts": [{"profile": {"name": "John"}, "wa_id": "27123"}],
+        }
+
+        response = self.client.post(reverse("whatsapp-events"), payload, format="json")
+
+        self.assertEqual(response.status_code, 200)
+
+        rapidpro_call = responses.calls[0]
+
+        self.assertEqual(rapidpro_call.request.url, settings.RAPIDPRO_CHANNEL_URL)
+        self.assertEqual(
+            json.loads(rapidpro_call.request.body),
+            {
+                "messages": [{"id": "message_id1"}],
+                "events": [{"id": "event_id1"}],
+                "contacts": [{"profile": {"name": "John"}, "wa_id": "27123"}],
+            },
+        )
+
+    @patch("requests.post")
+    def test_webhook_called_empty(self, mock_rapidpro_post):
+        payload = {
+            "messages": [{"id": "message_id1", "group_id": "group_id1"}],
+            "contacts": [{"profile": {"name": "John"}, "wa_id": "27123"}],
+        }
+
+        self.client.post(reverse("whatsapp-events"), payload, format="json")
+
+        mock_rapidpro_post.assert_not_called()
 
 
 class HealthViewTest(APITestCase):
