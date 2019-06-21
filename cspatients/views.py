@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -270,6 +270,30 @@ class PatientSelectView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response({"patient_id": patient_ids[option]}, status=status.HTTP_200_OK)
+
+
+class WhatsAppEventListener(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        headers = {"Content-Type": "application/json"}
+        payload = {"messages": [], "events": []}
+
+        for type in ("messages", "events"):
+            if type in request.data:
+                for item in request.data[type]:
+                    if "group_id" not in item:
+                        payload[type].append(item)
+
+        payload["contacts"] = request.data.get("contacts", [])
+
+        if len(payload["messages"]) == 0 and len(payload["events"]) == 0:
+            return Response(status=status.HTTP_200_OK)
+
+        response = requests.post(
+            settings.RAPIDPRO_CHANNEL_URL, json=payload, headers=headers
+        )
+        return Response(response.json(), status=response.status_code)
 
 
 def health(request):
