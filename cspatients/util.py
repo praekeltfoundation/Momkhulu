@@ -177,3 +177,18 @@ def can_convert_string_to_int(s):
 def serialise_patient_entry(patient_entry):
     patient_entry_serializer = PatientEntrySerializer(patient_entry)
     return patient_entry_serializer.data
+
+
+def build_new_patient_message(patient_data, url):
+    patient_data["momkhulu_url"] = url
+    message_template = (
+        "Patient Ms. {surname} has been added to the Momkhulu Triage Board.\n\n"
+        "*Patient Details:*\n"
+        "Operation: {operation}\n"
+        "Location: {location}\n"
+        "Indications: {indication}\n"
+        "Urgency: {urgency}\n"
+        "Decision time: {decision_time}\n\n"
+        "You can now view her entry here: {momkhulu_url}"
+    )
+    return message_template.format(**patient_data)

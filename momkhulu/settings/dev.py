@@ -17,6 +17,10 @@ CELERY_RESULT_BACKEND = "djcelery.backends.database:DatabaseBackend"
 
 RABBITMQ_MANAGEMENT_INTERFACE = "http://user:pass@rabbitmq:15672/api/queues//my_vhost/"
 MOMKHULU_GROUP_INVITE_LINK = "http://fakewhatsapp/the-group-id"
+MOMKHULU_WA_GROUP_ID = "the-group-id"
 RAPIDPRO_CHANNEL_URL = (
     "https://myrp.com/c/wa/11111111-1111-1111-1111-111111111111/receive"
 )
+
+TURN_TOKEN = env.str("TURN_TOKEN", "123456")
+TURN_URL = env.str("TURN_URL", "https://fakewhatsapp/")

@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from cspatients import util
 
 from .models import Baby, PatientEntry, Profile
-from .tasks import post_patient_update
+from .tasks import post_patient_update, send_wa_group_message
 
 
 @login_required()
@@ -82,8 +82,14 @@ class NewPatientEntryView(APIView):
 
         patient_entry, errors = util.save_model(util.get_rp_dict(request.data))
         if patient_entry:
+            patient_entry.refresh_from_db()
             patient_data = util.serialise_patient_entry(patient_entry)
 
+            message = util.build_new_patient_message(
+                patient_data, request.build_absolute_uri("/")
+            )
+
+            send_wa_group_message.delay(message)
             post_patient_update.delay()
         else:
             status_code = status.HTTP_400_BAD_REQUEST
