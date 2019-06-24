@@ -3,11 +3,17 @@ VERSIONS
 
 Next Release
 ------------
+
+0.0.5
+------------
 Removed patient ID and refactored models
 No Consent improvements
 Various display changes
 Patient entry marked as complete on delivery of last baby
 Refactored tests
+Send WA notification to group
+Split patient list into chunks
+Add cancel operation option
 
 0.0.4
 ------------
