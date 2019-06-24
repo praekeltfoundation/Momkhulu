@@ -223,7 +223,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
             "Operation: CS\n"
             "Location: None\n"
             "Indications: None\n"
-            "Urgency: 4\n"
+            "Urgency: Cold\n"
             "Decision time: 2019-05-12 12:22\n\n"
             "You can now view her entry here: http://testserver/"
         )
@@ -251,7 +251,7 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
             "Operation: CS\n"
             "Location: None\n"
             "Indications: None\n"
-            "Urgency: 4\n"
+            "Urgency: Cold\n"
             "Decision time: 2019-05-12 12:22\n\n"
             "You can now view her entry here: http://testserver/"
         )
@@ -301,7 +301,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "decision_time": "2019-01-01 02:00",
                 "gravidity": None,
                 "completion_time": None,
-                "urgency": 4,
+                "urgency": "Cold",
                 "location": None,
                 "outstanding_data": None,
                 "clinician": None,

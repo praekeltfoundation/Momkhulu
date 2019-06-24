@@ -6,6 +6,7 @@ from cspatients.models import PatientEntry
 class PatientEntrySerializer(serializers.ModelSerializer):
     gravpar = serializers.ReadOnlyField()
     decision_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M", required=False)
+    urgency = serializers.SerializerMethodField()
 
     class Meta:
         model = PatientEntry
@@ -15,6 +16,9 @@ class PatientEntrySerializer(serializers.ModelSerializer):
         super(PatientEntrySerializer, self).__init__(*args, **kwargs)
 
         self.fields["surname"].error_messages["required"] = "Surname is required"
+
+    def get_urgency(self, obj):
+        return obj.get_urgency_display()
 
 
 class UpdateEntrySerializer(serializers.Serializer):
