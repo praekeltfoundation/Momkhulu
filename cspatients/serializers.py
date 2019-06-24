@@ -5,6 +5,7 @@ from cspatients.models import PatientEntry
 
 class PatientEntrySerializer(serializers.ModelSerializer):
     gravpar = serializers.ReadOnlyField()
+    decision_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M", required=False)
 
     class Meta:
         model = PatientEntry

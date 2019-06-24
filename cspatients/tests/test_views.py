@@ -199,7 +199,8 @@ class AuthenticatedAPITestCase(TestCase):
 
 
 class NewPatientAPITestCase(AuthenticatedAPITestCase):
-    def test_new_patient_entry_saves_minimum_data(self):
+    @patch("cspatients.tasks.send_wa_group_message.delay")
+    def test_new_patient_entry_saves_minimum_data(self, mock_group_send):
         response = self.normalclient.post(
             reverse("rp_newpatiententry"), SAMPLE_RP_POST_DATA, format="json"
         )
@@ -208,7 +209,6 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         self.assertEqual(response.json()["errors"], "")
 
         # Check that the PatientEntry been correctly saved
-
         entry = PatientEntry.objects.all().first()
         self.assertEqual(entry.surname, "Doe")
         self.assertEqual(entry.gravpar, "G-P-")
@@ -217,7 +217,21 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
 
-    def test_new_patient_entry_no_consent(self):
+        message = (
+            "Patient Ms. Doe has been added to the Momkhulu Triage Board.\n\n"
+            "*Patient Details:*\n"
+            "Operation: CS\n"
+            "Location: None\n"
+            "Indications: None\n"
+            "Urgency: 4\n"
+            "Decision time: 2019-05-12 12:22\n\n"
+            "You can now view her entry here: http://testserver/"
+        )
+
+        mock_group_send.assert_called_with(message)
+
+    @patch("cspatients.tasks.send_wa_group_message.delay")
+    def test_new_patient_entry_no_consent(self, mock_group_send):
         response = self.normalclient.post(
             reverse("rp_newpatiententry"), SAMPLE_RP_POST_NO_CONSENT_DATA, format="json"
         )
@@ -230,6 +244,19 @@ class NewPatientAPITestCase(AuthenticatedAPITestCase):
         # Check that the PatientEntry been correctly saved
         self.assertEqual(entry.surname, "Pt of Dr Test")
         self.assertEqual(entry.gravpar, "G1P2")
+
+        message = (
+            "Patient Ms. Pt of Dr Test has been added to the Momkhulu Triage Board.\n\n"
+            "*Patient Details:*\n"
+            "Operation: CS\n"
+            "Location: None\n"
+            "Indications: None\n"
+            "Urgency: 4\n"
+            "Decision time: 2019-05-12 12:22\n\n"
+            "You can now view her entry here: http://testserver/"
+        )
+
+        mock_group_send.assert_called_with(message)
 
     def test_new_patient_entry_without_auth(self):
         response = self.client.post(
@@ -271,7 +298,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "gravpar": "G-P-",
                 "comorbid": None,
                 "indication": None,
-                "decision_time": "2019-01-01T02:00:00+02:00",
+                "decision_time": "2019-01-01 02:00",
                 "gravidity": None,
                 "completion_time": None,
                 "urgency": 4,

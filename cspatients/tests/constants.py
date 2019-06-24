@@ -3,8 +3,8 @@ SAMPLE_RP_POST_DATA = {
         "surname": {"category": "All Responses", "value": "Doe", "input": "Doe"},
         "decision_time": {
             "category": "All Responses",
-            "value": "2019-05-12 10:22+00:00",
-            "input": "2019-05-12 10:22+00:00",
+            "value": "2019-05-12 12:22+02:00",
+            "input": "2019-05-12 12:22+02:00",
         },
         "option": {"category": "Patient Entry", "value": "1", "input": "1"},
     }
@@ -30,6 +30,11 @@ SAMPLE_RP_POST_NO_CONSENT_DATA = {
             "category": "no_consent",
             "value": "2",
             "input": "2",
+        },
+        "decision_time": {
+            "category": "All Responses",
+            "value": "2019-05-12 10:22+00:00",
+            "input": "2019-05-12 10:22+00:00",
         },
     }
 }
