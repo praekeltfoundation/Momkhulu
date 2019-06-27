@@ -13,7 +13,7 @@ def read(*args):
 
 setup(
     name="momkhulu",
-    version="0.0.5",
+    version="0.0.6",
     description="Hospital Resource Allocation Tool",
     long_description=read("README.rst"),
     long_description_content_type="text/x-rst",

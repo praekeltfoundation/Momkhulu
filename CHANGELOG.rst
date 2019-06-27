@@ -4,6 +4,11 @@ VERSIONS
 Next Release
 ------------
 
+0.0.6
+------------
+Change hot urgnecy to warm
+Include urgency color in new patient group notification
+
 0.0.5
 ------------
 Removed patient ID and refactored models
