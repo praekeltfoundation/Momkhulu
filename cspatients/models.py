@@ -6,14 +6,14 @@ from django.utils import timezone
 class PatientEntry(models.Model):
     ELECTIVE = 5
     COLD = 4
-    HOT_YELLOW = 3
+    WARM_YELLOW = 3
     HOT_ORANGE = 2
     IMMEDIATE = 1
 
     URGENCY_CHOICES = (
         (ELECTIVE, "Elective"),
         (COLD, "Cold"),
-        (HOT_YELLOW, "Hot"),
+        (WARM_YELLOW, "Warm"),
         (HOT_ORANGE, "Hot"),
         (IMMEDIATE, "Immediate"),
     )

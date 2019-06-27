@@ -18,7 +18,7 @@ class PatientEntrySerializer(serializers.ModelSerializer):
         self.fields["surname"].error_messages["required"] = "Surname is required"
 
     def get_urgency(self, obj):
-        return obj.get_urgency_display()
+        return f"{obj.get_urgency_display()} ({obj.get_urgency_color()})"
 
 
 class UpdateEntrySerializer(serializers.Serializer):
