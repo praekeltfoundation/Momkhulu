@@ -31,6 +31,7 @@ from .constants import (
     SAMPLE_RP_UPDATE_DELIVERY_DATA_MINIMAL,
     SAMPLE_RP_UPDATE_INVALID_DATA,
     SAMPLE_RP_UPDATE_NONDELIVERY_DATA,
+    SAMPLE_RP_UPDATE_URGENCY_DATA,
 )
 
 
@@ -355,6 +356,27 @@ class UpdatePatientEntryAPITestCase(AuthenticatedAPITestCase):
         # Test that that the change has been made
         self.patiententry.refresh_from_db()
         self.assertTrue(self.patiententry.surname == "Nyasha")
+
+    def test_update_patient_urgency(self):
+        SAMPLE_RP_UPDATE_URGENCY_DATA["results"]["patient_id"]["value"] = str(
+            self.patiententry.id
+        )
+        SAMPLE_RP_UPDATE_URGENCY_DATA["results"]["patient_id"]["input"] = str(
+            self.patiententry.id
+        )
+
+        response = self.normalclient.post(
+            reverse("rp_entrychanges"), SAMPLE_RP_UPDATE_URGENCY_DATA, format="json"
+        )
+
+        # Test the right response code
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["errors"], "")
+        self.assertEqual(response.json()["urgency"], "Immediate (Red)")
+
+        # Test that that the change has been made
+        self.patiententry.refresh_from_db()
+        self.assertEqual(self.patiententry.urgency, 1)
 
     def test_update_patient_invalid_data(self):
         response = self.normalclient.post(

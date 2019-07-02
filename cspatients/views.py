@@ -123,6 +123,7 @@ class UpdatePatientEntryView(APIView):
         changes_dict = util.get_rp_dict(request.data, context="entrychanges")
         patient_entry, errors = util.save_model_changes(changes_dict)
         if patient_entry:
+            patient_entry.refresh_from_db()
             patient_data = util.serialise_patient_entry(patient_entry)
 
             post_patient_update.delay()
