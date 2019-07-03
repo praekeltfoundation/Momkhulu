@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.7
+------------
+Fix changing integer type fields
+
 0.0.6
 ------------
 Change hot urgnecy to warm
