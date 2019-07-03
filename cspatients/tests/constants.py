@@ -52,6 +52,15 @@ SAMPLE_RP_UPDATE_DATA = {
     }
 }
 
+SAMPLE_RP_UPDATE_URGENCY_DATA = {
+    "results": {
+        "patient_id": {"category": "All Responses", "value": "1", "input": "1"},
+        "new_value": {"category": "All Responses", "value": "1", "input": "1"},
+        "change_category": {"category": "urgency", "value": "1", "input": "1"},
+        "option": {"category": "Patient Entry", "value": "1", "input": "1"},
+    }
+}
+
 SAMPLE_RP_POST_DATA_NON_EXISTING = {
     "results": {
         "name": {"category": "All Responses", "value": "Jane Moe", "input": "Jane Moe"},
