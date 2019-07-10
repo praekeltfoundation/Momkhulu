@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.8
+------------
+Add starvation period to patient entry
+
 0.0.7
 ------------
 Fix changing integer type fields
