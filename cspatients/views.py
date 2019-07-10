@@ -145,6 +145,7 @@ class EntryStatusUpdateView(APIView):
 
             if data["option"] == "Delivery":
                 patiententry.foetus = data["foetus"]
+                patiententry.starvation_hours = data.get("starvation_hours")
 
                 if data["baby_number"] == data["foetus"]:
                     patiententry.completion_time = timezone.now()
@@ -170,6 +171,7 @@ class EntryStatusUpdateView(APIView):
             elif data["option"] == "NonDelivery":
                 patiententry.anesthetic_time = data["anesthetic_time"]
                 patiententry.completion_time = timezone.now()
+                patiententry.starvation_hours = data.get("starvation_hours")
             elif data["option"] == "ChangeOrCancel":
                 patiententry.operation_cancelled = True
             else:

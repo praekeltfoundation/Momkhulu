@@ -38,6 +38,7 @@ class PatientEntry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     anesthetic_time = models.DateTimeField(null=True)
+    starvation_hours = models.IntegerField(null=True)
 
     @property
     def gravpar(self):
