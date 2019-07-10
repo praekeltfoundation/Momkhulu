@@ -66,7 +66,7 @@
           <li class="patient-list__item">
             <h5 class="patient-list__label">Clinician</h5>
             <h4 class="patient-list__entry">{{ patiententry.clinician|default_if_none:"-" }}</h4>
-          </li>          
+          </li>
           <li class="patient-list__item patient-list__item--column">
             <div class="patient-list__item--column-left">
               <h5 class="patient-list__label">Decision time</h5>
@@ -99,6 +99,14 @@
               <h4 class="patient-list__entry">{{ patiententry.foetus|default_if_none:"-" }}</h4>
             </div>
           </li>
+          {% if patiententry.starvation_hours %}
+            <li class="patient-list__item patient-list__item--column">
+              <div class="patient-list__item--column-left">
+                <h5 class="patient-list__label">Starvation Hours</h5>
+                <h4 class="patient-list__entry">{{ patiententry.starvation_hours }}</h4>
+              </div>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>

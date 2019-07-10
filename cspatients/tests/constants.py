@@ -119,6 +119,11 @@ SAMPLE_RP_UPDATE_DELIVERY_DATA = {
         "nicu": {"name": "nicu", "category": "Yes", "value": "2"},
         "apgar_1": {"name": "apgar_1", "category": "All Responses", "value": "8"},
         "apgar_5": {"name": "apgar_5", "category": "All Responses", "value": "9"},
+        "starvation_hours": {
+            "name": "starvation_hours",
+            "category": "All Responses",
+            "value": "12",
+        },
         "option": {"category": "Delivery", "value": "3", "input": "3"},
     }
 }
@@ -167,6 +172,11 @@ SAMPLE_RP_UPDATE_NONDELIVERY_DATA = {
             "name": "anesthetic_time",
             "category": "All Responses",
             "value": "2019-05-12 10:22+00:00",
+        },
+        "starvation_hours": {
+            "name": "starvation_hours",
+            "category": "All Responses",
+            "value": "12",
         },
         "option": {"category": "NonDelivery", "value": "4", "input": "4"},
     }

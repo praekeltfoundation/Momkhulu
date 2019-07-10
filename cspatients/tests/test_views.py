@@ -312,6 +312,7 @@ class CheckPatientExistsAPITestCase(AuthenticatedAPITestCase):
                 "foetus": None,
                 "operation_cancelled": False,
                 "anesthetic_time": None,
+                "starvation_hours": None,
             },
         )
 
@@ -426,6 +427,11 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
         # Test returns the right response code
         self.assertEqual(response.status_code, 200)
 
+        self.patient_entry.refresh_from_db()
+        self.assertEqual(self.patient_entry.starvation_hours, 12)
+        self.assertEqual(self.patient_entry.foetus, 2)
+        self.assertIsNotNone(self.patient_entry.completion_time)
+
         # Test that the baby records have been created correctly
         self.assertEqual(Baby.objects.count(), 1)
 
@@ -459,6 +465,11 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
 
         # Test returns the right response code
         self.assertEqual(response.status_code, 200)
+
+        self.patient_entry.refresh_from_db()
+        self.assertEqual(self.patient_entry.starvation_hours, None)
+        self.assertEqual(self.patient_entry.foetus, 2)
+        self.assertIsNone(self.patient_entry.completion_time)
 
         # Test that the baby records have been created correctly
         self.assertEqual(Baby.objects.count(), 1)
@@ -571,6 +582,7 @@ class EntryStatusUpdateTestCase(AuthenticatedAPITestCase):
             self.patient_entry.anesthetic_time,
             timezone.datetime(2019, 5, 12, 10, 22, tzinfo=timezone.utc),
         )
+        self.assertEqual(self.patient_entry.starvation_hours, 12)
         self.assertIsNotNone(self.patient_entry.completion_time)
 
     def test_patient_who_exists_cancelled(self):
