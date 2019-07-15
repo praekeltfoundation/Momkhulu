@@ -275,10 +275,9 @@ class PatientSelectView(APIView):
 
         patient_ids = dict(item.split("=") for item in id_string.split("|"))
 
-        if option not in patient_ids:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        return Response({"patient_id": patient_ids[option]}, status=status.HTTP_200_OK)
+        return Response(
+            {"patient_id": patient_ids.get(option, "-1")}, status=status.HTTP_200_OK
+        )
 
 
 class WhatsAppEventListener(APIView):

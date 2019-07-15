@@ -798,7 +798,10 @@ class PatientSelectTestCase(AuthenticatedAPITestCase):
             {"patient_ids": "1=00000001|2=00000003|3=00000004", "option": "4"},
         )
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+
+        result = response.json()
+        self.assertEqual(result["patient_id"], "-1")
 
 
 class WhatsAppEventListenerTest(APITestCase):
