@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.9
+------------
+Fix 404 when incorrect patient is selected
+
 0.0.8
 ------------
 Add starvation period to patient entry
