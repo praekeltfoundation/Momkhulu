@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.10
+------------
+Change patient order on the triage board
+
 0.0.9
 ------------
 Fix 404 when incorrect patient is selected
