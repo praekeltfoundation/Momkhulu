@@ -61,12 +61,10 @@ def get_all_active_patient_entries(search=None, status=None):
                 urgency=status, completion_time__isnull=True
             )
 
-    # latest most urgent on the top, completed at the bottom
-    sorted_entries = sorted(
-        patiententrys, key=lambda x: (x.decision_time), reverse=True
-    )
+    # oldest most urgent on the top, completed at the bottom
     return sorted(
-        sorted_entries, key=lambda x: (x.completion_time is not None, x.urgency)
+        patiententrys,
+        key=lambda x: (x.completion_time is not None, x.urgency, x.decision_time),
     )
 
 
