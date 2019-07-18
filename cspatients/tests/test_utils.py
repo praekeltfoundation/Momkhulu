@@ -62,8 +62,8 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(len(patient_entries), 4)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].surname, "Urgency Immediate NEW")
-        self.assertEqual(patient_entries[1].surname, "Urgency Immediate")
+        self.assertEqual(patient_entries[0].surname, "Urgency Immediate")
+        self.assertEqual(patient_entries[1].surname, "Urgency Immediate NEW")
         self.assertEqual(patient_entries[2].surname, "Urgency COLD")
         self.assertEqual(patient_entries[3].surname, "John Completed")
 
@@ -92,8 +92,8 @@ class ViewAllContextTest(TestCase):
         self.assertEqual(len(patient_entries), 5)
 
         # Check that the results are sorted by the urgency
-        self.assertEqual(patient_entries[0].surname, "Urgency Immediate NEW")
-        self.assertEqual(patient_entries[1].surname, "Urgency Immediate")
+        self.assertEqual(patient_entries[0].surname, "Urgency Immediate")
+        self.assertEqual(patient_entries[1].surname, "Urgency Immediate NEW")
         self.assertEqual(patient_entries[2].surname, "Urgency COLD")
         self.assertEqual(patient_entries[3].surname, "Completed OLD")
         self.assertEqual(patient_entries[4].surname, "John Completed")
