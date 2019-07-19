@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from cspatients import util
 
 from .models import Baby, PatientEntry, Profile
-from .tasks import post_patient_update, send_wa_group_message
+from .tasks import post_patient_update, send_rapidpro_event, send_wa_group_message
 
 
 @login_required()
@@ -284,7 +284,7 @@ class WhatsAppEventListener(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        headers = {"Content-Type": "application/json"}
+
         payload = {"messages": [], "events": []}
 
         for type in ("messages", "events"):
@@ -298,10 +298,9 @@ class WhatsAppEventListener(APIView):
         if len(payload["messages"]) == 0 and len(payload["events"]) == 0:
             return Response(status=status.HTTP_200_OK)
 
-        response = requests.post(
-            settings.RAPIDPRO_CHANNEL_URL, json=payload, headers=headers
-        )
-        return Response(response.json(), status=response.status_code)
+        send_rapidpro_event.delay(payload)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 def health(request):

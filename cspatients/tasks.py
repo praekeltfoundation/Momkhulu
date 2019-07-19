@@ -58,3 +58,22 @@ def send_wa_group_message(message):
     )
     response.raise_for_status()
     return response
+
+
+@app.task(
+    autoretry_for=(RequestException, SoftTimeLimitExceeded),
+    retry_backoff=True,
+    max_retries=15,
+    acks_late=True,
+    soft_time_limit=10,
+    time_limit=15,
+    ignore_result=True,
+)
+def send_rapidpro_event(payload):
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(
+        settings.RAPIDPRO_CHANNEL_URL, json=payload, headers=headers
+    )
+    response.raise_for_status()
+    return response
