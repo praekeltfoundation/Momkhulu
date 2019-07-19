@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.11
+------------
+Move Rapidpro event request to task
+
 0.0.10
 ------------
 Change patient order on the triage board
