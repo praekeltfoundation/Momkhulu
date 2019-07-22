@@ -4,6 +4,10 @@ VERSIONS
 Next Release
 ------------
 
+0.0.12
+------------
+Add Prometheus exporter
+
 0.0.11
 ------------
 Move Rapidpro event request to task
