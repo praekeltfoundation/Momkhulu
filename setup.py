@@ -45,6 +45,7 @@ setup(
         "Django>=2.2.2,<2.3",
         "django-celery==3.2.2",
         "django-environ==0.4.5",
+        "django-prometheus>=1.0.15,<2",
         "djangorestframework>=3.9.1,<4",
         "environ==1.0",
         "simplejson==3.16.0",
