@@ -24,11 +24,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "djcelery",
+    "django_prometheus",
     "rest_framework",
     "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -36,6 +38,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 ROOT_URLCONF = "momkhulu.urls"
@@ -156,3 +159,5 @@ RAPIDPRO_CHANNEL_URL = env.str("RAPIDPRO_CHANNEL_URL", "REPLACEME")
 
 TURN_TOKEN = env.str("TURN_TOKEN", "REPLACEME")
 TURN_URL = env.str("TURN_URL", "REPLACEME")
+
+PROMETHEUS_EXPORT_MIGRATIONS = env.bool("PROMETHEUS_EXPORT_MIGRATIONS", False)
