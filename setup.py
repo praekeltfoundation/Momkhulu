@@ -41,7 +41,7 @@ setup(
         "daphne==2.2",
         "channels==2.1.7",
         "channels-redis==2.3.3",
-        "cryptography==2.7",
+        "cryptography==3.2",
         "Django>=2.2.2,<2.3",
         "django-celery==3.2.2",
         "django-environ==0.4.5",
